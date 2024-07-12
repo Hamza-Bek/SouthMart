@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Application.Interfaces;
 using Domain.Models;
 using Mapster;
+using Domain.Models.UserEntity;
 
 namespace Infrastructure.Repositories
 {
@@ -68,7 +69,17 @@ namespace Infrastructure.Repositories
                     Email = model.Email,
                     PasswordHash = model.Password,
                     UserName = model.Email
-                };              
+                };
+
+                var cart = new Cart()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    CartTotal = 0, 
+                    UserId = user.Id
+                };
+
+                user.CartId = cart.Id;
+                await _context.Carts.AddAsync(cart);
 
                 const string defaultRole = "User";
 
@@ -208,7 +219,8 @@ namespace Infrastructure.Repositories
                 new Claim(ClaimTypes.Name, user.Email!),
                 new Claim(ClaimTypes.Email, user.Email!),
                 new Claim(ClaimTypes.Role,(await userManager.GetRolesAsync(user)).FirstOrDefault()!.ToString()),
-                new Claim("Fullname", user.Name!),          
+                new Claim("Fullname", user.Name!),
+                new Claim("CartId", user.CartId!.ToString())
 
             };
 

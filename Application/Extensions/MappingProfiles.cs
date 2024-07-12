@@ -1,8 +1,10 @@
 ﻿using Application.DTOs.Request;
+using Application.DTOs.Request.OrderEntity;
 using Application.DTOs.Request.ProductEntity;
 using AutoMapper;
 using Domain.Models.ProductEntity;
 using Domain.Models.SellerEntity;
+using Domain.Models.UserEntity;
 
 namespace Application.Extensions
 {
@@ -15,6 +17,9 @@ namespace Application.Extensions
 
             CreateMap<ProductDTO, Product>();
             CreateMap<Product, ProductDTO>();
+
+            CreateMap<Order, OrderDTO>();
+            CreateMap<Order, OrderDTO>();
         }
 
     }

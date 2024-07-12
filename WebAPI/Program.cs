@@ -88,6 +88,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ISellerRepository, SellerRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IBuyerRepository , BuyerRepository>();
+
 
 var app = builder.Build();
 

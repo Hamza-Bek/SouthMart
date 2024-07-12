@@ -1,4 +1,5 @@
 ﻿using Domain.Models.Authentication;
+using Domain.Models.UserEntity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,10 @@ namespace Domain.Models.ProductEntity
         public int? Quantity { get; set; }
         public decimal? Cost { get; set; }
         public decimal? SellingPrice { get; set; }
+        
         public string SellerId { get; set; }
         public ApplicationUser Seller { get; set; }
+
+        public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
     }
 }

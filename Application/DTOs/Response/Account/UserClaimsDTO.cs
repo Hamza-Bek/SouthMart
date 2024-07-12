@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.Response.Account
 {
-    public record UserClaimsDTO(string Id = null!, string FullName = null!, string UserName = null!, string Email = null!, string Role = null!);
+    public record UserClaimsDTO(string Id = null!, string FullName = null!, string UserName = null!, string Email = null!, string Role = null!, string CartId = null!);
 }

@@ -62,7 +62,8 @@ namespace Application.Extensions
                     new(ClaimTypes.Name , claims.UserName!),
                     new(ClaimTypes.Email , claims.Email!),
                     new(ClaimTypes.Role, claims.Role),
-                    new Claim ("Fullname", claims.FullName),                   
+                    new Claim ("Fullname", claims.FullName),
+                    new Claim("CartId", claims.CartId!.ToString()),
                 ], Constants.AuthenticationType));
         }
 
@@ -79,8 +80,9 @@ namespace Application.Extensions
                 var email = token.Claims.FirstOrDefault(_ => _.Type == ClaimTypes.Email)!.Value;
                 var role = token.Claims.FirstOrDefault(_ => _.Type == ClaimTypes.Role)!.Value;
                 var fullname = token.Claims.FirstOrDefault(_ => _.Type == "Fullname")!.Value;
-                var id = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;                
-                return new UserClaimsDTO(id, fullname, name, email, role);
+                var id = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value;
+                var cartId = token.Claims.FirstOrDefault(c => c.Type == "CartId")!.Value;
+                return new UserClaimsDTO(id, fullname, name, email, role, cartId);
             }
             catch
             {

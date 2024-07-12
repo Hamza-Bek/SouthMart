@@ -123,5 +123,10 @@ namespace Infrastructure.Repositories
 
             return productDtos;
         }
+
+        public async Task<ProductResponse> AddProductToCartAsync(ProductDTO model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

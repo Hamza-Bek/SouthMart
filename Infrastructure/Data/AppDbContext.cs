@@ -1,6 +1,7 @@
 ﻿using Domain.Models.Authentication;
 using Domain.Models.ProductEntity;
 using Domain.Models.SellerEntity;
+using Domain.Models.UserEntity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,12 @@ namespace Infrastructure.Data
         public DbSet<RefreshToken> RefreshTokens { get; set; }     
         public DbSet<SellerAccount> SellerAccounts { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Location> Locations { get; set; }
+        public DbSet<OrderStatus> OrderStatuses { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -31,7 +38,34 @@ namespace Infrastructure.Data
             .HasOne(a => a.SellerAccount)
             .WithOne(b => b.Seller)
             .HasForeignKey<SellerAccount>(b => b.SellerId);
+            //
+            builder.Entity<ApplicationUser>()
+                .HasOne(a => a.Cart)
+                .WithOne(c => c.CartOwner)
+                .HasForeignKey<Cart>(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
+            builder.Entity<Location>()
+                .HasOne(l => l.LocationUser)
+                .WithOne()
+                .HasForeignKey<Location>(l => l.ApplicationUserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Order>()
+                .HasMany(o => o.OrderDetails)
+                .WithOne(od => od.Order)
+                .HasForeignKey(od => od.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Order>()
+                .HasOne(o => o.Location)
+                .WithMany(l => l.Orders)
+                .HasForeignKey(o => o.LocationId);
+
+            builder.Entity<OrderDetails>()
+                .HasKey(od => od.OrderDetailId);
+
+            //
             builder.Entity<ApplicationUser>()
             .HasMany(au => au.Products)
             .WithOne(p => p.Seller)
