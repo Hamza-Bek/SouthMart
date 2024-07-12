@@ -11,10 +11,7 @@ namespace Application.Extensions
         public MappingProfiles()
         {
             CreateMap<SellerAccountDTO, SellerAccount>();           
-            CreateMap<SellerAccount, SellerAccountDTO>();    
-            
-            CreateMap<Inventory, InventoryDTO>();
-            CreateMap<InventoryDTO, Inventory>();
+            CreateMap<SellerAccount, SellerAccountDTO>();                        
 
             CreateMap<ProductDTO, Product>();
             CreateMap<Product, ProductDTO>();

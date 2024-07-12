@@ -25,6 +25,20 @@ namespace Infrastructure.Repositories
                 if (user == null)
                     return new ProductResponse(false, "Seller id is empty");
 
+                var sellerAccount = await _context.SellerAccounts
+                      .SingleOrDefaultAsync(sa => sa.SellerId == userId);
+                if (sellerAccount == null)
+                {
+                    Console.WriteLine($"SellerAccount not found for userId: {userId}");
+                    return new ProductResponse(false, "User does not have access!");
+                }
+
+                if (userId != sellerAccount.SellerId)
+                {
+                    Console.WriteLine($"User ID mismatch: userId = {userId}, sellerAccount.Id = {sellerAccount.Id}");
+                    return new ProductResponse(false, "User does not have access!");
+                }
+
                 if (model == null)
                     return new ProductResponse(false, "Can not insert null values");
 
@@ -34,7 +48,8 @@ namespace Infrastructure.Repositories
                     Name = model.Name,
                     Description = model.Description,
                     Quantity = model.Quantity,
-                    Price = model.Price,
+                    Cost = model.Cost,
+                    SellingPrice = model.SellingPrice,
                     SellerId = userId
                 };
 
