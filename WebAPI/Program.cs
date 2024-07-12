@@ -1,4 +1,6 @@
+using Application.Extensions;
 using Application.Interfaces;
+using AutoMapper;
 using Domain.Models.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
@@ -23,6 +25,8 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 
 #region Connection String
@@ -82,7 +86,8 @@ builder.Services.AddSwaggerGen(options =>
 #endregion
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
-
+builder.Services.AddScoped<ISellerRepository, SellerRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 var app = builder.Build();
 
