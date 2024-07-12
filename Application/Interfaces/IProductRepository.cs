@@ -17,10 +17,6 @@ namespace Application.Interfaces
         Task<ProductResponse> UpdateProductAsync(ProductDTO model);
         Task<ProductResponse> RemoveProductAsync(string productId);
 
-        //Buyer's methods
-        Task<ProductResponse> AddProductToCartAsync(ProductDTO model);
-
-
         Task<List<ProductDTO>> GetProductBySeller(string userId);
     }
 }

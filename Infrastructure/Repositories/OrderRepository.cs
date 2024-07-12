@@ -15,53 +15,88 @@ namespace Infrastructure.Repositories
 {
     public class OrderRepository(AppDbContext _context, IMapper _mapper) : IOrderRepository
     {
-        public async Task<OrderResponse> PlaceOrderAsync(OrderDTO model, string userId)
+        public async Task<OrderResponse> PlaceOrderAsync(OrderDTO model)
         {
-            var map = _mapper.Map<OrderDTO>(model);
-
-            var user = await _context.Users
-                .Include(i => i.Location)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-            if (user == null)
-                return new OrderResponse(false, "User not found");
-
-            var userCart = await _context.Carts
-                .Include(p => p.CartItems)
-                .FirstOrDefaultAsync(c => c.UserId == userId);
-
-            if (userCart == null)
-                return new OrderResponse(false, "Cart not found");
-
-            var userLocation = await _context.Locations.FirstOrDefaultAsync(l => l.ApplicationUserId == userId);
-
-            if (userLocation == null)
-                return new OrderResponse(false, "Location not found");
-
-            decimal orderTotal = (decimal)userCart.CartTotal;
-
-            var order = new Order()
+            try
             {
-                OrderId = model.OrderId,
-                OrderDate = model.OrderDate,
-                OrderTotal = orderTotal,
-                OrderStatus = "Pending",
-                LocationId = userLocation.LocationId,
-                Location = userLocation,
-                OrderDetails = (ICollection<OrderDetails>)userCart.CartItems.Select(cartitem => new OrderDetails
+                var map = _mapper.Map<OrderDTO>(model);
+
+                var userId = model.UserId;
+
+                var user = await _context.Users
+                    .Include(i => i.Location)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user == null)
+                    return new OrderResponse(false, "User not found");
+
+                var userCart = await _context.Carts
+                    .Include(p => p.CartItems)
+                    .FirstOrDefaultAsync(c => c.UserId == userId);
+
+                if (userCart == null)
+                    return new OrderResponse(false, "Cart not found");
+
+                var userLocation = await _context.Locations.FirstOrDefaultAsync(l => l.ApplicationUserId == userId);
+
+                if (userLocation == null)
+                    return new OrderResponse(false, "Location not found");
+
+                decimal orderTotal = (decimal)userCart.CartTotal;
+
+                userCart.CartTotal = 0;
+
+                var order = new Order()
                 {
-                    OrderDetailId = Guid.NewGuid().ToString(),
-                    OrderId = model.OrderId,
-                    ProductName = cartitem.ProductName,
-                    ProductPrice = cartitem.ProductPrice,
-                    Quantity = cartitem.Quantity
-                }).ToList(),
-            };
+                    OrderId = Guid.NewGuid().ToString(),
+                    OrderNumber = GenerateRandomNumberString(5),
+                    OrderDate = model.OrderDate,
+                    OrderTotal = orderTotal,
+                    OrderStatus = "Pending",
+                    UserId = userId,                    
+                    LocationId = userLocation.LocationId,
+                    Location = userLocation,
+                    OrderDetails = userCart.CartItems.Select(cartitem => new OrderDetails
+                    {
+                        OrderDetailId = Guid.NewGuid().ToString(),
+                        OrderId = model.OrderId,
+                        ProductName = cartitem.ProductName,
+                        ProductPrice = cartitem.ProductPrice,
+                        Quantity = cartitem.Quantity
+                    }).ToList(),
+                };
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+                _context.Entry(userLocation).State = EntityState.Unchanged;
 
-            throw new NotImplementedException();
+                _context.Orders.Add(order);
+                await _context.SaveChangesAsync();
+
+                return new OrderResponse(true, "Order placed successfully");
+            }
+            catch (DbUpdateException ex)
+            {
+                // Log the error (uncomment ex variable name and write a log.)
+                var errorMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                return new OrderResponse(false, $"An error occurred while saving the entity changes: {errorMessage}");
+            }
+            catch (Exception ex)
+            {
+                // Log the error (uncomment ex variable name and write a log.)
+                return new OrderResponse(false, $"An unexpected error occurred: {ex.Message}");
+            }
+        }
+
+        private string GenerateRandomNumberString(int length)
+        {
+            Random random = new Random();
+            char[] digits = new char[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                digits[i] = (char)('0' + random.Next(0, 10));
+            }
+
+            return new string(digits);
         }
     }
 }

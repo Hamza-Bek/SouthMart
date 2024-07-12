@@ -4,13 +4,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Models.SellerEntity;
 using Infrastructure.Data;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
@@ -59,8 +53,6 @@ namespace Infrastructure.Repositories
 
             return sellerAccountDTO;
         }
-
-
-        private async Task SaveChangesAsync() => await _context.SaveChangesAsync();
+    
     }
 }

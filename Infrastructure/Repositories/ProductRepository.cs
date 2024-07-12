@@ -6,10 +6,7 @@ using Domain.Models.ProductEntity;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Infrastructure.Repositories
 {
@@ -124,9 +121,6 @@ namespace Infrastructure.Repositories
             return productDtos;
         }
 
-        public async Task<ProductResponse> AddProductToCartAsync(ProductDTO model)
-        {
-            throw new NotImplementedException();
-        }
+   
     }
 }

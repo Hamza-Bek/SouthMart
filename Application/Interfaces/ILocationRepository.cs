@@ -1,6 +1,5 @@
 ﻿using Application.DTOs.Request.OrderEntity;
 using Application.DTOs.Response;
-using Domain.Models.UserEntity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace Application.Interfaces
 {
-    public interface IOrderRepository
+    public interface ILocationRepository
     {
-        Task<OrderResponse> PlaceOrderAsync(OrderDTO model);
+        Task<GeneralResponse> AddLocationAsync(LocationDTO model);
+        Task<GeneralResponse> UpdateLocationAsync(LocationDTO model);
     }
 }

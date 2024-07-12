@@ -20,6 +20,9 @@ namespace Application.Extensions
 
             CreateMap<Order, OrderDTO>();
             CreateMap<Order, OrderDTO>();
+
+            CreateMap<LocationDTO, Location>(); 
+            CreateMap<Location, LocationDTO>();
         }
 
     }
