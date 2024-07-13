@@ -42,6 +42,11 @@ namespace Infrastructure.Repositories
                 if (userLocation == null)
                     return new OrderResponse(false, "Location not found");
 
+                var sellerId = model.SellerId;
+                var seller = await _context.SellerAccounts.FirstOrDefaultAsync(s => s.SellerId == sellerId);
+                if (seller == null)
+                    return new OrderResponse(false, "Seller Id not found");
+
                 decimal orderTotal = (decimal)userCart.CartTotal;
 
                 userCart.CartTotal = 0;
@@ -53,7 +58,8 @@ namespace Infrastructure.Repositories
                     OrderDate = model.OrderDate,
                     OrderTotal = orderTotal,
                     OrderStatus = "Pending",
-                    UserId = userId,                    
+                    UserId = userId,      
+                    SellerId = model.SellerId,
                     LocationId = userLocation.LocationId,
                     Location = userLocation,
                     OrderDetails = userCart.CartItems.Select(cartitem => new OrderDetails

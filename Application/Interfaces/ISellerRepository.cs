@@ -13,5 +13,9 @@ namespace Application.Interfaces
     {
         Task<SellerResponse> CreateSellerAccountAsync(SellerAccountDTO model);
         Task<SellerAccountDTO> GetSellerAccountAsync(string userId);
+
+        // Total sales and products sold
+
+        Task<SalesResponse> GetSalesForLastMonthAsync(string sellerId);
     }
 }

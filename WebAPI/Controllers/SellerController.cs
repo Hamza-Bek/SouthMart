@@ -3,6 +3,7 @@ using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Models.SellerEntity;
+using Domain.Models.UserEntity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -43,6 +44,26 @@ namespace WebAPI.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("last-month-sales")]
+        public async Task<ActionResult<SalesResponse>> GetLastMonthSales([FromQuery] string sellerId)
+        {
+            if (string.IsNullOrEmpty(sellerId))
+            {
+                return BadRequest(new SalesResponse(false, "Seller ID is required", new List<OrderDetails>()));
+            }
+
+            var response = await _sellerRepository.GetSalesForLastMonthAsync(sellerId);
+
+            if (response.Flag)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return StatusCode(500, response);
             }
         }
     }

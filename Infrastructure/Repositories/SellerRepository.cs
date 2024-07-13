@@ -3,6 +3,7 @@ using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Models.SellerEntity;
+using Domain.Models.UserEntity;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,31 @@ namespace Infrastructure.Repositories
 
             return new SellerResponse(true, "Seller account request sent!");
         }
+        
+        public async Task<SalesResponse> GetSalesForLastMonthAsync(string sellerId)
+        {
+            try
+            {
+                var now = DateTime.Now;
+                var startPeriod = new DateTime(now.Year, now.Month, 1).AddMonths(-1);
+                var endPeriod = new DateTime(now.Year, now.Month, 1);
+
+                Console.WriteLine($"Start Period: {startPeriod}, End Period: {endPeriod}");
+
+                var lastMonthSales = await _context.OrderDetails
+                    .Where(od => od.Order.SellerId == sellerId && od.Order.OrderDate >= startPeriod && od.Order.OrderDate < endPeriod)
+                    .ToListAsync();
+
+                var totalSales = lastMonthSales.Sum(od => od.ProductPrice * od.Quantity.GetValueOrDefault());
+
+                return new SalesResponse(true, $"Sales data retrieved successfully, Start Period: {startPeriod}, End Period: {endPeriod}", lastMonthSales);
+            }
+            catch (Exception ex)
+            {
+                return new SalesResponse(false, $"Error: {ex.Message}", new List<OrderDetails>());
+            }
+        }
+
         public async Task<SellerAccountDTO> GetSellerAccountAsync(string userId)
         {            
             var user = await _context.Users.FindAsync(userId);

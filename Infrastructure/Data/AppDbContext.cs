@@ -20,7 +20,8 @@ namespace Infrastructure.Data
         {
         
         }
-        public DbSet<RefreshToken> RefreshTokens { get; set; }     
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<SellerAccount> SellerAccounts { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Location> Locations { get; set; }
