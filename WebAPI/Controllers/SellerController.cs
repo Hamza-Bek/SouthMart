@@ -47,6 +47,48 @@ namespace WebAPI.Controllers
             }
         }
 
+
+        [HttpGet("last-year-sales")]
+        public async Task<ActionResult<SalesResponse>> GetLastYearSales([FromQuery] string sellerId)
+        {
+            if (string.IsNullOrEmpty(sellerId))
+            {
+                return BadRequest(new SalesResponse(false, "Seller ID is required", new List<OrderDetails>()));
+            }
+
+            var response = await _sellerRepository.GetSalesForLastYearAsync(sellerId);
+
+            if (response.Flag)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return StatusCode(500, response);
+            }
+        }
+
+        [HttpGet("current-year-sales")]
+        public async Task<ActionResult<SalesResponse>> GetCurrentYearSales([FromQuery] string sellerId)
+        {
+            if (string.IsNullOrEmpty(sellerId))
+            {
+                return BadRequest(new SalesResponse(false, "Seller ID is required", new List<OrderDetails>()));
+            }
+
+            var response = await _sellerRepository.GetSalesForCurrentYearAsync(sellerId);
+
+            if (response.Flag)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return StatusCode(500, response);
+            }
+        }
+
+
         [HttpGet("last-month-sales")]
         public async Task<ActionResult<SalesResponse>> GetLastMonthSales([FromQuery] string sellerId)
         {
@@ -56,6 +98,46 @@ namespace WebAPI.Controllers
             }
 
             var response = await _sellerRepository.GetSalesForLastMonthAsync(sellerId);
+
+            if (response.Flag)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return StatusCode(500, response);
+            }
+        }
+
+        [HttpGet("current-month-sales")]
+        public async Task<ActionResult<SalesResponse>> GetCurrentMonthSales([FromQuery] string sellerId)
+        {
+            if (string.IsNullOrEmpty(sellerId))
+            {
+                return BadRequest(new SalesResponse(false, "Seller ID is required", new List<OrderDetails>()));
+            }
+
+            var response = await _sellerRepository.GetSalesForCurrentMonthAsync(sellerId);
+
+            if (response.Flag)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return StatusCode(500, response);
+            }
+        }
+
+        [HttpGet("last-24H-sales")]
+        public async Task<ActionResult<SalesResponse>> GetSalesForLast24Hours([FromQuery] string sellerId)
+        {
+            if (string.IsNullOrEmpty(sellerId))
+            {
+                return BadRequest(new SalesResponse(false, "Seller ID is required", new List<OrderDetails>()));
+            }
+
+            var response = await _sellerRepository.GetSalesForLast24HoursAsync(sellerId);
 
             if (response.Flag)
             {
