@@ -29,7 +29,8 @@ namespace Infrastructure.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
-
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -51,6 +52,7 @@ namespace Infrastructure.Data
                 .WithOne()
                 .HasForeignKey<Location>(l => l.ApplicationUserId)
                 .OnDelete(DeleteBehavior.NoAction);
+        
 
             builder.Entity<Order>()
                 .HasMany(o => o.OrderDetails)
@@ -66,6 +68,13 @@ namespace Infrastructure.Data
             builder.Entity<OrderDetails>()
                 .HasKey(od => od.OrderDetailId);
 
+            builder.Entity<ApplicationUser>()
+                  .HasMany(au => au.Notifications)
+                  .WithOne(n => n.User)
+                  .HasForeignKey(n => n.UserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+
             //
             builder.Entity<ApplicationUser>()
             .HasMany(au => au.Products)
@@ -79,6 +88,19 @@ namespace Infrastructure.Data
                 .HasOne(p => p.Seller)
                 .WithMany(au => au.Products)
                 .HasForeignKey(p => p.SellerId);
+
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.User)
+                   .WithMany(u => u.Comments)
+                     .HasForeignKey(c => c.UserId)
+                        .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Comment>()
+                .HasOne(c => c.Product)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(c => c.ProductId)
+                .OnDelete(DeleteBehavior.NoAction); 
         }
     }
 }

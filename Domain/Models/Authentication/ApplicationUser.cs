@@ -16,8 +16,10 @@ namespace Domain.Models.Authentication
 
 
         public Location Location { get; set; }
+        public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
         public ICollection<Product> Products { get; set; } = new List<Product>();
         public ICollection<Order> Orders { get; set; } = new List<Order>();
-        
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
     }
 }

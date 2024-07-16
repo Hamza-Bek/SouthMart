@@ -47,6 +47,8 @@ namespace Infrastructure.Repositories
                 if (seller == null)
                     return new OrderResponse(false, "Seller Id not found");
 
+          
+
                 decimal orderTotal = (decimal)userCart.CartTotal;
 
                 userCart.CartTotal = 0;
@@ -61,18 +63,34 @@ namespace Infrastructure.Repositories
                     UserId = userId,      
                     SellerId = model.SellerId,
                     LocationId = userLocation.LocationId,
-                    Location = userLocation,
-                    OrderDetails = userCart.CartItems.Select(cartitem => new OrderDetails
-                    {
-                        OrderDetailId = Guid.NewGuid().ToString(),
-                        OrderId = model.OrderId,
-                        ProductName = cartitem.ProductName,
-                        ProductPrice = cartitem.ProductPrice,
-                        Quantity = cartitem.Quantity
-                    }).ToList(),
+                    Location = userLocation,                
                 };
 
+                var orderDetails = userCart.CartItems.Select(cartitem =>  new OrderDetails
+                {
+                    OrderDetailId = Guid.NewGuid().ToString(),
+                    OrderId = model.OrderId,
+                    ProductId = cartitem.ProductId,
+                    ProductName = cartitem.ProductName,
+                    ProductPrice = cartitem.ProductPrice,
+                    Quantity = cartitem.Quantity
+                }).ToList();
+
                 _context.Entry(userLocation).State = EntityState.Unchanged;
+          
+
+                foreach(var orderDetail in orderDetails)
+                {
+                    var product = await _context.Products.FirstOrDefaultAsync(p => p.Id ==  orderDetail.ProductId);
+                    if(product != null)
+                    {
+                        product.Quantity -= orderDetail.Quantity;
+                        seller.Revenue += (decimal)(product.SellingPrice - product.Cost);
+                        seller.GrossSales += (decimal)(product.SellingPrice); 
+                        _context.Entry(product).State = EntityState.Modified;
+                    }
+                }
+
 
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();

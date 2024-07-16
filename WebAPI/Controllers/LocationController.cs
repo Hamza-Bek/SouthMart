@@ -1,6 +1,6 @@
 ﻿namespace WebAPI.Controllers
 {
-    public class OrdersController
+    public class LocationController
     {
     }
 }
