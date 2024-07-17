@@ -11,7 +11,7 @@ namespace Application.Interfaces
     public interface ICommentRepository
     {
         Task<NotificationResponse> AddCommentAsync(CommentDTO model);
-        //Task<NotificationResponse> EditCommentAsync(CommentDTO model);
+        Task<NotificationResponse> EditCommentAsync(CommentDTO model);
         //Task<NotificationResponse> DeleteCommentAsync(CommentDTO model);
 
         //Task<NotificationResponse> GetProductCommentsAsync(string productId);

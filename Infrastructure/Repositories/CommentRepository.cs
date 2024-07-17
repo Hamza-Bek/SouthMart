@@ -5,16 +5,13 @@ using AutoMapper;
 using Domain.Models.ProductEntity;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Infrastructure.Repositories
 {
-    public class CommentRepository(AppDbContext _context , IMapper _mapper) : ICommentRepository
+    public class CommentRepository (AppDbContext _context , IMapper _mapper) : ICommentRepository
     {
+      
         public async Task<NotificationResponse> AddCommentAsync(CommentDTO model)
         {
             _mapper.Map<CommentDTO>(model);
@@ -43,5 +40,27 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return new NotificationResponse(true, "Comment posted successfully"); 
         }
+
+        public async Task<NotificationResponse> EditCommentAsync(CommentDTO model)
+        {
+            if (model == null)
+                return new NotificationResponse(false, "Can't update null comment");
+
+            var comment = await _context.Comments.FirstOrDefaultAsync(c => c.Id == model.Id);
+            if (comment == null)
+                return new NotificationResponse(false, "Comment not found");
+
+            if (comment.UserId != model.UserId)
+                return new NotificationResponse(false, "User not authorized to edit this comment");
+
+            comment.content = model.content;
+            comment.DateCreated = DateTime.Now; // Assuming you have a DateModified field for tracking edits
+
+            _context.Comments.Update(comment);
+            await _context.SaveChangesAsync();
+
+            return new NotificationResponse(true, "Comment updated successfully");
+        }
     }
 }
+

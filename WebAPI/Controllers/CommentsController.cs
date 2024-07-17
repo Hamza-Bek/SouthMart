@@ -8,7 +8,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class CommentsController(ICommentRepository _commentRepository) : Controller
     {
-        [HttpPost]
+        [HttpPost("add-comment")]
         public async Task<IActionResult> AddComment(CommentDTO model)
         {
             try
@@ -17,6 +17,20 @@ namespace WebAPI.Controllers
                 return Ok(response);
             }
             catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("edit-comment")]
+        public async Task<IActionResult> EditComment(CommentDTO model)
+        {
+            try
+            {
+                var response = await _commentRepository.EditCommentAsync(model);
+                return Ok(response);
+            }
+            catch (Exception ex) 
             {
                 return BadRequest(ex.Message);
             }
