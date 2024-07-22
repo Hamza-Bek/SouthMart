@@ -16,7 +16,7 @@ namespace Domain.Models.ProductEntity
         public int? Quantity { get; set; }
         public decimal? Cost { get; set; }
         public decimal? SellingPrice { get; set; }
-        
+        public string? Category { get; set; }
         public string SellerId { get; set; }
         public ApplicationUser Seller { get; set; }
 

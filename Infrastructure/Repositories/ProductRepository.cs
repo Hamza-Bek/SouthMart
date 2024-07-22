@@ -10,7 +10,7 @@ using System;
 
 namespace Infrastructure.Repositories
 {
-    public class ProductRepository(AppDbContext _context , IMapper _mapper) : IProductRepository
+    public class ProductRepository(AppDbContext _context, IMapper _mapper) : IProductRepository
     {
         public async Task<ProductResponse> AddProductAsync(ProductDTO model)
         {
@@ -39,11 +39,16 @@ namespace Infrastructure.Repositories
                 if (model == null)
                     return new ProductResponse(false, "Can not insert null values");
 
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == model.Category);
+                if (category == null)
+                    return new ProductResponse(false, "Category not found!");
+
                 var pr = new Product()
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = model.Name,
                     Description = model.Description,
+                    Category = model.Category,
                     Quantity = model.Quantity,
                     Cost = model.Cost,
                     SellingPrice = model.SellingPrice,
@@ -67,7 +72,7 @@ namespace Infrastructure.Repositories
                 return new ProductResponse(false, "An error occurred while saving the entity changes. See the inner exception for details.");
             }
 
-        }     
+        }
 
         public async Task<ProductResponse> UpdateProductAsync(ProductDTO model)
         {
@@ -77,9 +82,13 @@ namespace Infrastructure.Repositories
                     return new ProductResponse(false, "Can not insert null values");
 
                 var product = await _context.Products.FindAsync(model.Id);
-
                 if (product == null)
                     return new ProductResponse(false, "No produt found");
+
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == model.Category);
+                if (category == null)
+                    return new ProductResponse(false, "Category not found!");
+
 
                 _mapper.Map(model, product);
 
@@ -97,8 +106,8 @@ namespace Infrastructure.Repositories
         public async Task<ProductResponse> RemoveProductAsync(string productId)
         {
             var product = await _context.Products.FindAsync(productId);
-            
-            if(product == null || string.IsNullOrEmpty(productId))
+
+            if (product == null || string.IsNullOrEmpty(productId))
                 return new ProductResponse(false, "Product not found");
 
             _context.Products.Remove(product);
@@ -121,6 +130,23 @@ namespace Infrastructure.Repositories
             return productDtos;
         }
 
-   
+        public async Task<ProductResponse> AddCategoryAsync(CategoryDTO model)
+        {
+            
+            if (model == null)
+                return new ProductResponse(false, "Can't insert null values");
+
+            var category = new Category()
+            {
+                CategoryId = Guid.NewGuid().ToString(),
+                CategoryTag = model.CategoryTag
+            };
+
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+            return new ProductResponse(true, "Category added successfully");
+        }
+
+        public async Task<IEnumerable<CategoryDTO>> GetAllCategories() => (IEnumerable<CategoryDTO>)await _context.Categories.AsNoTracking().ToListAsync();
     }
 }

@@ -1,0 +1,123 @@
+﻿@page "/product/add"
+
+
+<div class="page-wrapper">
+<div class="content">
+<div class="page-header">
+<div class="page-title">
+<h4>Product Add</h4>
+<h6>Create new product</h6>
+</div>
+</div>
+
+<div class="card">
+<div class="card-body">
+<div class="row">
+<div class="col-lg-3 col-sm-6 col-12">
+<div class="form-group">
+<label>Product Name</label>
+<input type="text">
+</div>
+</div>
+<div class="col-lg-3 col-sm-6 col-12">
+<div class="form-group">
+<label>Category</label>
+<select class="select">
+<option>Choose Category</option>
+<option>Computers</option>
+</select>
+</div>
+</div>
+                    <div class="col-lg-3 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label>Cost</label>
+                            <input type="text">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6 col-12">
+                        <div class="form-group">
+                            <label>Selling Price</label>
+                            <input type="text">
+                        </div>
+                    </div>
+
+
+
+<div class="col-lg-3 col-sm-6 col-12">
+<div class="form-group">
+<label>Quantity</label>
+<input type="text">
+</div>
+</div>
+<div class="col-lg-12">
+<div class="form-group">
+<label>Description</label>
+<textarea class="form-control"></textarea>
+</div>
+</div>
+
+<div class="col-lg-12">
+<div class="form-group">
+<label> Product Image</label>
+<div class="image-upload">
+<input type="file">
+<div class="image-uploads">
+<img src="img/icons/upload.svg" alt="img">
+<h4>Drag and drop a file to upload</h4>
+</div>
+</div>
+</div>
+</div>
+<div class="col-lg-12">
+<a href="javascript:void(0);" class="btn btn-submit me-2">Submit</a>
+<a href="productlist.html" class="btn btn-cancel">Cancel</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<style>
+    /* Form Group Styles */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Select Styles */
+.select {
+    appearance: none;
+    background: #fff url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="feather feather-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>') no-repeat right 0.75rem center/8px 10px;
+    padding-right: 2.25rem;
+}
+
+.select::-ms-expand {
+    display: none;
+}
+
+</style>

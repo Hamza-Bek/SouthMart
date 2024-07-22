@@ -1,12 +1,13 @@
 ﻿using Application.DTOs.Request.ProductEntity;
 using Application.Interfaces;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductsController (IProductRepository _productRepository) : Controller
+    public class ProductsController (IProductRepository _productRepository , AppDbContext _context) : Controller
     {
         [HttpPost("add-product")]
         public async Task<IActionResult> AddProduct(ProductDTO model)
@@ -69,6 +70,30 @@ namespace WebAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost("add-category")]
+        public async Task<IActionResult> AddCategory(CategoryDTO model)
+        {
+            try
+            {
+                var response = await _productRepository.AddCategoryAsync(model);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("get-categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = _context.Categories.ToList();
+
+            var categoriesDic = categories.ToDictionary(e => e.CategoryId, e => e.CategoryTag);
+
+            return Ok(categoriesDic);
         }
     }
 }

@@ -1,10 +1,17 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Application.Extensions
+@using Application.Interfaces
 @using Microsoft.JSInterop
 @using WebUI
 @using WebUI.Layout
+@inject HttpClient Http
+@inject IJSRuntime js
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager NavManager

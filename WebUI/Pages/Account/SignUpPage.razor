@@ -1,0 +1,88 @@
+﻿@page "/signup"
+@using Application.DTOs.Request.Account
+@inject IAccountRepository accountService
+@inject NavigationManager NavManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+<body>
+    <img class="wave-signup" src="imgs/wave-op.png">
+    <div class="container-form-signup">
+        <div class="login-content-signup">
+            <EditForm Model="@UserRe" OnValidSubmit="@HandleRegistration">
+                <img src="imgs/avatar.svg">
+                <h2 class="title-signup">Welcome</h2>
+
+                <div class="input-div-signup one">
+                    <div class="i">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="div-signup">
+                        <InputText @bind-Value="UserRe.Name" placeholder="Username" class="input" />
+                    </div>
+                </div>
+
+                <div class="input-div-signup one">
+                    <div class="i">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="div-signup">
+                        <InputText @bind-Value="UserRe.Email" placeholder="Email" class="input" />
+                    </div>
+                </div>
+
+                <div class="input-div-signup pass">
+                    <div class="i">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="div-signup">
+                        <InputText @bind-Value="UserRe.Password" placeholder="Password" type="password" class="input" />
+                    </div>
+                </div>
+
+                <div class="input-div-signup pass">
+                    <div class="i">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="div-signup">
+                        <InputText @bind-Value="UserRe.ConfirmPassword" placeholder="Confirm Password" type="password" class="input" />
+                    </div>
+                </div>
+
+                <a href="#">Forgot Password?</a>
+                <button type="submit" class="btn-signup">Sign Up</button>
+            </EditForm>
+        </div>
+        <div class="img-signup">
+            <img src="imgs/bg2.svg">
+        </div>
+    </div>
+</body>
+
+
+
+@code {
+
+    public CreateAccountDTO UserRe { get; set; } = new();
+    bool isLoadingData = true;
+
+
+    private async Task HandleRegistration()
+    {
+        var response = await accountService.CreateAccountAsync(UserRe);
+        if (response.Flag)
+        {
+            var responseLogin = await accountService.LoginAccountAsync(UserRe);
+            if (responseLogin.Flag)
+            {
+                var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+                await customAuthStateProvider.UpdateAuthenticationState(new LocalStorageDTO()
+                    {
+                        Token = responseLogin.Token,
+                        Refresh = responseLogin.RefreshToken
+                    });
+                NavManager.NavigateTo("/", forceLoad: true);
+            }
+        }
+        return;
+    }
+}     

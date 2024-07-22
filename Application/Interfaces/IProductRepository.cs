@@ -17,6 +17,9 @@ namespace Application.Interfaces
         Task<ProductResponse> UpdateProductAsync(ProductDTO model);
         Task<ProductResponse> RemoveProductAsync(string productId);
 
+        Task<ProductResponse> AddCategoryAsync(CategoryDTO model);
+        Task<IEnumerable<CategoryDTO>> GetAllCategories();
+
         Task<List<ProductDTO>> GetProductBySeller(string userId);
     }
 }

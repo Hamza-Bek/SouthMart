@@ -1,0 +1,12 @@
+﻿@page "/logout"
+@using Application.DTOs.Request.Account
+@using Application.Extensions
+@code{
+    protected override async Task OnInitializedAsync()
+    {
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(new LocalStorageDTO());
+
+        NavManager.NavigateTo("/", true);
+    }
+}

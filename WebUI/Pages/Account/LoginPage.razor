@@ -1,0 +1,63 @@
+﻿@page "/login"
+@using Application.DTOs.Request.Account
+@inject IAccountRepository accountService
+@inject NavigationManager NavManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+<body>
+    <img class="wave" src="imgs/wave.png">
+    <div class="container-form">                  
+        <div class="img">
+            <img src="imgs/bg.svg">
+        </div>
+        <div class="login-content">
+            <EditForm Model="@User" OnValidSubmit="@HandleLogin">
+                <img src="imgs/avatar.svg">
+                <h2 class="title">Welcome, BACK!</h2>
+                <div class="input-div one">
+                    <div class="i">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="div">
+                        <InputText @bind-Value="User.Email" placeholder="Email" class="input" />
+                    </div>
+                </div>
+                <div class="input-div pass">
+                    <div class="i">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="div">
+                        <InputText @bind-Value="User.Password" placeholder="Password" type="password" class="input" />
+                    </div>
+                </div>
+                <a href="#">Forgot Password?</a>
+                <button type="submit" class="btn">Login</button>
+            </EditForm>
+        </div>
+    </div>
+</body>
+
+
+@code {
+    public LoginDTO User { get; set; } = new();
+
+
+    async Task HandleLogin()
+    {
+
+        var response = await accountService.LoginAccountAsync(User);
+        if (response.Flag)
+        {
+
+
+            var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+            await customAuthStateProvider.UpdateAuthenticationState(new LocalStorageDTO()
+                {
+                    Token = response.Token,
+                    Refresh = response.RefreshToken
+                });
+            NavManager.NavigateTo("/", forceLoad: true);
+        }        
+        return;
+    }
+}   
