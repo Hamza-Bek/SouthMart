@@ -7541,3 +7541,33 @@ span.select2-container.select2-container--default.select2-container--open {
         top: 50%;
         right: 10px
     }
+
+.submenu.coming-soon a.disabled {
+    pointer-events: none;
+    color: #aaa;
+    cursor: not-allowed;
+    position: relative;
+}
+
+    /* Tooltip style */
+    .submenu.coming-soon a.disabled::after {
+        content: 'Coming Soon';
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+        font-size: 12px;
+    }
+
+    /* Show tooltip on hover */
+    .submenu.coming-soon a.disabled:hover::after {
+        opacity: 1;
+    }
