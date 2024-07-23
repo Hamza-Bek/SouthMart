@@ -21,5 +21,8 @@ namespace Application.Interfaces
         Task<IEnumerable<CategoryDTO>> GetAllCategories();
 
         Task<List<ProductDTO>> GetProductBySeller(string userId);
+        Task<IEnumerable<ProductDTO>> GetProducts();
+        Task<IEnumerable<Product>> GetProductsByCategoryAsync(string categoryTag);
+
     }
 }

@@ -30,6 +30,18 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddScoped<IAccountRepository, AccountService>();
+builder.Services.AddScoped<IProductRepository, ProductService>();
+builder.Services.AddScoped<IBuyerRepository, BuyerService>();
+
+
+builder.Services.AddHttpClient<IBuyerRepository, BuyerService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7207/");
+});
+builder.Services.AddHttpClient<IProductRepository, ProductService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7207/");
+});
 builder.Services.AddHttpClient<IAccountRepository, AccountService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7207/");

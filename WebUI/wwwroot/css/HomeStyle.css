@@ -829,3 +829,6 @@ h1, h2, h3, h4, h5, h6 {
 .auth-container {      
     z-index: 2; /* Set to 1 or higher to ensure it is above the wave image */
 }
+.pointer-cursor {
+    cursor: pointer;
+}

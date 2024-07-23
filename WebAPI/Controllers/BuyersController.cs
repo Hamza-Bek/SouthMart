@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Request.ProductEntity;
 using Application.Interfaces;
+using Domain.Models.UserEntity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -40,7 +41,7 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpGet("get-user-cart")]
+        [HttpGet("get-user-cart/{userId}")]
         public async Task<IActionResult> GetCart(string userId)
         {
             try
@@ -54,5 +55,13 @@ namespace WebAPI.Controllers
             }
         }
 
+
+        [HttpGet("get-cart-items/{userId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<CartItem>))]
+        public async Task<IActionResult> GetCartItems(string userId)
+        {
+            var data = await _buyerRepository.GetCartItemsAsync(userId);
+            return Ok(data);
+        }
     }
 }

@@ -91,9 +91,33 @@ namespace WebAPI.Controllers
         {
             var categories = _context.Categories.ToList();
 
-            var categoriesDic = categories.ToDictionary(e => e.CategoryId, e => e.CategoryTag);
+           // var categoriesDic = categories.ToDictionary(e => e.CategoryId, e => e.CategoryTag);
 
-            return Ok(categoriesDic);
+            return Ok(categories);
+        }
+
+        [HttpGet("get-products")]
+        public async Task<IActionResult> GetProducts()
+        {
+            var products = _context.Products.ToList();
+
+            // var categoriesDic = categories.ToDictionary(e => e.CategoryId, e => e.CategoryTag);
+
+            return Ok(products);
+        }
+
+        [HttpGet("get-category-products/{categoryTag}")]
+        public async Task<IActionResult> GetProductsByCategory(string categoryTag)
+        {
+            try
+            {
+                var response = await _productRepository.GetProductsByCategoryAsync(categoryTag);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Application.Interfaces
     public interface IBuyerRepository
     {
         Task<Cart> GetCartAsync(string userId);
+        Task<IEnumerable<CartItem>> GetCartItemsAsync(string userId);
 
         Task<BuyerResponse> AddProductToCartAsync(string productId, string userId);
         Task<BuyerResponse> RemoveProductFromCartAsync(string productId, string userId);

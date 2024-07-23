@@ -4,7 +4,6 @@ using Domain.Models.UserEntity;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Infrastructure.Repositories
 {
     public class BuyerRepository(AppDbContext _context) : IBuyerRepository
@@ -67,6 +66,29 @@ namespace Infrastructure.Repositories
                 .Include(p => p.CartOwner)
                 .Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
+        public async Task<IEnumerable<CartItem>> GetCartItemsAsync(string userId)
+        {
+            var getUser = await _context.Users.FindAsync(userId);
+            if (getUser == null)
+            {
+                Console.WriteLine("User not found");
+                return Enumerable.Empty<CartItem>();
+            }
+
+
+            var userCartItems = await _context.CartItems
+             .Where(ci => ci.CartId == getUser.CartId)
+             .ToListAsync();
+
+            if (userCartItems == null || !userCartItems.Any())
+            {
+                Console.WriteLine("User's cart not found");
+                return Enumerable.Empty<CartItem>();
+            }
+
+            return userCartItems;
         }
 
         public async Task<BuyerResponse> RemoveProductFromCartAsync(string productId, string userId)

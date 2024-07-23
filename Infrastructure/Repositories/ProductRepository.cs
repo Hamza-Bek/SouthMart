@@ -148,5 +148,20 @@ namespace Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<CategoryDTO>> GetAllCategories() => (IEnumerable<CategoryDTO>)await _context.Categories.AsNoTracking().ToListAsync();
+
+        public async Task<IEnumerable<ProductDTO>> GetProducts() => (IEnumerable<ProductDTO>)await _context.Products.AsNoTracking().ToListAsync();
+
+        public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(string categoryTag)
+        {
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryTag == categoryTag);
+            if (category == null)
+                return Enumerable.Empty<Product>();
+
+            var products = await _context.Products
+                .Where(p => p.Category == category.CategoryTag)
+                .ToListAsync();
+
+            return products;
+        }
     }
 }
