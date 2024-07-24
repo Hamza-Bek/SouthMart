@@ -29,11 +29,18 @@ builder.Services.AddTransient<CustomHttpHandler>();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddBlazoredLocalStorage();
 
+#region Implementation
 builder.Services.AddScoped<IAccountRepository, AccountService>();
 builder.Services.AddScoped<IProductRepository, ProductService>();
 builder.Services.AddScoped<IBuyerRepository, BuyerService>();
+builder.Services.AddScoped<IOrderRepository, OrderService>();
+#endregion
 
-
+#region HTTP's CLients
+builder.Services.AddHttpClient<IOrderRepository, OrderService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7207/");
+});
 builder.Services.AddHttpClient<IBuyerRepository, BuyerService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7207/");
@@ -51,7 +58,7 @@ builder.Services.AddHttpClient("WebUIClient", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7207");
 }).AddHttpMessageHandler<CustomHttpHandler>();
-
+#endregion
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7207") });
 

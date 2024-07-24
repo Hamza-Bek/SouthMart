@@ -1,0 +1,343 @@
+﻿@page "/product"
+
+<div class="container">
+    <div class="title">PRODUCT DETAIL</div>
+    <div class="detail">
+        <div class="image">
+            <img src="/imgs/thumb-tomatoes.png">
+        </div>
+        <div class="content">
+            <h1 class="name"></h1>
+            <div class="price"></div>
+            <div class="buttons">
+                <button>$1499</button>
+                <button>
+                    Add To Cart
+                    <span>
+                        <svg class="" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 15a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 0h8m-8 0-1-4m9 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm-9-4h10l2-7H3m2 7L3 4m0 0-.792-3H1" />
+                        </svg>
+                    </span>
+                </button>
+
+            </div>
+            <div class="description">
+                Lorem ipsum odor amet, consectetuer adipiscing elit. Et orci mauris dignissim sem sagittis rhoncus porta. Tempor magnis fames tempus eget tortor iaculis. Nunc phasellus et sapien morbi fermentum; varius rutrum facilisi. Nec tempus sed suspendisse, natoque curae malesuada etiam consectetur. At fringilla in primis molestie malesuada. Vulputate porta placerat viverra massa cubilia enim tellus egestas. Nullam odio sollicitudin rhoncus efficitur eu.                
+            </div>
+        </div>
+    </div>
+
+    <div class="title">Reviews</div>
+    <div class="listProduct">
+
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+        <div class="container bootdey">
+            <div class="col-md-12 bootstrap snippets">
+                <div class="panel">
+                    <div class="panel-body">
+                        <textarea class="form-control" rows="2" placeholder="What are you thinking?"></textarea>
+                        <div class="mar-top clearfix">
+                            <button class="btn-comment btn-comment-sm btn-comment-primary pull-right" type="submit"><i class="fa fa-pencil fa-fw"></i> Share</button>                            
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-body">
+                        <!-- Newsfeed Content -->
+                        <!--===================================================-->
+                        <div class="media-block">
+                            <a class="media-left" href="#"><img class="img-circle img-sm" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar1.png"></a>
+                            <div class="media-body">
+                                <div class="mar-btm">
+                                    <a href="#" class="btn-comment-link text-semibold media-heading box-inline">Lisa D.</a>
+                                    <p class="text-muted text-sm"><i class="fa fa-mobile fa-lg"></i> - From Mobile - 11 min ago</p>
+                                </div>
+                                <p>consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
+                                <div class="pad-ver">
+                                    <div class="btn-comment-group">
+                                        <a class="btn-comment btn-comment-sm btn-comment-default btn-comment-hover-success" href="#"><i class="fa fa-thumbs-up"></i></a>
+                                        <a class="btn-comment btn-comment-sm btn-comment-default btn-comment-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
+                                    </div>
+                                    <a class="btn-comment btn-comment-sm btn-comment-default btn-comment-hover-primary" href="#">Comment</a>
+                                </div>
+                                <hr>                               
+                            </div>
+                        </div>                  
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    body {
+        margin-top: 20px;        
+    }
+
+    .img-sm {
+        width: 46px;
+        height: 46px;
+    }
+
+    .panel {
+        box-shadow: 0 2px 0 rgba(0,0,0,0.075);
+        border-radius: 0;
+        border: 0;
+        margin-bottom: 15px;
+    }
+
+        .panel .panel-footer, .panel > :last-child {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .panel .panel-heading, .panel > :first-child {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+    .panel-body {
+        padding: 25px 20px;
+    }
+
+
+    .media-block .media-left {
+        display: block;
+        float: left
+    }
+
+    .media-block .media-right {
+        float: right
+    }
+
+    .media-block .media-body {
+        display: block;
+        overflow: hidden;
+        width: auto
+    }
+
+    .middle .media-left,
+    .middle .media-right,
+    .middle .media-body {
+        vertical-align: middle
+    }
+
+    .thumbnail {
+        border-radius: 0;
+        border-color: #e9e9e9
+    }
+
+    .tag.tag-sm, .btn-comment-group-sm > .tag {
+        padding: 5px 10px;
+    }
+
+    .tag:not(.label) {
+        background-color: #fff;
+        padding: 6px 12px;
+        border-radius: 2px;
+        border: 1px solid #cdd6e1;
+        font-size: 12px;
+        line-height: 1.42857;
+        vertical-align: middle;
+        -webkit-transition: all .15s;
+        transition: all .15s;
+    }
+
+    .text-muted, a.text-muted:hover, a.text-muted:focus {
+        color: #acacac;
+    }
+
+    .text-sm {
+        font-size: 0.9em;
+    }
+
+    .text-5x, .text-4x, .text-5x, .text-2x, .text-lg, .text-sm, .text-xs {
+        line-height: 1.25;
+    }
+
+    .btn-comment-trans {
+        background-color: transparent;
+        border-color: transparent;
+        color: #929292;
+    }
+
+    .btn-comment-icon {
+        padding-left: 9px;
+        padding-right: 9px;
+    }
+
+        .btn-comment-sm, .btn-comment-group-sm > .btn-comment, .btn-comment-icon.btn-comment-sm {
+            padding: 5px 10px !important;
+        }
+
+    .mar-top {
+        margin-top: 15px;
+    }
+    body{
+    margin: 0;
+    font-family: Poppins;
+}
+a{
+    color: unset;
+    text-decoration: none;
+}
+.container{
+    width: 900px;
+    margin: auto;
+    max-width: 90vw;
+    text-align: center;
+    padding-top: 10px;
+}
+.title{
+    font-size: xx-large;
+    padding: 20px 0;
+}
+.listProduct .item img{
+    width: 90%;
+    filter: drop-shadow(0 50px 20px #0009);
+}
+.listProduct{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+.listProduct .item{
+    background-color: #EEEEE6;
+    padding: 20px;
+    border-radius: 20px;
+}
+.listProduct .item h2{
+    font-weight: 500;
+    font-size: large;
+}
+.listProduct .item .price{
+    letter-spacing: 7px;
+    font-size: small;
+}
+/* detail page */
+
+.detail{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px;
+    text-align: left;
+}
+.detail .image img{
+    width: 100%;
+}
+.detail .image{
+    position: relative;
+}
+.detail .image::before{
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    content: '';
+    background-color: #94817733;
+    z-index: -1;
+    border-radius: 190px 100px 170px 180px;
+    left: calc(50% - 150px);
+    top: 50px;
+
+}
+.detail .name{
+    font-size: xxx-large;
+    padding: 40px 0 0 0;
+    margin: 0 0 10px 0;
+}
+.detail .price{
+    font-weight: bold;
+    font-size: x-large;
+    letter-spacing: 7px;
+    margin-bottom: 20px;
+}
+.detail .buttons{
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.detail .buttons button{
+    background-color: #eee;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 20px;
+    font-family: Poppins;
+    font-size: large;
+}
+.detail .buttons svg{
+    width: 15px;
+}
+.detail .buttons span{
+    background-color: #555454;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    margin-left: 20px;
+}
+.detail .buttons button:nth-child(2){
+    background-color: #2F2F2F;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #eee;
+    box-shadow: 0 10px 20px #2F2F2F77;
+}
+.detail .description{
+    font-weight: 300;
+}
+
+
+
+/* mobile */
+
+</style>
+
+<script>
+    let products = null;
+    // get datas from file json
+    fetch('products.json')
+        .then(response => response.json())
+        .then(data => {
+            products = data;
+            showDetail();
+        })
+
+    function showDetail() {
+        // remove datas default from HTML
+        let detail = document.querySelector('.detail');
+        let listProduct = document.querySelector('.listProduct');
+        let productId = new URLSearchParams(window.location.search).get('id');
+        let thisProduct = products.filter(value => value.id == productId)[0];
+        //if there is no product with id = productId => return to home page
+        if (!thisProduct) {
+            window.location.href = "/";
+        }
+
+        detail.querySelector('.image img').src = thisProduct.image;
+        detail.querySelector('.name').innerText = thisProduct.name;
+        detail.querySelector('.price').innerText = '$' + thisProduct.price;
+        detail.querySelector('.description').innerText = '$' + thisProduct.description;
+
+
+        (products.filter(value => value.id != productId)).forEach(product => {
+            let newProduct = document.createElement('a');
+            newProduct.href = '/detail.html?id=' + product.id;
+            newProduct.classList.add('item');
+            newProduct.innerHTML =
+                `<img src="${product.image}" alt="">
+                <h2>${product.name}</h2>
+                <div class="price">$${product.price}</div>`;
+            listProduct.appendChild(newProduct);
+        });
+    }
+
+</script>
+
+@code {
+
+}

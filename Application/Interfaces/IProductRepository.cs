@@ -12,15 +12,16 @@ namespace Application.Interfaces
     public interface IProductRepository
     {
 
-        //Seller's methods
+        //POST's METHODS
+        Task<ProductResponse> AddCategoryAsync(CategoryDTO model);
         Task<ProductResponse> AddProductAsync(ProductDTO model);
         Task<ProductResponse> UpdateProductAsync(ProductDTO model);
         Task<ProductResponse> RemoveProductAsync(string productId);
 
-        Task<ProductResponse> AddCategoryAsync(CategoryDTO model);
-        Task<IEnumerable<CategoryDTO>> GetAllCategories();
 
+        // GET's METHODS
         Task<List<ProductDTO>> GetProductBySeller(string userId);
+        Task<IEnumerable<CategoryDTO>> GetAllCategories();        
         Task<IEnumerable<ProductDTO>> GetProducts();
         Task<IEnumerable<Product>> GetProductsByCategoryAsync(string categoryTag);
 
