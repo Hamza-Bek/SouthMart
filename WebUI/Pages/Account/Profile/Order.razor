@@ -1,32 +1,37 @@
 ﻿@page "/order"
+@inject IOrderRepository orderService
+
+@using Application.DTOs.Request.OrderEntity
+@using System.Security.Claims
+@using Domain.Models.UserEntity
+
 <div class="container-track px-1 px-md-4 py-5 mx-auto">
     <div class="card">
         <div class="row d-flex justify-content-between px-3 top">
             <div class="d-flex">
-                <h5>ORDER <span class="text-primary font-weight-bold">#Y34XDHR</span></h5>
+                <h5>ORDER <span class="text-primary font-weight-bold">#@lastOrder?.OrderNumber</span></h5>
             </div>
             <div class="d-flex flex-column text-sm-right">
-                <p class="mb-0">Expected Arrival <span>01/12/19</span></p>
-                <p>USPS <span class="font-weight-bold">234094567242423422898</span></p>
+                <p class="mb-0">Expected Arrival <span>@lastOrder?.OrderDate.ToShortDateString()</span></p>
+                <p>USPS <span class="font-weight-bold">@lastOrder?.OrderNumber</span></p>
             </div>
         </div>
-        <!-- Add class 'active' to progress -->
         <div class="row d-flex justify-content-center">
             <div class="col-12">
                 <ul id="progressbar" class="text-center">
-                    <li class="active step0">
+                    <li class="@GetClass("Processed")">
                         <span class="icon"></span>
                         <p class="font-weight-bold">Order Processed</p>
                     </li>
-                    <li class="active step0">
+                    <li class="@GetClass("Shipped")">
                         <span class="icon"></span>
                         <p class="font-weight-bold">Order Shipped</p>
                     </li>
-                    <li class="active step0">
+                    <li class="@GetClass("EnRoute")">
                         <span class="icon"></span>
                         <p class="font-weight-bold">Order En Route</p>
                     </li>
-                    <li class="step0">
+                    <li class="@GetClass("Arrived")">
                         <span class="icon"></span>
                         <p class="font-weight-bold">Order Arrived</p>
                     </li>
@@ -41,5 +46,80 @@
 
 
 @code {
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
+    private string userId;
 
+    private OrderDTO lastOrder;
+
+
+    private async Task GetLastOrder()
+    {
+        var authState = await AuthStateTask;
+
+        foreach (var claim in authState.User.Claims)
+        {
+            Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
+        }
+
+        var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+
+        if (userIdClaim != null)
+        {
+            userId = userIdClaim.Value;
+        }
+
+        try
+        {
+            var orders = await orderService.GetUserOrders(userId);
+            if (orders != null && orders.Any())
+            {
+                lastOrder = orders.OrderByDescending(o => o.OrderDate).FirstOrDefault(); // Get the most recent order
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error while getting orders: {ex.Message}");
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetLastOrder();
+    }
+
+    private string GetClass(string step)
+    {
+        if (lastOrder == null || string.IsNullOrEmpty(lastOrder.OrderStatus))
+        {
+            Console.WriteLine("No order details available.");
+            return "step0";
+        }
+
+        // Log the order status for debugging
+        Console.WriteLine($"Order Status: {lastOrder.OrderStatus}");
+
+        switch (step)
+        {
+            case "Processed":
+                return lastOrder.OrderStatus == "Processed" || lastOrder.OrderStatus == "Shipped" || lastOrder.OrderStatus == "EnRoute" || lastOrder.OrderStatus == "Arrived"
+                    ? "active step0"
+                    : "step0";
+            case "Shipped":
+                return lastOrder.OrderStatus == "Shipped" || lastOrder.OrderStatus == "EnRoute" || lastOrder.OrderStatus == "Arrived"
+                    ? "active step0"
+                    : "step0";
+            case "EnRoute":
+                return lastOrder.OrderStatus == "EnRoute" || lastOrder.OrderStatus == "Arrived"
+                    ? "active step0"
+                    : "step0";
+            case "Arrived":
+                return lastOrder.OrderStatus == "Arrived"
+                    ? "active step0"
+                    : "step0";
+            default:
+                return "step0";
+        }
+    }
 }

@@ -2,6 +2,7 @@
 using Application.DTOs.Response;
 using Application.Extensions;
 using Application.Interfaces;
+using Domain.Models.ProductEntity;
 using Domain.Models.UserEntity;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,21 @@ namespace Application.Services
         {
             _httpClient = httpClient;
             this.httpClientService = httpClientService;
+        }
+
+        public async Task<IEnumerable<OrderDTO>> GetUserOrders(string userId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/orders/get-orders/{userId}");
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadFromJsonAsync<IEnumerable<OrderDTO>>();
+                return data ?? Enumerable.Empty<OrderDTO>();
+            }
+            catch
+            {
+                return Enumerable.Empty<OrderDTO>();
+            }
         }
 
         public async Task<OrderResponse> PlaceOrderAsync(OrderDTO model)

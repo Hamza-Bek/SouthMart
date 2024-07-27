@@ -4,6 +4,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Models.UserEntity;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,28 @@ namespace Infrastructure.Repositories
 {
     public class OrderRepository(AppDbContext _context, IMapper _mapper) : IOrderRepository
     {
+        public async Task<IEnumerable<OrderDTO>> GetUserOrders(string userId)
+        {
+            try
+            {                
+                var user = await _context.Users.FindAsync(userId);
+
+                if (user == null)
+                    return Enumerable.Empty<OrderDTO>();
+                
+                var orders = await _context.Orders.Where(o => o.UserId == userId).ToListAsync();
+                
+                var orderDTOs = _mapper.Map<IEnumerable<OrderDTO>>(orders);
+
+                return orderDTOs;
+            }
+            catch
+            {
+                // Handle any errors that occur
+                return Enumerable.Empty<OrderDTO>(); // Return an empty list if an exception occurs
+            }
+        }
+
         public async Task<OrderResponse> PlaceOrderAsync(OrderDTO model)
         {
             try
