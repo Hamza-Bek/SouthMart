@@ -16,6 +16,8 @@ namespace Infrastructure.Repositories
         {
             try
             {
+                var statuses = await _context.SellerStatuses.FirstOrDefaultAsync();
+
                 var userId = model.SellerId;
                 var user = await _context.Users.FindAsync(userId);
 
@@ -24,11 +26,14 @@ namespace Infrastructure.Repositories
 
                 var sellerAccount = await _context.SellerAccounts
                       .SingleOrDefaultAsync(sa => sa.SellerId == userId);
-                if (sellerAccount == null)
+                if (sellerAccount == null )
                 {
                     Console.WriteLine($"SellerAccount not found for userId: {userId}");
                     return new ProductResponse(false, "User does not have access!");
                 }
+
+                if (sellerAccount.Status == statuses.Rejected)
+                    return new ProductResponse(false, "Seller account is Rejected");
 
                 if (userId != sellerAccount.SellerId)
                 {
@@ -162,6 +167,19 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
 
             return products;
+        }
+
+        public async Task<IEnumerable<Product>> GetProductByIdAsync(string product)
+        {
+            var getProduct = await _context.Products.FirstOrDefaultAsync(p => p.Id == product);
+            if(getProduct == null)
+                return Enumerable.Empty<Product>();
+
+            var data = await _context.Products
+                .Where(n => n.Name == getProduct.Name)
+                .ToListAsync();
+
+            return data;
         }
     }
 }

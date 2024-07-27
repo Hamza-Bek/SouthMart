@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.Request;
+using Application.DTOs.Request.Account;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
@@ -13,6 +14,26 @@ namespace WebAPI.Controllers
     public class SellerController(ISellerRepository _sellerRepository) : Controller
     {
 
+
+        [HttpPost("approve-seller-account")]        
+        public async Task<IActionResult> ApproveSellerAccount([FromBody] ApproveSellerAccountDTO model)
+        {
+            var response = await _sellerRepository.ApproveSellerAccountAsync(model.AccountId, model.IsApproved);
+            if (!response.Flag)
+                return BadRequest(response.Message);
+
+            return Ok(response.Message);
+        }
+
+        [HttpPost("create-seller-status")]
+        public async Task<IActionResult> CreateSellerStatus(SellerStatus model)
+        {
+            var response = await _sellerRepository.AddSellerStatus(model);
+            if (!response.Flag)
+                return BadRequest(response.Message);
+
+            return Ok(response.Message);
+        }
 
         [HttpPost("create-seller-account")]
         [ProducesResponseType(204)]

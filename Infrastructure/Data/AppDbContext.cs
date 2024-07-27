@@ -32,6 +32,7 @@ namespace Infrastructure.Data
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<SellerStatus> SellerStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

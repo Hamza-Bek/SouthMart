@@ -34,9 +34,14 @@ builder.Services.AddScoped<IAccountRepository, AccountService>();
 builder.Services.AddScoped<IProductRepository, ProductService>();
 builder.Services.AddScoped<IBuyerRepository, BuyerService>();
 builder.Services.AddScoped<IOrderRepository, OrderService>();
+builder.Services.AddScoped<ICommentRepository, CommentService>();
 #endregion
 
 #region HTTP's CLients
+builder.Services.AddHttpClient<ICommentRepository, CommentService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7207/");
+});
 builder.Services.AddHttpClient<IOrderRepository, OrderService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7207/");

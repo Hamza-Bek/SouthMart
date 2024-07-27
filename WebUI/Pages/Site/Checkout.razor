@@ -1,0 +1,246 @@
+﻿@page "/checkout"
+
+<div class='container'>
+    <div class='window'>
+        <div class='order-info'>
+            <div class='order-info-content'>
+                <h2>Order Summary</h2>
+                <div class='line'></div>
+                <!-- Order Items -->
+                <div class='order-items'>
+                    <!-- Example order items, repeat as needed -->
+                    <div class='order-item'>
+                        <img src='https://dl.dropboxusercontent.com/s/sim84r2xfedj99n/%24_32.JPG' class='full-width' />
+                        <div class='item-details'>
+                            <span class='thin'>Nike</span><br> Free Run 3.0 Women<br> <span class='thin small'> Color: Grey/Orange, Size: 10.5<br><br></span>
+                            <div class='price'>$99.95</div>
+                        </div>
+                    </div>
+                    <div class='line'></div>
+                    <div class='order-item'>
+                        <img src='https://dl.dropboxusercontent.com/s/qbj9tsbvthqq72c/Vintage-20L-Backpack-by-Fj%C3%A4llr%C3%A4ven.jpg' class='full-width' />
+                        <div class='item-details'>
+                            <span class='thin'>Fjällräven</span><br>Vintage Backpack<br> <span class='thin small'> Color: Olive, Size: 20L</span>
+                            <div class='price'>$235.95</div>
+                        </div>
+                    </div>
+                    <div class='line'></div>
+                </div>
+                <div class='line'></div>
+                <div class='total'>
+                    <span style='float:left;'>
+                        <div class='thin dense'>VAT 19%</div>
+                        <div class='thin dense'>Delivery</div>
+                        TOTAL
+                    </span>
+                    <span style='float:right; text-align:right;'>
+                        <div class='thin dense'>$68.75</div>
+                        <div class='thin dense'>$4.95</div>
+                        $435.55
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="credit-info">
+            <div class="credit-info-content">
+                <table class="half-input-table">
+                    <tr>
+                        <td>Please select your Payment: </td>
+                        <td>
+                            <select id="card-select" class="card-select">
+                                <option value="visa" selected>Visa</option>
+                                <option value="master">On-Door payment</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <div id="card-details">
+                    <img src="https://dl.dropboxusercontent.com/s/ubamyu6mzov5c80/visa_logo%20%281%29.png" height="80" class="credit-card-image" id="credit-card-image" />
+                    <label>Card Number</label>
+                    <input class="input-field" />
+                    <label>Card Holder</label>
+                    <input class="input-field" />
+                    <table class="half-input-table">
+                        <tr>
+                            <td>
+                                <label>Expires</label>
+                                <input class="input-field" />
+                            </td>
+                            <td>
+                                <label>CVC</label>
+                                <input class="input-field" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div><a class="pointer-event" href="#"><i class="fa-solid fa-location-dot"></i> Add Location?</a></div>
+                <button class="pay-btn">Checkout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dropdown-select {
+        display: none;
+        position: absolute;
+        background: #77aaee;
+        text-align: left;
+        box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.1);
+        border-bottom-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+        width: 100%; /* Make dropdown select the same width as the button */
+        left: 0; /* Align to the left of the dropdown button */
+        box-sizing: border-box;
+        z-index: 1; /* Ensure the dropdown appears above other content */
+    }
+
+  
+    .container {
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px; /* Optional for spacing */
+    }
+
+    .window {
+        display: flex;
+        width: 1000px; /* Adjust width as needed */
+        max-width: 100%;
+        background: #fff;
+        box-shadow: 0px 15px 50px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 30px;
+        overflow: hidden; /* Hide any overflow */
+    }
+
+    .order-info {
+        flex: 1;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto; /* Enable vertical scrolling */
+        max-height: 540px; /* Set a max-height to control the scroll area */
+    }
+
+    .order-info-content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .order-items {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .order-item {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .item-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .price {
+        color: #4488dd;
+    }
+
+    .total {
+        margin-top: 25px;
+        font-size: 1.3rem;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .credit-info {
+        background: #4488dd;
+        color: #eee;
+        padding: 25px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex: 1;
+        border-top-right-radius: 30px;
+        border-bottom-right-radius: 30px;
+    }
+
+    .credit-info-content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .credit-card-image {
+        display: block;
+        max-height: 80px;
+        margin: 35px auto 15px auto;
+    }
+
+    .input-field {
+        background: rgba(255, 255, 255, 0.1);
+        margin: 3px 0 10px 0;
+        font-size: 1.3rem;
+        border: none;
+        padding: 5px 10px;
+        color: #fff;
+        width: 100%;
+    }
+
+    .pay-btn {
+        background: #22b877;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        padding: 10px;
+        cursor: pointer;
+        transition: background .2s ease;
+    }
+
+        .pay-btn:hover {
+            background: #22a877;
+        }
+
+    .line {
+        height: 1px;
+        width: 100%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        background: #ddd;
+    }
+
+ 
+
+    
+
+
+    .order-item img.full-width {
+        width: 100px; /* Adjust size as needed */
+        height: auto;
+    }
+
+    .order-item .item-details {
+        flex: 1;
+    }
+
+  
+</style>
+
+<script>
+    document.getElementById('card-select').addEventListener('change', function () {
+        var cardDetails = document.getElementById('card-details');
+        if (this.value === 'master') { // Assuming 'master' is for On-Door payment
+            cardDetails.style.display = 'none';
+        } else {
+            cardDetails.style.display = 'block';
+        }
+    });
+</script>
+
+@code {
+
+}

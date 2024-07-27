@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Request.ProductEntity;
 using Application.Interfaces;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -10,6 +11,7 @@ namespace WebAPI.Controllers
     public class ProductsController (IProductRepository _productRepository , AppDbContext _context) : Controller
     {
         [HttpPost("add-product")]
+        [Authorize(Roles = "Seller")]
         public async Task<IActionResult> AddProduct(ProductDTO model)
         {
             try
@@ -24,6 +26,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("update-product")]
+        [Authorize(Roles = "Seller")]
         public async Task<IActionResult> UpdateProductAsync(ProductDTO model)
         {
             try
@@ -39,6 +42,7 @@ namespace WebAPI.Controllers
 
 
         [HttpDelete("remove-product")]
+        [Authorize(Roles = "Seller")]
         public async Task<IActionResult> RemoveProductAsync(string productId)
         {
             try
@@ -112,6 +116,20 @@ namespace WebAPI.Controllers
             try
             {
                 var response = await _productRepository.GetProductsByCategoryAsync(categoryTag);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("get-product-by-Id/{product}")]
+        public async Task<IActionResult> GetProductById(string product)
+        {
+            try
+            {
+                var response = await _productRepository.GetProductByIdAsync(product);
                 return Ok(response);
             }
             catch (Exception ex)

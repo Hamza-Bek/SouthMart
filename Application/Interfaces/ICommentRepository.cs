@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Request.ProductEntity;
 using Application.DTOs.Response;
+using Domain.Models.ProductEntity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,12 @@ namespace Application.Interfaces
 {
     public interface ICommentRepository
     {
+        //POST's METHODS
         Task<NotificationResponse> AddCommentAsync(CommentDTO model);
         Task<NotificationResponse> EditCommentAsync(CommentDTO model);
         //Task<NotificationResponse> DeleteCommentAsync(CommentDTO model);
 
-        //Task<NotificationResponse> GetProductCommentsAsync(string productId);
+        //GET's METHODS
+        Task<List<Comment>> GetProductCommentsAsync(string productId);
     }
 }

@@ -17,6 +17,20 @@ namespace Infrastructure.Repositories
 {
     public class NotificationRepository(AppDbContext _context , IMapper _mapper) : INotificationRepository
     {
+        public async Task<NotificationResponse> AddNotificationAsync(string userId, string message)
+        {
+            var notification = new Notification
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserId = userId,
+                Content = message,                
+            };
+
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+            return new NotificationResponse(true, "Notification added!");
+        }
+
         public async Task<List<NotificationDTO>> GetAllNotifications(string userId)
         {
             var user = await _context.Users.FindAsync(userId);
@@ -32,6 +46,7 @@ namespace Infrastructure.Repositories
             return notificationDTO;
         }
         
+
         public async Task<NotificationResponse> LowQuantityNotifyAsync(NotificationDTO model)
         {
             _mapper.Map<NotificationDTO>(model);

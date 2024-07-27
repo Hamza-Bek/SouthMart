@@ -1,4 +1,9 @@
-﻿@page "/product"
+﻿@page "/product-details/{product}"
+@inject IProductRepository productService
+@inject ICommentRepository commentService
+@using Application.DTOs.Request.ProductEntity
+@using Domain.Models.ProductEntity
+@using System.Security.Claims
 
 <div class="container">
     <div class="title">PRODUCT DETAIL</div>
@@ -6,11 +11,13 @@
         <div class="image">
             <img src="/imgs/thumb-tomatoes.png">
         </div>
-        <div class="content">
-            <h1 class="name"></h1>
-            <div class="price"></div>
+        @foreach (var item in ProductDetail)
+        {
+            <div class="content">
+                <h1 class="name">@item.Name</h1>
+            <div class="price">$@item.SellingPrice</div>
             <div class="buttons">
-                <button>$1499</button>
+                <button>-</button>
                 <button>
                     Add To Cart
                     <span>
@@ -19,55 +26,52 @@
                         </svg>
                     </span>
                 </button>
-
+                    <button>+</button>
             </div>
             <div class="description">
                 Lorem ipsum odor amet, consectetuer adipiscing elit. Et orci mauris dignissim sem sagittis rhoncus porta. Tempor magnis fames tempus eget tortor iaculis. Nunc phasellus et sapien morbi fermentum; varius rutrum facilisi. Nec tempus sed suspendisse, natoque curae malesuada etiam consectetur. At fringilla in primis molestie malesuada. Vulputate porta placerat viverra massa cubilia enim tellus egestas. Nullam odio sollicitudin rhoncus efficitur eu.                
             </div>
         </div>
+        }
     </div>
 
     <div class="title">Reviews</div>
     <div class="listProduct">
-
         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
         <div class="container bootdey">
             <div class="col-md-12 bootstrap snippets">
                 <div class="panel">
-                    <div class="panel-body">
-                        <textarea class="form-control" rows="2" placeholder="What are you thinking?"></textarea>
+                    <div class="panel-body">                        
+                        <textarea class="form-control" rows="2" placeholder="What are you thinking?" @bind="newComment.content"></textarea>
                         <div class="mar-top clearfix">
-                            <button class="btn-comment btn-comment-sm btn-comment-primary pull-right" type="submit"><i class="fa fa-pencil fa-fw"></i> Share</button>                            
+                            <button class="btn-comment btn-comment-sm btn-comment-primary pull-right" @onclick="AddComment">
+                                <i class="fa fa-pencil fa-fw"></i> Share
+                            </button>
                         </div>
                     </div>
                 </div>
                 <div class="panel">
                     <div class="panel-body">
-                        <!-- Newsfeed Content -->
-                        <!--===================================================-->
-                        <div class="media-block">
-                            <a class="media-left" href="#"><img class="img-circle img-sm" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar1.png"></a>
-                            <div class="media-body">
-                                <div class="mar-btm">
-                                    <a href="#" class="btn-comment-link text-semibold media-heading box-inline">Lisa D.</a>
-                                    <p class="text-muted text-sm"><i class="fa fa-mobile fa-lg"></i> - From Mobile - 11 min ago</p>
-                                </div>
-                                <p>consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
-                                <div class="pad-ver">
-                                    <div class="btn-comment-group">
-                                        <a class="btn-comment btn-comment-sm btn-comment-default btn-comment-hover-success" href="#"><i class="fa fa-thumbs-up"></i></a>
-                                        <a class="btn-comment btn-comment-sm btn-comment-default btn-comment-hover-danger" href="#"><i class="fa fa-thumbs-down"></i></a>
+                        @foreach (var comment in Comments)
+                        {
+                            <div class="media-block">
+                                <a class="media-left" href="#"><img class="img-circle img-sm" alt="Profile Picture" src="https://bootdey.com/img/Content/avatar/avatar1.png"> <a href="#" class="">@comment.User?.Name</a></a>
+                                <div class="media-body">
+                                    <div class="mar-btm">
+                                        <p class="text-muted text-sm">@comment.DateCreated.ToString("MMM dd, yyyy")</p>
                                     </div>
-                                    <a class="btn-comment btn-comment-sm btn-comment-default btn-comment-hover-primary" href="#">Comment</a>
+                                    <p>@comment.content</p>
+                                    <div class="pad-ver">
+                                        <a class="btn-comment btn-comment-sm btn-comment-default btn-comment-hover-primary" href="#">Edit Comment</a>
+                                    </div>
+                                    <hr>
                                 </div>
-                                <hr>                               
                             </div>
-                        </div>                  
+                        }
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -339,5 +343,89 @@ a{
 </script>
 
 @code {
+    [Parameter]
+    public string product { get; set; }
+    private IEnumerable<Comment> Comments;
+    private IEnumerable<Product> ProductDetail;
+    private CommentDTO newComment = new CommentDTO();
+
+    [CascadingParameter] 
+    public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
+    private string userId;
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+
+        if (!string.IsNullOrEmpty(product))
+        {
+            await LoadProductDetail();
+            await GetComments();
+        }
+    }
+
+    private async Task LoadProductDetail()
+    {
+        ProductDetail = await productService.GetProductByIdAsync(product);
+    }
+
+    private async Task GetComments()
+    {
+        if (!string.IsNullOrEmpty(product))
+        {
+            var comments = await commentService.GetProductCommentsAsync(product);
+            Comments = comments.OrderByDescending(c => c.DateCreated);
+        }
+    }
+
+    private async Task AddComment()
+    {
+        var authState = await AuthStateTask;
+        foreach (var claim in authState.User.Claims)
+        {
+            Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
+        }
+
+        var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+        if (userIdClaim != null)
+        {
+            userId = userIdClaim.Value;
+        }
+
+        if (string.IsNullOrEmpty(newComment.content))
+        {
+            Console.WriteLine("Comment content cannot be empty.");
+            return;
+        }
+
+        newComment.Id = Guid.NewGuid().ToString();
+        newComment.DateCreated = DateTime.Now;
+        newComment.ProductId = product;
+        newComment.UserId = userId;
+
+        try
+        {
+            var result = await commentService.AddCommentAsync(newComment);
+
+            if (result.Flag)
+            {
+                // Comment added successfully
+                newComment = new CommentDTO(); // Clear the form
+                await GetComments(); // Refresh comments list
+            }
+            else
+            {
+                // Display server error message
+                Console.WriteLine($"Error: {result.Message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exception
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
+    }
+
 
 }

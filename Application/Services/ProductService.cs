@@ -50,6 +50,21 @@ namespace Application.Services
             }
         }
 
+        public async Task<IEnumerable<Product>> GetProductByIdAsync(string product)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/products/get-product-by-Id/{product}");
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadFromJsonAsync<IEnumerable<Product>>();
+                return data ?? Enumerable.Empty<Product>();
+            }
+            catch 
+            {               
+                return Enumerable.Empty<Product>();
+            }
+        }
+
         public Task<List<ProductDTO>> GetProductBySeller(string userId)
         {
             throw new NotImplementedException();

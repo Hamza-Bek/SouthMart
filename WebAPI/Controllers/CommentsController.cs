@@ -1,5 +1,7 @@
 ﻿using Application.DTOs.Request.ProductEntity;
 using Application.Interfaces;
+using Application.Services;
+using Domain.Models.ProductEntity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -8,17 +10,31 @@ namespace WebAPI.Controllers
     [ApiController]
     public class CommentsController(ICommentRepository _commentRepository) : Controller
     {
+        
         [HttpPost("add-comment")]
-        public async Task<IActionResult> AddComment(CommentDTO model)
+        public async Task<IActionResult> AddComment(CommentDTO comment)
         {
-            try
+            if (comment == null)
             {
-                var response = await _commentRepository.AddCommentAsync(model);
-                return Ok(response);
+                return BadRequest("Invalid comment data.");
             }
-            catch (Exception ex)
+
+            // Validate the comment model
+            if (string.IsNullOrEmpty(comment.content) || string.IsNullOrEmpty(comment.ProductId) || string.IsNullOrEmpty(comment.UserId))
             {
-                return BadRequest(ex.Message);
+                return BadRequest("Comment content, ProductId, or UserId cannot be empty.");
+            }
+
+            // Add comment logic here
+            var result = await _commentRepository.AddCommentAsync(comment);
+
+            if (result.Flag)
+            {
+                return Ok(new { Flag = true, Message = "Comment added successfully." });
+            }
+            else
+            {
+                return StatusCode(500, "An error occurred while adding the comment.");
             }
         }
 
@@ -31,6 +47,20 @@ namespace WebAPI.Controllers
                 return Ok(response);
             }
             catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("get-comments/{productId}")]
+        public async Task<IActionResult> GetComments(string productId)
+        {
+            try
+            {
+                var data = await _commentRepository.GetProductCommentsAsync(productId);
+                return Ok(data);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

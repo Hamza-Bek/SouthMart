@@ -1,0 +1,218 @@
+﻿@page "/profile"
+
+<div class="demo-page">
+    <div class="demo-page-navigation">
+        <nav>
+            <ul>
+                <li>
+                    <a href="#installation">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tool">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                        </svg>
+                        Orders
+                    </a>
+                </li>
+                <li>
+                    <a href="#structure">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                            <polyline points="2 17 12 22 22 17" />
+                            <polyline points="2 12 12 17 22 12" />
+                        </svg>
+                        Favorites
+                    </a>
+                </li>
+                <li>
+                    <a href="seller">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-align-justify">
+                            <line x1="21" y1="10" x2="3" y2="10" />
+                            <line x1="21" y1="6" x2="3" y2="6" />
+                            <line x1="21" y1="14" x2="3" y2="14" />
+                            <line x1="21" y1="18" x2="3" y2="18" />
+                        </svg>
+                        Seller account
+                    </a>
+                </li>
+                <li>
+                    <a href="#checkbox-and-radio">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-square">
+                            <polyline points="9 11 12 14 22 4" />
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                        </svg>
+                        Logout
+                    </a>
+                </li>
+              
+            </ul>
+        </nav>
+    </div>
+    <main class="demo-page-content">
+        <section>
+            <div class="href-target" id="intro"></div>
+            <h1 class="package-name">What is SouthMart?</h1>
+            <p>
+                It’s a virtual multi-tenant website, Where you can find what you are looking for Easily, Rapidly with best prices 😉. Hypermarket 🛒 that sells everything .
+            </p>         
+        </section>
+
+        <section>
+            <div class="href-target" id="user-details"></div>
+            <h1>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                    <path d="M20 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M4 21v-2a4 4 0 0 1 3-3.87"></path>
+                    <path d="M12 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path>
+                </svg>
+                User Details
+            </h1>
+            <div class="user-profile">
+                <div class="user-image-container">
+                    <img src="imgs/avatar.svg" alt="User Image" class="user-image" />
+                    <button class="edit-image-button" title="Edit Photo">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                </div>
+                <div class="user-info">
+                    <div class="nice-form-group">
+                        <label>Name</label>
+                        <input type="text" placeholder="User's name" />
+                    </div>
+                    <div class="nice-form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="User's email" />
+                    </div>
+                    <div class="nice-form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" placeholder="User's phone number" />
+                    </div>
+                </div>
+            </div>
+
+            <details>
+                <summary>
+                    <div class="toggle-code">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-code">
+                            <polyline points="16 18 22 12 16 6" />
+                            <polyline points="8 6 2 12 8 18" />
+                        </svg>
+                        Save Changes
+                    </div>
+                </summary>
+                <script src="https://gist.github.com/nielsVoogt/a00c2c8b6b7acfacce6d50926379e722.js"></script>
+            </details>
+        </section>
+
+        <section>
+            <div class="href-target" id="input-types"></div>
+            <h1>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-align-justify">
+                    <line x1="21" y1="10" x2="3" y2="10" />
+                    <line x1="21" y1="6" x2="3" y2="6" />
+                    <line x1="21" y1="14" x2="3" y2="14" />
+                    <line x1="21" y1="18" x2="3" y2="18" />
+                </svg>
+                Location
+            </h1>
+            <p>All available input types are included</p>
+
+            <div class="nice-form-group">
+                <label>Phone Number</label>
+                <input type="tel" placeholder="+2012345678" value="" />
+            </div>
+
+            <div class="nice-form-group">
+                <label>Country</label>
+                <input type="text" placeholder="Cairo" value="" />
+            </div>
+
+            <div class="nice-form-group">
+                <label>Street</label>
+                <input type="text" placeholder="Nile-street" value="" />
+            </div>
+
+            <div class="nice-form-group">
+                <label>Building</label>
+                <input type="url" placeholder="22" value="" />
+            </div>
+
+            <div class="nice-form-group">
+                <label>Floor</label>
+                <input type="text" placeholder="1" />
+            </div>
+           
+            <details>
+                <summary>
+                    <div class="toggle-code">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-code">
+                            <polyline points="16 18 22 12 16 6" />
+                            <polyline points="8 6 2 12 8 18" />
+                        </svg>
+                        Add Location
+                    </div>
+                </summary>
+                <script src="https://gist.github.com/nielsVoogt/e25c9c8f2b8456bbd1239b775d21333f.js"></script>
+            </details>
+        </section>    
+
+        <section id="seller" >
+            <div class="href-target" id="icons"></div>
+            <h1>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-feather">
+                    <path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z" />
+                    <line x1="16" y1="8" x2="2" y2="22" />
+                    <line x1="17.5" y1="15" x2="9" y2="15" />
+                </svg>
+               Request Seller Account
+            </h1>
+            <p>
+               Join us NOW! and start your business with selling prooducts with us.
+            </p>
+
+            <div class="nice-form-group">
+                <label>Name</label>
+                <input type="text" placeholder="Your business name" value="" class="icon-left" />
+            </div>
+
+            <div class="nice-form-group">
+                <label>Email</label>
+                <input type="email" placeholder="example@example.com" value="" class="icon-left" />
+            </div>
+
+            <div class="nice-form-group">
+                <label>Description</label>
+                <input type="text" placeholder="Your business description" value="" class="icon-left" />
+            </div>        
+
+            <div class="nice-form-group">
+                <label>Phone Number</label>
+                <input type="tel" placeholder="Your phonenumber" value="" class="icon-left" />
+            </div>
+
+            <div class="nice-form-group">
+                <label>Upload Business Logo</label>
+                <input type="file" accept="image/*" class="icon-left" />
+            </div>
+
+            <details>
+                <summary>
+                    <div class="toggle-code">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-code">
+                            <polyline points="16 18 22 12 16 6" />
+                            <polyline points="8 6 2 12 8 18" />
+                        </svg>
+                        Send Request
+                    </div>
+                </summary>
+                <script src="https://gist.github.com/nielsVoogt/8cc4cd8ebc6e81c3f889f1b40037b0cc.js"></script>
+            </details>
+        </section>        
+
+        <footer>Made with ♥ for CSS</footer>
+    </main>
+</div>
+
+<link rel="stylesheet" type="text/css" href="css/ProfileForm.css">
+
+@code {
+
+}

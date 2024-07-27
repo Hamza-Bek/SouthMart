@@ -33,7 +33,9 @@ namespace Infrastructure.Repositories
                 content = model.content,
                 DateCreated = DateTime.Now,
                 UserId = model.UserId,
+                User = user,
                 ProductId = model.ProductId,
+                Product = product,
             };
 
             _context.Comments.Add(comment);
@@ -60,6 +62,20 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
 
             return new NotificationResponse(true, "Comment updated successfully");
+        }
+
+        public async Task<List<Comment>> GetProductCommentsAsync(string productId)
+        {
+            var product = await _context.Products.FirstOrDefaultAsync(ui => ui.Id == productId);
+            if (product == null)
+                return new List<Comment>();
+
+            var comments = await _context.Comments
+                .Include(u => u.User)
+                .Where(ui => ui.ProductId == productId)
+                .ToListAsync();
+
+            return comments;
         }
     }
 }

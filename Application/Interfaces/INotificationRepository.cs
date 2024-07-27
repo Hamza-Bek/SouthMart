@@ -12,13 +12,14 @@ namespace Application.Interfaces
     public interface INotificationRepository
     {
         Task<List<NotificationDTO>> GetAllNotifications(string userId);
+        Task<NotificationResponse> AddNotificationAsync(string userId, string message);
 
         //Buyer's methods :
         Task<NotificationResponse> OrderPlacedNotify(NotificationDTO model);
 
         //Seller's methods : 
         Task<NotificationResponse> LowQuantityNotifyAsync(NotificationDTO model);
-
+        
        //Task<NotificationResponse> NewOrderPlacedNotifyAsync(NotificationDTO model);
     }
 }

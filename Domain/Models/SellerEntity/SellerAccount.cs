@@ -17,7 +17,7 @@ namespace Domain.Models.SellerEntity
         public DateTime DateCreated { get; set; }
         public decimal GrossSales { get; set; }
         public decimal Revenue { get; set; }
-
+        public string Status { get; set; }
 
         // Foreign key for ApplicationUser
         public string? SellerId { get; set; }
