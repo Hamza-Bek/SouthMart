@@ -43,7 +43,6 @@ namespace Infrastructure.Repositories
             return new GeneralResponse(true, "Location added successfully!");
 
         }
-
         public async Task<GeneralResponse> UpdateLocationAsync(LocationDTO model)
         {
             try

@@ -42,7 +42,7 @@ namespace Infrastructure.Data
             .HasOne(a => a.SellerAccount)
             .WithOne(b => b.Seller)
             .HasForeignKey<SellerAccount>(b => b.SellerId);
-            //
+            
             builder.Entity<ApplicationUser>()
                 .HasOne(a => a.Cart)
                 .WithOne(c => c.CartOwner)
@@ -53,8 +53,7 @@ namespace Infrastructure.Data
                 .HasOne(l => l.LocationUser)
                 .WithOne()
                 .HasForeignKey<Location>(l => l.ApplicationUserId)
-                .OnDelete(DeleteBehavior.NoAction);
-        
+                .OnDelete(DeleteBehavior.NoAction);        
 
             builder.Entity<Order>()
                 .HasMany(o => o.OrderDetails)
@@ -76,12 +75,11 @@ namespace Infrastructure.Data
                   .HasForeignKey(n => n.UserId)
                     .OnDelete(DeleteBehavior.NoAction);
 
-
-            //
+            
             builder.Entity<ApplicationUser>()
-            .HasMany(au => au.Products)
-            .WithOne(p => p.Seller)
-            .HasForeignKey(p => p.SellerId);
+                .HasMany(au => au.Products)
+                .WithOne(p => p.Seller)
+                .HasForeignKey(p => p.SellerId);
 
             builder.Entity<Product>()
                  .HasKey(p => p.Id);
@@ -94,9 +92,9 @@ namespace Infrastructure.Data
 
             builder.Entity<Comment>()
                 .HasOne(c => c.User)
-                   .WithMany(u => u.Comments)
-                     .HasForeignKey(c => c.UserId)
-                        .OnDelete(DeleteBehavior.NoAction);
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<Comment>()
                 .HasOne(c => c.Product)

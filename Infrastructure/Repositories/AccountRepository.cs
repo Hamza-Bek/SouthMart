@@ -30,11 +30,10 @@ namespace Infrastructure.Repositories
     {
 
         private async Task<ApplicationUser> FindUserByEmailAsync(string email)
-       => await userManager.FindByEmailAsync(email);
+            => await userManager.FindByEmailAsync(email);
 
         private async Task<IdentityRole> FindRoleByNameAsync(string roleName)
             => await roleManager.FindByNameAsync(roleName);
-
 
         public async Task<GeneralResponse> ChangeUserRoleAsync(ChangeUserRoleDTO model)
         {
@@ -45,11 +44,13 @@ namespace Infrastructure.Repositories
             var preRole = (await userManager.GetRolesAsync(user)).FirstOrDefault();
             var removeOldRole = await userManager.RemoveFromRoleAsync(user, preRole!);
             var error = CheckResponse(removeOldRole);
+            
             if (!string.IsNullOrEmpty(error))
                 return new GeneralResponse(false, error);
 
             var result = await userManager.AddToRoleAsync(user, model.RoleName);
             var respone = CheckResponse(result);
+
             if (!string.IsNullOrEmpty(error))
                 return new GeneralResponse(false, respone);
             else
@@ -92,6 +93,7 @@ namespace Infrastructure.Repositories
 
                 string jwtToken = await GenerateToken(user);
                 string refreshToken = GenerateRefreshToken();
+
                 if (string.IsNullOrEmpty(jwtToken) || string.IsNullOrEmpty(refreshToken))
                 {
                     return new GeneralResponse(false, "Error occured while logging in.");
@@ -117,14 +119,18 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                if ((await FindRoleByNameAsync(model.Name)) == null)
+                if ((await FindRoleByNameAsync(model.Name!)) == null)
                 {
-                    var response = await roleManager.CreateAsync(new IdentityRole(model.Name));
+                    var response = await roleManager.CreateAsync(new IdentityRole(model.Name!));
                     var error = CheckResponse(response);
-                    if (!string.IsNullOrEmpty(error)) throw new Exception(error);
+                    
+                    if (!string.IsNullOrEmpty(error)) 
+                            throw new Exception(error);
+
                     else
                         return new GeneralResponse(true, $"{model.Name} created");
-                }
+               
+                }                
                 return new GeneralResponse(false, $"{model.Name} already created");
             }
             catch (Exception ex) { throw new Exception(ex.Message); }

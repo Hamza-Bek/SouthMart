@@ -44,8 +44,7 @@ namespace Infrastructure.Repositories
             var notificationDTO = notifications.Select(p => _mapper.Map<NotificationDTO>(p)).ToList();
 
             return notificationDTO;
-        }
-        
+        }        
 
         public async Task<NotificationResponse> LowQuantityNotifyAsync(NotificationDTO model)
         {

@@ -253,22 +253,7 @@ namespace Infrastructure.Repositories
                 return new SellerResponse(false, "Failed to give access to seller role!");
             }
           
-        }
-
-        private void NotifyAdmin(SellerAccount acc)
-        {
-            // Create a new notification for the admin
-            var notification = new Notification
-            {
-                Id = Guid.NewGuid().ToString(),
-                UserId = "adminUserId", // Replace with actual admin user ID
-                Content = $"New seller account request from {acc.Name}",                               
-            };
-
-            // Add the notification to the database
-            _context.Notifications.Add(notification);
-            _context.SaveChanges();
-        }
+        }        
 
         public async Task<SellerResponse> AddSellerStatus(SellerStatus model)
         {
