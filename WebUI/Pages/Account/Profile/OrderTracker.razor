@@ -13,7 +13,7 @@
             </div>
             <div class="d-flex flex-column text-sm-right">
                 <p class="mb-0">Expected Arrival <span>@lastOrder?.OrderDate.ToShortDateString()</span></p>
-                <p>USPS <span class="font-weight-bold">@lastOrder?.OrderNumber</span></p>
+                <p>USPS <span class="font-weight-bold" @onclick="() => NavigateToProductDetails(lastOrder?.OrderId)">@lastOrder?.OrderNumber</span></p>
             </div>
         </div>
         <div class="row d-flex justify-content-center">
@@ -71,7 +71,7 @@
 
         try
         {
-            var orders = await orderService.GetUserOrders(userId);
+            var orders = await orderService.GetUserOrdersAsync(userId);
             if (orders != null && orders.Any())
             {
                 lastOrder = orders.OrderByDescending(o => o.OrderDate).FirstOrDefault(); // Get the most recent order
@@ -83,6 +83,10 @@
         }
     }
 
+    private void NavigateToProductDetails(string orderId)
+    {
+        NavManager.NavigateTo($"/invoice/{orderId}");
+    }
 
     protected override async Task OnInitializedAsync()
     {

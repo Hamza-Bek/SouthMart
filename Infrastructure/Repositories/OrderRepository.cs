@@ -16,7 +16,53 @@ namespace Infrastructure.Repositories
 {
     public class OrderRepository(AppDbContext _context, IMapper _mapper) : IOrderRepository
     {
-        public async Task<IEnumerable<OrderDTO>> GetUserOrders(string userId)
+        public async Task<OrderResponse> ClearCartItemsAsync(string userId)
+        {
+            var getUser = await _context.Users.FindAsync(userId);
+            if (getUser == null)
+                return new OrderResponse(Flag: false, Message: "The user was not found");
+
+            var getUserCart = await _context.Carts.Include(p => p.CartItems).FirstOrDefaultAsync(c => c.UserId == userId);
+            if (getUserCart == null)
+                return new OrderResponse(Flag: false, Message: "The user's cart is not found!");
+
+            // Get all cart items for the user
+            var getUserCartItems = _context.CartItems.Where(ci => ci.CartId == getUserCart.Id).ToList();
+            if (!getUserCartItems.Any())
+                return new OrderResponse(Flag: false, Message: "Cart is already clear");
+
+            // Remove each cart item from the context
+            _context.CartItems.RemoveRange(getUserCartItems);
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+
+            return new OrderResponse(Flag: true, Message: "The cart cleared!");
+        }
+
+        public async Task<OrderResponse> ClearCartTotalAsync(string userId)
+        {
+            // Retrieve the user from the database
+            var getUser = await _context.Users.FindAsync(userId);
+            if (getUser == null)
+                return new OrderResponse(Flag: false, Message: "No user was found");
+
+            // Retrieve the user's cart
+            var getUserCart = await _context.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
+            if (getUserCart == null)
+                return new OrderResponse(Flag: false, Message: "No user's cart was found");
+
+            // Clear the CartTotal
+            getUserCart.CartTotal = 0;
+
+            // Save the changes to the database
+            await _context.SaveChangesAsync();
+
+            return new OrderResponse(Flag: true, Message: "Cart Total cleared successfully");
+        }
+
+        public async Task<IEnumerable<OrderDTO>> GetUserOrdersAsync(string userId)
         {
             try
             {                
@@ -38,7 +84,21 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task<OrderResponse> PlaceOrderAsync(OrderDTO model)
+		public async Task<IEnumerable<Order>> GetUserOrdersByOrderIdAsync(string orderId)
+		{
+			var order = await _context.Orders
+                .Include(o => o.OrderMaker)
+                .Include(d => d.OrderDetails)
+                .Include(l => l.Location)
+                .FirstOrDefaultAsync(i => i.OrderId == orderId);
+
+			if (order == null)
+				return Enumerable.Empty<Order>();
+
+			return new List<Order> { order };
+		}
+
+		public async Task<OrderResponse> PlaceOrderAsync(OrderDTO model)
         {
             try
             {
@@ -47,6 +107,7 @@ namespace Infrastructure.Repositories
                 var userId = model.UserId;
 
                 var user = await _context.Users
+                    .Include(u => u.SellerAccount)
                     .Include(i => i.Location)
                     .FirstOrDefaultAsync(u => u.Id == userId);
 
@@ -63,13 +124,7 @@ namespace Infrastructure.Repositories
                 var userLocation = await _context.Locations.FirstOrDefaultAsync(l => l.ApplicationUserId == userId);
 
                 if (userLocation == null)
-                    return new OrderResponse(false, "Location not found");
-
-                var sellerId = model.SellerId;
-                var seller = await _context.SellerAccounts.FirstOrDefaultAsync(s => s.SellerId == sellerId);
-                if (seller == null)
-                    return new OrderResponse(false, "Seller Id not found");
-
+                    return new OrderResponse(false, "Location not found");                
           
 
                 decimal orderTotal = (decimal)userCart.CartTotal;
@@ -83,34 +138,48 @@ namespace Infrastructure.Repositories
                     OrderDate = model.OrderDate,
                     OrderTotal = orderTotal,
                     OrderStatus = "Pending",
-                    UserId = userId,      
-                    SellerId = model.SellerId,
+                    UserId = userId,                        
                     LocationId = userLocation.LocationId,
-                    Location = userLocation,                
-                };
-
-                var orderDetails = userCart.CartItems.Select(cartitem =>  new OrderDetails
-                {
-                    OrderDetailId = Guid.NewGuid().ToString(),
-                    OrderId = model.OrderId,
-                    ProductId = cartitem.ProductId,
-                    ProductName = cartitem.ProductName,
-                    ProductPrice = cartitem.ProductPrice,
-                    Quantity = cartitem.Quantity
-                }).ToList();
+                    Location = userLocation,
+                    OrderMaker = user,                    
+					OrderDetails = userCart.CartItems.Select(cartItem => new OrderDetails
+					{
+						OrderDetailId = Guid.NewGuid().ToString(),
+						ProductId = cartItem.ProductId,
+						ProductName = cartItem.ProductName,
+						ProductPrice = cartItem.ProductPrice,
+						Quantity = cartItem.Quantity
+					}).ToList()
+				};           
 
                 _context.Entry(userLocation).State = EntityState.Unchanged;
           
 
-                foreach(var orderDetail in orderDetails)
+                foreach(var orderDetail in order.OrderDetails)
                 {
-                    var product = await _context.Products.FirstOrDefaultAsync(p => p.Id ==  orderDetail.ProductId);
-                    if(product != null)
+                    var product = await _context.Products
+                     .Include(p => p.Seller) // Include the Seller navigation property
+                     .ThenInclude(s => s.SellerAccount) // Then include the SellerAccount
+                     .FirstOrDefaultAsync(p => p.Id == orderDetail.ProductId);
+
+
+                    if (product != null)
                     {
-                        product.Quantity -= orderDetail.Quantity;
-                        seller.Revenue += (decimal)(product.SellingPrice - product.Cost);
-                        seller.GrossSales += (decimal)(product.SellingPrice); 
-                        _context.Entry(product).State = EntityState.Modified;
+                        var sellerAccount = product.Seller?.SellerAccount;
+                        if (sellerAccount != null)
+                        {
+                            product.Quantity -= orderDetail.Quantity;
+                            sellerAccount.Revenue += (decimal)(product.SellingPrice - product.Cost);
+                            sellerAccount.GrossSales += (decimal)(product.SellingPrice);
+
+                            _context.Entry(product).State = EntityState.Modified;
+                            _context.Entry(sellerAccount).State = EntityState.Modified;
+                        }
+                        else
+                        {
+                            // Handle the case where sellerAccount is null
+                            // This might involve logging the issue or raising an exception
+                        }
                     }
                 }
 

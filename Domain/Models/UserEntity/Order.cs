@@ -14,7 +14,7 @@ namespace Domain.Models.UserEntity
         public DateTime OrderDate { get; set; }
         public decimal OrderTotal { get; set; }
         public string? OrderStatus { get; set; }
-        public string SellerId { get; set; }
+     
 
         // RELATIONSHIPS                
         public string? LocationId { get; set; }

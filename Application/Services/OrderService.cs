@@ -25,7 +25,33 @@ namespace Application.Services
             this.httpClientService = httpClientService;
         }
 
-        public async Task<IEnumerable<OrderDTO>> GetUserOrders(string userId)
+        public async Task<OrderResponse> ClearCartItemsAsync(string userId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/orders/clear-cart-items/{userId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return new OrderResponse { Flag = true, Message = "Item deleted successfully." };
+            }
+            else
+            {
+                return new OrderResponse { Flag = false, Message = "Failed to remove the plate!" };
+            }
+        }
+
+        public async Task<OrderResponse> ClearCartTotalAsync(string userId)
+        {
+            var response = await _httpClient.DeleteAsync($"api/orders/clear-cart-total/{userId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return new OrderResponse { Flag = true, Message = "Item deleted successfully." };
+            }
+            else
+            {
+                return new OrderResponse { Flag = false, Message = "Failed to remove the plate!" };
+            }
+        }
+
+        public async Task<IEnumerable<OrderDTO>> GetUserOrdersAsync(string userId)
         {
             try
             {
@@ -40,14 +66,39 @@ namespace Application.Services
             }
         }
 
-        public async Task<OrderResponse> PlaceOrderAsync(OrderDTO model)
+		public async Task<IEnumerable<Order>> GetUserOrdersByOrderIdAsync(string orderId)
+		{
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/orders/get-order-orderid/{orderId}");
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadFromJsonAsync<IEnumerable<Order>>();
+                return data ?? Enumerable.Empty<Order>();
+            }
+            catch
+            {
+                return Enumerable.Empty<Order>();
+            }
+		}
+
+		public async Task<OrderResponse> PlaceOrderAsync(OrderDTO model)
         {
             try
             {
-                var data = await _httpClient.PostAsJsonAsync("", model);
-                var responseContent = await data.Content.ReadAsStringAsync();
+                 model = new OrderDTO()
+                {
+                    OrderId = Guid.NewGuid().ToString(),
+                    OrderDate = DateTime.Now,
+                    OrderStatus = "Pending",
+                    OrderTotal = 0,
+                    UserId = model.UserId,
+                    OrderNumber = "0",
+                    LocationId = "0"
+                };
 
-                var response = JsonSerializer.Deserialize<OrderResponse>(responseContent);
+                var data = await _httpClient.PostAsJsonAsync("api/orders/place-order", model);
+                var response = await data.Content.ReadFromJsonAsync<OrderResponse>();
+                
                 if (response.Flag)
                     return new OrderResponse(true, "Order Placed Successfully");
                 else

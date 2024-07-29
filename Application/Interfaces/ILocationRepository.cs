@@ -10,7 +10,11 @@ namespace Application.Interfaces
 {
     public interface ILocationRepository
     {
+        Task<IEnumerable<LocationDTO>> GetLocation(string userId);
+     
         Task<GeneralResponse> AddLocationAsync(LocationDTO model);
         Task<GeneralResponse> UpdateLocationAsync(LocationDTO model);
+
+      
     }
 }

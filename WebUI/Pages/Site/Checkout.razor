@@ -1,4 +1,11 @@
 ﻿@page "/checkout"
+@using Application.DTOs.Request.OrderEntity
+@using Domain.Models.UserEntity
+@using System.Security.Claims
+@inject IBuyerRepository buyerSerivce
+@inject IOrderRepository orderService
+@inject ILocationRepository locationService
+
 
 <div class='container'>
     <div class='window'>
@@ -9,34 +16,28 @@
                 <!-- Order Items -->
                 <div class='order-items'>
                     <!-- Example order items, repeat as needed -->
-                    <div class='order-item'>
-                        <img src='https://dl.dropboxusercontent.com/s/sim84r2xfedj99n/%24_32.JPG' class='full-width' />
-                        <div class='item-details'>
-                            <span class='thin'>Nike</span><br> Free Run 3.0 Women<br> <span class='thin small'> Color: Grey/Orange, Size: 10.5<br><br></span>
-                            <div class='price'>$99.95</div>
+                    @foreach(var item in cartItems)
+                    {
+                        <div class='order-item'>
+                            <img src='https://dl.dropboxusercontent.com/s/sim84r2xfedj99n/%24_32.JPG' class='full-width' />
+                            <div class='item-details'>
+                                <span class='thin'>@item.ProductName</span>
+                                <div class='price'>$@item.ProductPrice</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class='line'></div>
-                    <div class='order-item'>
-                        <img src='https://dl.dropboxusercontent.com/s/qbj9tsbvthqq72c/Vintage-20L-Backpack-by-Fj%C3%A4llr%C3%A4ven.jpg' class='full-width' />
-                        <div class='item-details'>
-                            <span class='thin'>Fjällräven</span><br>Vintage Backpack<br> <span class='thin small'> Color: Olive, Size: 20L</span>
-                            <div class='price'>$235.95</div>
-                        </div>
-                    </div>
-                    <div class='line'></div>
-                </div>
-                <div class='line'></div>
+                        <div class='line'></div>
+                    }                                                      
+                </div>                
                 <div class='total'>
                     <span style='float:left;'>
-                        <div class='thin dense'>VAT 19%</div>
+                        <div class='thin dense'>VAT</div>
                         <div class='thin dense'>Delivery</div>
                         TOTAL
                     </span>
                     <span style='float:right; text-align:right;'>
-                        <div class='thin dense'>$68.75</div>
-                        <div class='thin dense'>$4.95</div>
-                        $435.55
+                        <div class='thin dense'>FREE</div>
+                        <div class='thin dense'>FREE</div>
+                        $@cartItems.Sum(item => item.ProductPrice * item.Quantity)
                     </span>
                 </div>
             </div>
@@ -73,162 +74,14 @@
                         </tr>
                     </table>
                 </div>
-                <div><a class="pointer-event" href="#"><i class="fa-solid fa-location-dot"></i> Add Location?</a></div>
-                <button class="pay-btn">Checkout</button>
+                <div><a class="pointer-event" href="/profile"><i class="fa-solid fa-location-dot"></i> Add Location?</a></div>
+                <a @onclick="PlaceOrder" class="pay-btn">Checkout</a>
             </div>
         </div>
     </div>
 </div>
 
-<style>
-    .dropdown-select {
-        display: none;
-        position: absolute;
-        background: #77aaee;
-        text-align: left;
-        box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.1);
-        border-bottom-right-radius: 5px;
-        border-bottom-left-radius: 5px;
-        width: 100%; /* Make dropdown select the same width as the button */
-        left: 0; /* Align to the left of the dropdown button */
-        box-sizing: border-box;
-        z-index: 1; /* Ensure the dropdown appears above other content */
-    }
-
-  
-    .container {
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px; /* Optional for spacing */
-    }
-
-    .window {
-        display: flex;
-        width: 1000px; /* Adjust width as needed */
-        max-width: 100%;
-        background: #fff;
-        box-shadow: 0px 15px 50px 10px rgba(0, 0, 0, 0.2);
-        border-radius: 30px;
-        overflow: hidden; /* Hide any overflow */
-    }
-
-    .order-info {
-        flex: 1;
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        overflow-y: auto; /* Enable vertical scrolling */
-        max-height: 540px; /* Set a max-height to control the scroll area */
-    }
-
-    .order-info-content {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    .order-items {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .order-item {
-        display: flex;
-        gap: 15px;
-        align-items: center;
-    }
-
-    .item-details {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .price {
-        color: #4488dd;
-    }
-
-    .total {
-        margin-top: 25px;
-        font-size: 1.3rem;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .credit-info {
-        background: #4488dd;
-        color: #eee;
-        padding: 25px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        flex: 1;
-        border-top-right-radius: 30px;
-        border-bottom-right-radius: 30px;
-    }
-
-    .credit-info-content {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .credit-card-image {
-        display: block;
-        max-height: 80px;
-        margin: 35px auto 15px auto;
-    }
-
-    .input-field {
-        background: rgba(255, 255, 255, 0.1);
-        margin: 3px 0 10px 0;
-        font-size: 1.3rem;
-        border: none;
-        padding: 5px 10px;
-        color: #fff;
-        width: 100%;
-    }
-
-    .pay-btn {
-        background: #22b877;
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        font-size: 1.2rem;
-        padding: 10px;
-        cursor: pointer;
-        transition: background .2s ease;
-    }
-
-        .pay-btn:hover {
-            background: #22a877;
-        }
-
-    .line {
-        height: 1px;
-        width: 100%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        background: #ddd;
-    }
-
- 
-
-    
-
-
-    .order-item img.full-width {
-        width: 100px; /* Adjust size as needed */
-        height: auto;
-    }
-
-    .order-item .item-details {
-        flex: 1;
-    }
-
-  
-</style>
+<link rel="stylesheet" type="text/css" href="css/Checkout.css">
 
 <script>
     document.getElementById('card-select').addEventListener('change', function () {
@@ -242,5 +95,81 @@
 </script>
 
 @code {
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
+    private string userId;
+    private string cartId;
+    private IEnumerable<CartItem> cartItems = new List<CartItem>();
+    private bool isLoading = true;
 
-}
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateTask;
+        foreach (var claim in authState.User.Claims)
+        {
+            Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
+        }
+
+        var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+        var userCartIdClaim = authState.User.FindFirst(c => c.Type == "CartId");
+        if (userIdClaim != null)
+        {
+            userId = userIdClaim.Value;
+            cartId = userCartIdClaim.Value;
+            cartItems = await buyerSerivce.GetCartItemsAsync(userId);
+
+        }
+        isLoading = false;
+    }                                                                                                                                                                                                              
+
+
+    private async Task PlaceOrder()
+    {
+        isLoading = true;
+
+        try
+        {
+            var location = await locationService.GetLocation(userId);
+            if (location == null || !location.Any())
+            {
+                NavManager.NavigateTo("/profile", true);
+                return;
+            }
+
+            if (cartItems == null || !cartItems.Any())
+            {
+                await js.InvokeVoidAsync("alert", "No items in the cart!");
+                isLoading = false;
+                return;
+            }
+
+            // Create the OrderDTO with necessary information
+            var orderDto = new OrderDTO
+                {
+                    OrderDate = DateTime.UtcNow,
+                    OrderTotal = cartItems.Sum(item => item.Quantity * item.ProductPrice),
+                    UserId = userId,
+                    LocationId = location.First().LocationId // Assuming the first location is the one to use
+                };
+
+            var response = await orderService.PlaceOrderAsync(orderDto);
+            if (response.Flag)
+            {
+                await orderService.ClearCartTotalAsync(userId);
+                await orderService.ClearCartItemsAsync(userId);
+                NavManager.NavigateTo("/order");
+                Console.WriteLine("Order placed successfully.");
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.Message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error placing order: {ex.Message}");
+        }
+
+        isLoading = false;
+    }
+
+}  

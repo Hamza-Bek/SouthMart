@@ -12,8 +12,11 @@ namespace Application.Interfaces
     public interface IOrderRepository
     {
         Task<OrderResponse> PlaceOrderAsync(OrderDTO model);
+        Task<OrderResponse> ClearCartTotalAsync(string userId);
+        Task<OrderResponse> ClearCartItemsAsync(string userId);
 
         // GET's METHODS
-        Task<IEnumerable<OrderDTO>> GetUserOrders(string userId);
-    }
+        Task<IEnumerable<OrderDTO>> GetUserOrdersAsync(string userId);
+		Task<IEnumerable<Order>> GetUserOrdersByOrderIdAsync(string orderId);
+	}
 }

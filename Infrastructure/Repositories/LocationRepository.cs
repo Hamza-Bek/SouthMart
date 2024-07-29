@@ -4,6 +4,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Models.UserEntity;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,39 @@ namespace Infrastructure.Repositories
             return new GeneralResponse(true, "Location added successfully!");
 
         }
+
+        public async Task<IEnumerable<LocationDTO>> GetLocation(string userId)
+        {
+            var getUser = await _context.Users.FindAsync(userId);
+            if (getUser == null)
+            {
+                Console.WriteLine("User's cart not found");
+                return Enumerable.Empty<LocationDTO>();
+            }
+
+            var getUserLocation = await _context.Locations
+             .FirstOrDefaultAsync(o => o.ApplicationUserId == getUser.Id);
+
+            if (getUserLocation == null)
+            {
+                Console.WriteLine("User's cart not found");
+                return Enumerable.Empty<LocationDTO>();
+            }
+
+            var locationDTO = new LocationDTO
+            {
+                LocationId = getUserLocation.LocationId,
+                PhoneNumber = getUserLocation.PhoneNumber,
+                Country = getUserLocation.Country,
+                Street = getUserLocation.Street,
+                Building = getUserLocation.Building,
+                Floor = getUserLocation.Floor,
+                ApplicationUserId = getUserLocation.ApplicationUserId
+            };
+
+            return new List<LocationDTO> { locationDTO };
+        }
+
         public async Task<GeneralResponse> UpdateLocationAsync(LocationDTO model)
         {
             try

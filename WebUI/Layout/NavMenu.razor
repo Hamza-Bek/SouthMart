@@ -58,16 +58,17 @@
                 <AuthorizeView>
                     <Authorized>
                 <div class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
-                    <ul class="d-flex justify-content-end list-unstyled m-0">
-                        <li>
-                            <a href="/logout" class="rounded-circle bg-light p-2 mx-1">
-                                <i class="fa-solid fa-right-from-bracket" style="color: #cc0000;"></i>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="rounded-circle bg-light p-2 mx-1">
-                                <i class="fa-solid fa-user large-icon"></i>
-                            </a>
+                    <ul class="d-flex justify-content-end list-unstyled m-0">                      
+                        <li>                            
+                                <a class="nav-link dropdown-toggle rounded-circle bg-light p-2 mx-1" role="button" id="pages" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user large-icon"></i></a>                                
+                                <ul class="dropdown-menu" aria-labelledby="pages">
+                                    <li><a href="about.html" class="dropdown-item">Settings </a></li>
+                                    <li><a href="shop.html" class="dropdown-item">Track Order </a></li>
+                                    <li><a href="single-product.html" class="dropdown-item">Orders History </a></li>
+                                    <li><a href="cart.html" class="dropdown-item">Cart </a></li>
+                                    <li><a href="checkout.html" class="dropdown-item">Invoice </a></li>
+                                <li><a href="blog.html" class="dropdown-item"><i class="fa-solid fa-right-from-bracket" style="color: #cc0000;"> Logout</i></a></li>                                                                                                         
+                                </ul>                            
                         </li>
                         <li>
                             <a href="#" class="rounded-circle bg-light p-2 mx-1">
@@ -89,7 +90,7 @@
                     <div class="cart text-end d-none d-lg-block dropdown">
                         <button class="border-0 bg-transparent d-flex flex-column gap-2 lh-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
                             <span class="fs-6 text-muted dropdown-toggle">Your Cart</span>
-                            <span class="cart-total fs-5 fw-bold">$1290.00</span>
+                            <span class="cart-total fs-5 fw-bold">@cartItems.Sum(item => item.ProductPrice * item.Quantity)</span>
                         </button>
                     </div>
                 </div>
@@ -124,7 +125,7 @@
 
                             </ul>
 
-                            <button class="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
+                            <a class="w-100 btn btn-primary btn-lg" type="submit" href="/checkout" >Continue to checkout</a>
                         </div>
                     </div>
                 </div>

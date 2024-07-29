@@ -86,7 +86,7 @@ namespace Infrastructure.Repositories
                 Console.WriteLine($"Start Period: {startPeriod}, End Period: {endPeriod}");
 
                 var lastMonthSales = await _context.OrderDetails
-                    .Where(od => od.Order.SellerId == sellerId && od.Order.OrderDate >= startPeriod && od.Order.OrderDate < endPeriod)
+                    .Where(od => od.Order.OrderDate >= startPeriod && od.Order.OrderDate < endPeriod)
                     .ToListAsync();
 
                 var totalSales = lastMonthSales.Sum(od => od.ProductPrice * od.Quantity.GetValueOrDefault());
@@ -110,7 +110,7 @@ namespace Infrastructure.Repositories
                 Console.WriteLine($"Start Period: {startPeriod}, End Period: {endPeriod}");
 
                 var lastMonthSales = await _context.OrderDetails
-                    .Where(od => od.Order.SellerId == sellerId && od.Order.OrderDate >= startPeriod && od.Order.OrderDate < endPeriod)
+                    .Where(od => od.Order.OrderDate >= startPeriod && od.Order.OrderDate < endPeriod)
                     .ToListAsync();
 
                 var totalSales = lastMonthSales.Sum(od => od.ProductPrice * od.Quantity.GetValueOrDefault());
@@ -134,7 +134,7 @@ namespace Infrastructure.Repositories
                 Console.WriteLine($"Start Period: {startPeriod}, End Period: {endPeriod}");
 
                 var last24HoursSales = await _context.OrderDetails
-                    .Where(od => od.Order.SellerId == sellerId && od.Order.OrderDate >= startPeriod && od.Order.OrderDate <= endPeriod)
+                    .Where(od => od.Order.OrderDate >= startPeriod && od.Order.OrderDate <= endPeriod)
                     .ToListAsync();
 
                 var totalSales = last24HoursSales.Sum(od => od.ProductPrice * od.Quantity.GetValueOrDefault());
@@ -172,7 +172,7 @@ namespace Infrastructure.Repositories
                 Console.WriteLine($"Start Period: {startPeriod}, End Period: {endPeriod}");
 
                 var currentYearSales = await _context.OrderDetails
-                    .Where(od => od.Order.SellerId == sellerId && od.Order.OrderDate >= startPeriod && od.Order.OrderDate < endPeriod)
+                    .Where(od => od.Order.OrderDate >= startPeriod && od.Order.OrderDate < endPeriod)
                     .ToListAsync();
 
                 var totalSales = currentYearSales.Sum(od => od.ProductPrice * od.Quantity.GetValueOrDefault());
@@ -196,7 +196,7 @@ namespace Infrastructure.Repositories
                 Console.WriteLine($"Start Period: {startPeriod}, End Period: {endPeriod}");
 
                 var currentYearSales = await _context.OrderDetails
-                    .Where(od => od.Order.SellerId == sellerId && od.Order.OrderDate >= startPeriod && od.Order.OrderDate < endPeriod)
+                    .Where(od => od.Order.OrderDate >= startPeriod && od.Order.OrderDate < endPeriod)
                     .ToListAsync();
 
                 var totalSales = currentYearSales.Sum(od => od.ProductPrice * od.Quantity.GetValueOrDefault());

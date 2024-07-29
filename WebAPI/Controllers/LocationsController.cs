@@ -1,5 +1,7 @@
 ﻿using Application.DTOs.Request.OrderEntity;
 using Application.Interfaces;
+using Domain.Models.UserEntity;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -35,6 +37,14 @@ namespace WebAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet("get-location/{userId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Location>))]
+        public async Task<IActionResult> GetOrder(string userId)
+        {
+            var data = await _locationRepository.GetLocation(userId);
+            return Ok(data);
         }
     }
 }
