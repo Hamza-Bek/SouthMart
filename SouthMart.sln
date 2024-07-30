@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{F2F9B106-902B-4F0A-A0E4-726EB70E01C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DashUI", "DashUI\DashUI.csproj", "{559AB5D6-23CF-47CD-BB75-E7B57B54661E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DashUI", "DashUI\DashUI.csproj", "{559AB5D6-23CF-47CD-BB75-E7B57B54661E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

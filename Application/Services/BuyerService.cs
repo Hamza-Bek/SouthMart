@@ -23,9 +23,28 @@ namespace Application.Services
             _httpClient = httpClient;
             this.httpClientService = httpClientService;
         }
-        public Task<BuyerResponse> AddProductToCartAsync(string productId, string userId)
+        public async Task<BuyerResponse> AddProductToCartAsync(string productId, string userId)
         {
-            throw new NotImplementedException();
+            try
+            {
+               
+                var data = await _httpClient.PostAsJsonAsync($"api/buyers/add-product-cart/{productId}/{userId}", new { });
+                var response = await data.Content.ReadFromJsonAsync<BuyerResponse>();
+                if (response.Flag)
+                {
+                    return new BuyerResponse { Flag = true, Message = "Plate added successfully" };
+
+                }
+                else
+                {
+
+                    return new BuyerResponse { Flag = false, Message = "Failed to add plate" };
+
+                }
+
+
+            }
+            catch (Exception ex) { return new BuyerResponse(Flag: false, Message: ex.Message); }
         }
 
         public async Task<Cart> GetCartAsync(string userId)
@@ -33,7 +52,7 @@ namespace Application.Services
             try
             {
 
-                var response = await _httpClient.GetAsync($"get-user-cart/{userId}");
+                var response = await _httpClient.GetAsync($"api/buyers/get-user-cart/{userId}");
                 string error = CheckResponseStatus(response);
                 if (!string.IsNullOrEmpty(error))
                     throw new Exception(error);

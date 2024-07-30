@@ -1,4 +1,4 @@
-﻿@using Domain.Models.UserEntity
+﻿﻿@using Domain.Models.UserEntity
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
 @inject IBuyerRepository buyerService
@@ -21,54 +21,54 @@
     </div>
 </div>
 
-  <div class="container-fluid">
-        <div class="row py-3 border-bottom">
+<div class="container-fluid">
+    <div class="row py-3 border-bottom">
 
-            <div class="col-sm-4 col-lg-3 text-center text-sm-start">
-                <div class="main-logo">
-                    <a href="/">
-                        <img src="/imgs/main-logo(1).png" alt="logo" class="img-fluid">
-                    </a>
+        <div class="col-sm-4 col-lg-3 text-center text-sm-start">
+            <div class="main-logo">
+                <a href="/">
+                    <img src="/imgs/main-logo(1).png" alt="logo" class="img-fluid">
+                </a>
+            </div>
+        </div>
+
+        <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
+            <div class="search-bar row bg-light p-2 my-2 rounded-4">
+                <div class="col-md-4 d-none d-md-block">
+                    <select class="form-select border-0 bg-transparent">
+                        <option>All Categories</option>
+                        <option>Groceries</option>
+                        <option>Drinks</option>
+                        <option>Chocolates</option>
+                    </select>
+                </div>
+                <div class="col-11 col-md-7">
+                    <form id="search-form" class="text-center" action="index.html" method="post">
+                        <input type="text" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" />
+                    </form>
+                </div>
+                <div class="col-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z" /></svg>
                 </div>
             </div>
+        </div>
 
-            <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
-                <div class="search-bar row bg-light p-2 my-2 rounded-4">
-                    <div class="col-md-4 d-none d-md-block">
-                        <select class="form-select border-0 bg-transparent">
-                            <option>All Categories</option>
-                            <option>Groceries</option>
-                            <option>Drinks</option>
-                            <option>Chocolates</option>
-                        </select>
-                    </div>
-                    <div class="col-11 col-md-7">
-                        <form id="search-form" class="text-center" action="index.html" method="post">
-                            <input type="text" class="form-control border-0 bg-transparent" placeholder="Search for more than 20,000 products" />
-                        </form>
-                    </div>
-                    <div class="col-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z" /></svg>
-                    </div>
-                </div>
-            </div>
 
-           
 
-                <AuthorizeView>
-                    <Authorized>
+        <AuthorizeView>
+            <Authorized>
                 <div class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
-                    <ul class="d-flex justify-content-end list-unstyled m-0">                      
-                        <li>                            
-                                <a class="nav-link dropdown-toggle rounded-circle bg-light p-2 mx-1" role="button" id="pages" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user large-icon"></i></a>                                
-                                <ul class="dropdown-menu" aria-labelledby="pages">
-                                    <li><a href="about.html" class="dropdown-item">Settings </a></li>
-                                    <li><a href="shop.html" class="dropdown-item">Track Order </a></li>
-                                    <li><a href="single-product.html" class="dropdown-item">Orders History </a></li>
-                                    <li><a href="cart.html" class="dropdown-item">Cart </a></li>
-                                    <li><a href="checkout.html" class="dropdown-item">Invoice </a></li>
-                                <li><a href="blog.html" class="dropdown-item"><i class="fa-solid fa-right-from-bracket" style="color: #cc0000;"> Logout</i></a></li>                                                                                                         
-                                </ul>                            
+                    <ul class="d-flex justify-content-end list-unstyled m-0">
+                        <li>
+                            <a class="nav-link dropdown-toggle rounded-circle bg-light p-2 mx-1" role="button" id="pages" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user large-icon"></i></a>
+                            <ul class="dropdown-menu" aria-labelledby="pages">
+                                <li><a href="about.html" class="dropdown-item">Settings </a></li>
+                                <li><a href="shop.html" class="dropdown-item">Track Order </a></li>
+                                <li><a href="single-product.html" class="dropdown-item">Orders History </a></li>
+                                <li><a href="cart.html" class="dropdown-item">Cart </a></li>
+                                <li><a href="checkout.html" class="dropdown-item">Invoice </a></li>
+                                <li><a href="blog.html" class="dropdown-item"><i class="fa-solid fa-right-from-bracket" style="color: #cc0000;"> Logout</i></a></li>
+                            </ul>
                         </li>
                         <li>
                             <a href="#" class="rounded-circle bg-light p-2 mx-1">
@@ -105,17 +105,17 @@
                                 <span class="badge bg-primary rounded-pill">3</span>
                             </h4>
                             <ul class="list-group mb-3">
-                                @foreach(var item in cartItems)
+                                @foreach (var item in cartItems)
                                 {
                                     <li class="list-group-item d-flex justify-content-between lh-sm">
                                         <div>
                                             <h6 class="my-0">@item.ProductName</h6>
-                                           <small class="text-body-secondary">qty:@item.Quantity</small>
+                                            <small class="text-body-secondary">qty:@item.Quantity</small>
                                         </div>
                                         <span class="text-body-secondary">@item.ProductPrice</span>
                                     </li>
 
-                                   
+
                                 }
 
                                 <li class="list-group-item d-flex justify-content-between">
@@ -125,33 +125,33 @@
 
                             </ul>
 
-                            <a class="w-100 btn btn-primary btn-lg" type="submit" href="/checkout" >Continue to checkout</a>
+                            <a class="w-100 btn btn-primary btn-lg" type="submit" href="/checkout">Continue to checkout</a>
                         </div>
                     </div>
                 </div>
-                    </Authorized>
-                    <NotAuthorized>
-                         
+            </Authorized>
+            <NotAuthorized>
+
                 <div class="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
                     <div class="auth-container">
-                    <ul class="d-flex justify-content-end list-unstyled m-0">
-                        <li>
-                            <a href="/signup" class="rounded-circle bg-light p-3 mx-2">
-                                Sign up
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/login" class="rounded-circle bg-light p-3 mx-2">
-                                Login
-                            </a>
-                        </li>                                            
-                    </ul>                   
-                </div>                      
+                        <ul class="d-flex justify-content-end list-unstyled m-0">
+                            <li>
+                                <a href="/signup" class="rounded-circle bg-light p-3 mx-2">
+                                    Sign up
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/login" class="rounded-circle bg-light p-3 mx-2">
+                                    Login
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                    </NotAuthorized>
-                </AuthorizeView>
-            
-   <style>
+            </NotAuthorized>
+        </AuthorizeView>
+
+        <style>
             .btn-custom-sm {
                 padding: 5px 10px;
                 font-size: 12px;
@@ -189,17 +189,20 @@
                 margin-left: 0.25rem;
                 margin-right: 0.25rem;
             }
-   </style>
+        </style>
 
-        </div>
     </div>
+</div>
 
 @code {
-    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
+    [CascadingParameter] 
+    public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
     private string userId;
-    private string cartId;       
+    private string cartId;
     private IEnumerable<CartItem> cartItems = new List<CartItem>();
     private bool isLoading = true;
+    private Timer timer;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -219,5 +222,18 @@
 
         }
         isLoading = false;
+        timer = new Timer(RefreshData, null, TimeSpan.Zero, TimeSpan.FromSeconds(100));
+    }
+
+    private async void RefreshData(object state)
+    {
+        cartItems = await buyerService.GetCartItemsAsync(userId);
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+        cartService.OnChange -= StateHasChanged;
     }
 }                

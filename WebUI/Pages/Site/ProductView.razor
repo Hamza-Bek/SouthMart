@@ -1,9 +1,11 @@
 ﻿@page "/product-details/{product}"
 @inject IProductRepository productService
 @inject ICommentRepository commentService
+@inject IBuyerRepository buyerService
 @using Application.DTOs.Request.ProductEntity
 @using Domain.Models.ProductEntity
 @using System.Security.Claims
+@using Domain.Models.UserEntity
 
 <div class="container">
     <div class="title">PRODUCT DETAIL</div>
@@ -18,7 +20,7 @@
             <div class="price">$@item.SellingPrice</div>
             <div class="buttons">
                 <button>-</button>
-                <button>
+                    <button @onclick="() => AddPlateToCart(item.Id)">
                     Add To Cart
                     <span>
                         <svg class="" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
@@ -351,9 +353,38 @@ a{
 
     [CascadingParameter] 
     public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
-    private string userId;
+    private string userId;   
+
+    private async Task AddPlateToCart(string productId)
+    {
+        var authState = await AuthStateTask;
 
 
+
+        foreach (var claim in authState.User.Claims)
+        {
+            Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
+        }
+
+        var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+        if (userIdClaim != null)
+        {
+            userId = userIdClaim.Value;
+            var response = await buyerService.AddProductToCartAsync(productId, userId);
+            if (response.Flag)
+            {
+                Console.WriteLine("Product Added!");
+            }
+            else
+            {
+                Console.WriteLine("Failed to add product");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Failed to add product");
+        }
+    }
 
     protected override async Task OnParametersSetAsync()
     {

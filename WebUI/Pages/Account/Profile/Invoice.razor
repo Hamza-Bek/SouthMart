@@ -72,7 +72,7 @@
 
 				<tr class="total">
 					<td></td>
-					<td>Total: $@order?.OrderDetails.Sum(i => i.ProductPrice)</td>
+					<td>Total: $@order?.OrderDetails.Sum(i => i.ProductPrice * i.Quantity)</td>
 				</tr>
 
 			</table>

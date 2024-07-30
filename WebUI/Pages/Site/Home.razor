@@ -378,8 +378,8 @@ else
                         <span class="badge bg-success position-absolute m-3">-30%</span>
                         <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
                         <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-bananas.png"  class="tab-image">
+                                                    <a @onclick="() => NavigateToProductDetails(product.Id)" title="Product Title">
+                                                        <img  src="imgs/thumb-bananas.png" class="tab-image">
                           </a>
                         </figure>
                         <h3>@product.Name</h3>
@@ -1994,4 +1994,8 @@ else
         NavManager.NavigateTo($"/menu/{categoryTag}");
     }
 
+    private void NavigateToProductDetails(string product)
+    {
+        NavManager.NavigateTo($"/product-details/{product}");
+    }
 }

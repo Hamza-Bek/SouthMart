@@ -10,7 +10,7 @@ namespace WebAPI.Controllers
     public class BuyersController(IBuyerRepository _buyerRepository) : Controller
     {
 
-        [HttpPost("add-product-cart")]
+        [HttpPost("add-product-cart/{productId}/{userId}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ProductDTO>))]
         public async Task<IActionResult> AddProductToCart(string productId, string userId)
         {
