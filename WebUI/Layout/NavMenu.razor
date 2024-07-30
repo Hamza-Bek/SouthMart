@@ -200,8 +200,7 @@
     private string userId;
     private string cartId;
     private IEnumerable<CartItem> cartItems = new List<CartItem>();
-    private bool isLoading = true;
-    private Timer timer;
+    private bool isLoading = true;    
 
 
     protected override async Task OnInitializedAsync()
@@ -219,21 +218,9 @@
             userId = userIdClaim.Value;
             cartId = userCartIdClaim.Value;
             cartItems = await buyerService.GetCartItemsAsync(userId);
-
         }
-        isLoading = false;
-        timer = new Timer(RefreshData, null, TimeSpan.Zero, TimeSpan.FromSeconds(100));
+        isLoading = false;        
     }
 
-    private async void RefreshData(object state)
-    {
-        cartItems = await buyerService.GetCartItemsAsync(userId);
-        InvokeAsync(StateHasChanged);
-    }
-
-    public void Dispose()
-    {
-        timer?.Dispose();
-        cartService.OnChange -= StateHasChanged;
-    }
+   
 }                
