@@ -66,9 +66,27 @@ namespace Application.Services
             }
         }
 
-        public Task<BuyerResponse> RemoveProductFromCartAsync(string productId, string userId)
+        public async Task<BuyerResponse> RemoveProductFromCartAsync(string productId, string userId)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                var response = await _httpClient.DeleteAsync($"api/buyers/remove-product/{productId}/{userId}");
+                
+                if (response.IsSuccessStatusCode)
+                {
+
+                    return new BuyerResponse { Flag = true, Message = "Item deleted successfully." };
+                }
+                else
+                {
+                    return new BuyerResponse { Flag = false, Message = "Failed to remove the plate!" };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new BuyerResponse { Flag = false, Message = ex.Message };
+            }
         }
 
         private static string CheckResponseStatus(HttpResponseMessage response)
@@ -96,12 +114,6 @@ namespace Application.Services
             {
                 throw new Exception(ex.Message);
             }
-
-
-
-
-
-
         }
     }
 }

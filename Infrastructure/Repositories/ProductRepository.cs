@@ -57,7 +57,8 @@ namespace Infrastructure.Repositories
                     Quantity = model.Quantity,
                     Cost = model.Cost,
                     SellingPrice = model.SellingPrice,
-                    SellerId = userId
+                    SellerId = userId,
+                    AddedDate = DateTime.Now,
                 };
 
                 _context.Products.Add(pr);
@@ -118,22 +119,7 @@ namespace Infrastructure.Repositories
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return new ProductResponse(true, "Product Deleted!");
-        }
-
-        public async Task<List<ProductDTO>> GetProductBySeller(string userId)
-        {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-                Console.WriteLine("User not found!");
-
-            var products = await _context.Products
-            .Where(p => p.SellerId == userId)
-            .ToListAsync();
-
-            var productDtos = products.Select(p => _mapper.Map<ProductDTO>(p)).ToList();
-
-            return productDtos;
-        }
+        }   
 
         public async Task<ProductResponse> AddCategoryAsync(CategoryDTO model)
         {
@@ -152,34 +138,9 @@ namespace Infrastructure.Repositories
             return new ProductResponse(true, "Category added successfully");
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetAllCategories() => (IEnumerable<CategoryDTO>)await _context.Categories.AsNoTracking().ToListAsync();
+       
+    
 
-        public async Task<IEnumerable<ProductDTO>> GetProducts() => (IEnumerable<ProductDTO>)await _context.Products.AsNoTracking().ToListAsync();
-
-        public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(string categoryTag)
-        {
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryTag == categoryTag);
-            if (category == null)
-                return Enumerable.Empty<Product>();
-
-            var products = await _context.Products
-                .Where(p => p.Category == category.CategoryTag)
-                .ToListAsync();
-
-            return products;
-        }
-
-        public async Task<IEnumerable<Product>> GetProductByIdAsync(string product)
-        {
-            var getProduct = await _context.Products.FirstOrDefaultAsync(p => p.Id == product);
-            if(getProduct == null)
-                return Enumerable.Empty<Product>();
-
-            var data = await _context.Products
-                .Where(n => n.Name == getProduct.Name)
-                .ToListAsync();
-
-            return data;
-        }
+      
     }
 }

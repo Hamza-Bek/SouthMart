@@ -14,9 +14,12 @@ namespace Domain.Models.ProductEntity
         public string Name { get; set; }
         public string? Description { get; set; }
         public int? Quantity { get; set; }
+        public int TotalSold { get; set; }
         public decimal? Cost { get; set; }
         public decimal? SellingPrice { get; set; }
         public string? Category { get; set; }
+        public DateTime AddedDate { get; set; }
+
         public string SellerId { get; set; }
         public ApplicationUser Seller { get; set; }
 

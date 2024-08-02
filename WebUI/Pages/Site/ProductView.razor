@@ -1,5 +1,5 @@
 ﻿@page "/product-details/{product}"
-@inject IProductRepository productService
+@inject IMenuRepository menuService
 @inject ICommentRepository commentService
 @inject IBuyerRepository buyerService
 @using Application.DTOs.Request.ProductEntity
@@ -398,7 +398,7 @@ a{
 
     private async Task LoadProductDetail()
     {
-        ProductDetail = await productService.GetProductByIdAsync(product);
+        ProductDetail = await menuService.GetProductByIdAsync(product);
     }
 
     private async Task GetComments()

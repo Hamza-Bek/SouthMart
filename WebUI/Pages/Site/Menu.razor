@@ -1,6 +1,6 @@
 ﻿@page "/menu/{categoryTag}"
 @using Domain.Models.ProductEntity
-@inject IProductRepository productService
+@inject IMenuRepository menuService
 <section class="py-5">
     <div class="container-fluid">
 
@@ -74,7 +74,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        Products = (await productService.GetProductsByCategoryAsync(CategoryTag)).ToList();
+        Products = (await menuService.GetProductsByCategoryAsync(CategoryTag)).ToList();
     }
 
     private void NavigateToProductDetails(string product)

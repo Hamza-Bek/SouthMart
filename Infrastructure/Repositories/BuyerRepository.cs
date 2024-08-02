@@ -60,6 +60,46 @@ namespace Infrastructure.Repositories
             return new BuyerResponse(true, "Product added to the cart!");
         }
 
+        public async Task<BuyerResponse> RemoveProductFromCartAsync(string productId, string userId)
+        {
+            var product = await _context.Products.FindAsync(productId);
+            if (product == null)
+                return new BuyerResponse(false, "Product not found");
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return new BuyerResponse(false, "User not found");
+
+
+            var userCart = await _context.Carts
+                .Include(p => p.CartItems)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+            if (userCart == null)
+                return new BuyerResponse(false, "Cart not found");
+
+            var itemToRemove = await _context.CartItems
+                .FirstOrDefaultAsync(ci => ci.ProductId == product.Id && ci.CartId == user.CartId);
+
+            if (itemToRemove == null)
+                return new BuyerResponse(false, "Product not found");
+
+            if (itemToRemove.Quantity > 1)
+            {
+                itemToRemove.Quantity--;
+                itemToRemove.Total = itemToRemove.Total - itemToRemove.ProductPrice;
+                userCart.CartTotal = (decimal)itemToRemove.Total;
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                _context.CartItems.Remove(itemToRemove);
+            }
+
+            await _context.SaveChangesAsync();
+            return new BuyerResponse(true, "The product have been removed from the cart!");
+
+        }
+
         public async Task<Cart> GetCartAsync(string userId)
         {
             return await _context.Carts
@@ -91,44 +131,6 @@ namespace Infrastructure.Repositories
             return userCartItems;
         }
 
-        public async Task<BuyerResponse> RemoveProductFromCartAsync(string productId, string userId)
-        {
-            var product = await _context.Products.FindAsync(productId);
-            if (product == null)
-                return new BuyerResponse(false, "Product not found");
-
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-                return new BuyerResponse(false, "User not found");
-
-
-            var userCart = await _context.Carts
-                .Include(p => p.CartItems)
-                .FirstOrDefaultAsync (c => c.UserId == userId);
-            if (userCart == null)
-                return new BuyerResponse(false, "Cart not found");
-
-            var itemToRemove = await _context.CartItems
-                .FirstOrDefaultAsync(ci => ci.ProductId == product.Id && ci.CartId == user.CartId);
-
-            if (itemToRemove == null)
-                return new BuyerResponse(false, "Product not found");
-
-            if (itemToRemove.Quantity > 1)
-            {
-                itemToRemove.Quantity--;
-                itemToRemove.Total = itemToRemove.Total - itemToRemove.ProductPrice;
-                userCart.CartTotal = (decimal)itemToRemove.Total;
-                await _context.SaveChangesAsync();
-            }
-            else
-            {
-                _context.CartItems.Remove(itemToRemove);
-            }
-
-            await _context.SaveChangesAsync();
-            return new BuyerResponse(true, "The product have been removed from the cart!");
-
-        }
+        
     }
 }

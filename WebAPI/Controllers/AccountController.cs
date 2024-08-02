@@ -47,6 +47,13 @@ namespace WebAPI.Controllers
             return Ok(await _account.RefreshTokenAsync(model));
         }
 
+        [HttpGet("get-user/{userId}")]
+        public async Task<ActionResult<GetUserDTO>> GetUser(string userId)
+        {
+            var data = await _account.GetUserAsync(userId);
+            return Ok(data);
+        }
+
         [HttpPost("identity/change-role")]
         public async Task<ActionResult<GeneralResponse>> ChangeUserRole(ChangeUserRoleDTO model)
             => Ok(await _account.ChangeUserRoleAsync(model));

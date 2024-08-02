@@ -1,0 +1,63 @@
+﻿@page "/orders/history"
+@using Application.DTOs.Request.OrderEntity
+@using Domain.Models.UserEntity
+@using System.Security.Claims
+@inject IOrderRepository orderService
+
+<div class="container">
+    <h2>Orders History <small>all orders made by you</small></h2>
+    <ul class="responsive-table">
+        <li class="table-header">
+            <div class="col col-1">Number</div>
+            <div class="col col-2">Ordered On</div>
+            <div class="col col-3">Total</div>
+            <div class="col col-4">Status</div>
+            <div class="col col-5"></div>
+        </li>
+        @foreach(var order in orders)
+        {
+            <li class="table-row">
+                <div class="col col-1" data-label="Order Number">@order.OrderNumber</div>
+                <div class="col col-2" data-label="Ordered On">@order.OrderDate</div>
+                <div class="col col-3" data-label="Total">@order.OrderTotal</div>
+                <div class="col col-4" data-label="Status">@order.OrderStatus</div>
+                <div class="col col-5 invoice-link" data-label="Invoice" @onclick="() => NavigateToProductDetails(order.OrderId)"> Invoice </div>
+            </li>
+        }
+    
+      
+    </ul>
+</div>
+
+<link rel="stylesheet" type="text/css" href="css/OrderHistoryStyle.css">
+@code {
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
+    private string userId;
+    private string cartId;
+    private IEnumerable<OrderDTO> orders = new List<OrderDTO>();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateTask;
+        foreach (var claim in authState.User.Claims)
+        {
+            Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
+        }
+
+        var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+        var userCartIdClaim = authState.User.FindFirst(c => c.Type == "CartId");
+        if (userIdClaim != null)
+        {
+            userId = userIdClaim.Value;
+            cartId = userCartIdClaim.Value;
+            orders = await orderService.GetUserOrdersAsync(userId);
+        }
+        isLoading = false;
+    }
+
+    private void NavigateToProductDetails(string orderId)
+    {
+        NavManager.NavigateTo($"/invoice/{orderId}");
+    }
+}

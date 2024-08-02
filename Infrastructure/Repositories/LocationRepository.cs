@@ -45,6 +45,29 @@ namespace Infrastructure.Repositories
 
         }
 
+        public async Task<GeneralResponse> UpdateLocationAsync(LocationDTO model)
+        {
+            try
+            {
+                if (model == null || string.IsNullOrEmpty(model.ApplicationUserId))
+                    return new GeneralResponse(false, "Can not insert null values");
+
+                var location = await _context.Locations.FindAsync(model.LocationId);
+                if (location == null)
+                    return new GeneralResponse(false, "Location not found");
+
+                _mapper.Map(model, location);
+
+                _context.Locations.Update(location);
+                await _context.SaveChangesAsync();
+                return new GeneralResponse(true, "Location changed successfully");
+            }
+            catch (Exception ex)
+            {
+                return new GeneralResponse(false, $"Error : {ex.Message} ");
+            }
+        }
+
         public async Task<IEnumerable<LocationDTO>> GetLocation(string userId)
         {
             var getUser = await _context.Users.FindAsync(userId);
@@ -77,27 +100,6 @@ namespace Infrastructure.Repositories
             return new List<LocationDTO> { locationDTO };
         }
 
-        public async Task<GeneralResponse> UpdateLocationAsync(LocationDTO model)
-        {
-            try
-            {
-                if (model == null || string.IsNullOrEmpty(model.ApplicationUserId))
-                    return new GeneralResponse(false, "Can not insert null values");
-
-                var location = await _context.Locations.FindAsync(model.LocationId);
-                if(location == null)
-                    return new GeneralResponse(false , "Location not found");
-
-                _mapper.Map(model, location);
-
-                _context.Locations.Update(location);
-                await _context.SaveChangesAsync();
-                return new GeneralResponse(true, "Location changed successfully");
-            }
-            catch (Exception ex)
-            {
-                return new GeneralResponse(false, $"Error : {ex.Message} ");
-            }
-        }
+        
     }
 }

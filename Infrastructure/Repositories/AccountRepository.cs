@@ -20,20 +20,33 @@ using Domain.Models.UserEntity;
 
 namespace Infrastructure.Repositories
 {
-    public class AccountRepository(
-         UserManager<ApplicationUser> userManager,
-         RoleManager<IdentityRole> roleManager,
-         SignInManager<ApplicationUser> signInManager,
-         AppDbContext _context,
-         IConfiguration config) : IAccountRepository
+    public class AccountRepository : IAccountRepository
 
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly AppDbContext _context;
+        private readonly IConfiguration _config;
+        
+        public AccountRepository
+            (UserManager<ApplicationUser> userManager , RoleManager<IdentityRole> roleManager, 
+            SignInManager<ApplicationUser> signInManager,
+            AppDbContext context,
+            IConfiguration config)
+        {
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _signInManager = signInManager;
+            _context = context;
+            _config = config;
+        }
 
         private async Task<ApplicationUser> FindUserByEmailAsync(string email)
             => await userManager.FindByEmailAsync(email);
 
         private async Task<IdentityRole> FindRoleByNameAsync(string roleName)
-            => await roleManager.FindByNameAsync(roleName);
+            => await _roleManager.FindByNameAsync(roleName);
 
         public async Task<GeneralResponse> ChangeUserRoleAsync(ChangeUserRoleDTO model)
         {
@@ -41,14 +54,14 @@ namespace Infrastructure.Repositories
             if (await FindUserByEmailAsync(model.UserEmail) is null) return new GeneralResponse(false, "User not found");
 
             var user = await FindUserByEmailAsync(model.UserEmail);
-            var preRole = (await userManager.GetRolesAsync(user)).FirstOrDefault();
-            var removeOldRole = await userManager.RemoveFromRoleAsync(user, preRole!);
+            var preRole = (await _userManager.GetRolesAsync(user)).FirstOrDefault();
+            var removeOldRole = await _userManager.RemoveFromRoleAsync(user, preRole!);
             var error = CheckResponse(removeOldRole);
             
             if (!string.IsNullOrEmpty(error))
                 return new GeneralResponse(false, error);
 
-            var result = await userManager.AddToRoleAsync(user, model.RoleName);
+            var result = await _userManager.AddToRoleAsync(user, model.RoleName);
             var respone = CheckResponse(result);
 
             if (!string.IsNullOrEmpty(error))
@@ -84,7 +97,7 @@ namespace Infrastructure.Repositories
 
                 const string defaultRole = "User";
 
-                var result = await userManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
 
                 string error = CheckResponse(result);
                 if (!string.IsNullOrEmpty(error)) return new GeneralResponse(false, error);
@@ -121,7 +134,7 @@ namespace Infrastructure.Repositories
             {
                 if ((await FindRoleByNameAsync(model.Name!)) == null)
                 {
-                    var response = await roleManager.CreateAsync(new IdentityRole(model.Name!));
+                    var response = await _roleManager.CreateAsync(new IdentityRole(model.Name!));
                     var error = CheckResponse(response);
                     
                     if (!string.IsNullOrEmpty(error)) 
@@ -147,7 +160,7 @@ namespace Infrastructure.Repositories
                 SignInResult result;
                 try
                 {
-                    result = await signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+                    result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
                 }
                 catch
                 {
@@ -182,10 +195,13 @@ namespace Infrastructure.Repositories
         public async Task<LoginResponse> RefreshTokenAsync(RefreshTokenDTO model)
         {
             var token = await _context.RefreshTokens.FirstOrDefaultAsync(t => t.Token == model.Token);
+
             if (token == null) return new LoginResponse();
-            var user = await userManager.FindByIdAsync(token.UserId);
+            var user = await _userManager.FindByIdAsync(token.UserId);
+
             string newToken = await GenerateToken(user);
             string newRefreshToken = GenerateRefreshToken();
+
             var saveResult = await SaveRefreshToken(user.Id, newRefreshToken);
             if (saveResult.Flag)
                 return new LoginResponse(true, $"{user.Name} successfully re-logged in", newToken, newRefreshToken);
@@ -224,18 +240,18 @@ namespace Infrastructure.Repositories
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.Email!),
                 new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(ClaimTypes.Role,(await userManager.GetRolesAsync(user)).FirstOrDefault()!.ToString()),
+                new Claim(ClaimTypes.Role,(await _userManager.GetRolesAsync(user)).FirstOrDefault()!.ToString()),
                 new Claim("Fullname", user.Name!),
                 new Claim("CartId", user.CartId!.ToString())
 
             };
 
-                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
                 var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(
-                    issuer: config["Jwt:Issuer"],
-                    audience: config["Jwt:Audience"],
+                    issuer: _config["Jwt:Issuer"],
+                    audience: _config["Jwt:Audience"],
                     claims: userClaims,
                     expires: DateTime.Now.AddMinutes(30),
                     signingCredentials: credentials
@@ -262,7 +278,7 @@ namespace Infrastructure.Repositories
             if (await FindRoleByNameAsync(role.Name) == null)
                 await CreateRoleAsync(role.Adapt(new CreateRoleDTO()));
 
-            IdentityResult result = await userManager.AddToRoleAsync(user, role.Name);
+            IdentityResult result = await _userManager.AddToRoleAsync(user, role.Name);
             string error = CheckResponse(result);
             if (!string.IsNullOrEmpty(error))
                 return new GeneralResponse(false, error);
@@ -270,5 +286,14 @@ namespace Infrastructure.Repositories
                 return new GeneralResponse(true, $"{user.Name} assigned to {role.Name} role");
         }
 
+        public async Task<IEnumerable<GetUserDTO>> GetUserAsync(string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user is null)
+                return null!;
+
+            var getUserDeatils = new GetUserDTO(user.Email, user.Name);
+            return new List<GetUserDTO> { getUserDeatils };
+        }
     }
 }

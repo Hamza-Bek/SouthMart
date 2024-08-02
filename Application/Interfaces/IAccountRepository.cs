@@ -19,5 +19,7 @@ namespace Application.Interfaces
         Task<LoginResponse> RefreshTokenAsync(RefreshTokenDTO model);
         Task<GeneralResponse> CreateRoleAsync(CreateRoleDTO model);
         Task<GeneralResponse> ChangeUserRoleAsync(ChangeUserRoleDTO model);
+
+        Task<IEnumerable<GetUserDTO>> GetUserAsync(string userId);
     }
 }

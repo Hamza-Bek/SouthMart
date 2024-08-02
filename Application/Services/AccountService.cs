@@ -90,5 +90,29 @@ namespace Application.Services
             else
                 return null;
         }
+
+        public async Task<IEnumerable<GetUserDTO>> GetUserAsync(string userId)
+        {
+            try
+            {
+                var privateClient = await httpClientService.GetPrivateClient();
+                var response = await privateClient.GetAsync($"api/account/get-user/{userId}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Log the status code or error for debugging purposes
+                    var error = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"HTTP Error: {response.StatusCode}, Details: {error}");
+                }
+
+                var result = await response.Content.ReadFromJsonAsync<IEnumerable<GetUserDTO>>();
+                return result ?? Enumerable.Empty<GetUserDTO>();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (if you have a logging mechanism)
+                throw new Exception($"Error fetching user details: {ex.Message}");
+            }
+        }
     }
 }

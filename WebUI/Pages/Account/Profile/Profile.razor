@@ -1,4 +1,11 @@
 ﻿@page "/profile"
+@using Application.DTOs.Request.Account
+@using Application.DTOs.Request.OrderEntity
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@inject ILocationRepository locationService
+@inject IAccountRepository accountService
+@attribute [Authorize]
 
 <div class="demo-page">
     <div class="demo-page-navigation">
@@ -73,18 +80,19 @@
                     </button>
                 </div>
                 <div class="user-info">
-                    <div class="nice-form-group">
-                        <label>Name</label>
-                        <input type="text" placeholder="User's name" />
-                    </div>
-                    <div class="nice-form-group">
-                        <label>Email</label>
-                        <input type="email" placeholder="User's email" />
-                    </div>
-                    <div class="nice-form-group">
-                        <label>Phone Number</label>
-                        <input type="tel" placeholder="User's phone number" />
-                    </div>
+                    @foreach (var info in user)
+                    {
+                        <div class="nice-form-group">
+                            <label>username</label>
+                            <input type="text" placeholder="@info.Username" read />
+                        </div>
+
+                        <div class="nice-form-group">
+                            <label>Email</label>
+                            <small>With additional information below the label</small>
+                            <input type="text" placeholder="@info.UserEmail" readonly />
+                        </div>
+                    }
                 </div>
             </div>
 
@@ -115,43 +123,39 @@
             </h1>
             <p>All available input types are included</p>
 
-            <div class="nice-form-group">
-                <label>Phone Number</label>
-                <input type="tel" placeholder="+2012345678" value="" />
-            </div>
+            <EditForm Model="location" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-            <div class="nice-form-group">
-                <label>Country</label>
-                <input type="text" placeholder="Cairo" value="" />
-            </div>
+                <div class="nice-form-group">
+                    <label>Phone</label>
+                    <InputText type="tel" @bind-Value="location.PhoneNumber" placeholder="Phone number" />
+                </div>
 
-            <div class="nice-form-group">
-                <label>Street</label>
-                <input type="text" placeholder="Nile-street" value="" />
-            </div>
+                <div class="nice-form-group">
+                    <label>Country</label>
+                    <InputText type="text" @bind-Value="location.Country" placeholder="Country" />
+                </div>
 
-            <div class="nice-form-group">
-                <label>Building</label>
-                <input type="url" placeholder="22" value="" />
-            </div>
+                <div class="nice-form-group">
+                    <label>Street</label>
+                    <InputText type="text" @bind-Value="location.Street" placeholder="Street number" />
+                </div>
 
-            <div class="nice-form-group">
-                <label>Floor</label>
-                <input type="text" placeholder="1" />
-            </div>
-           
-            <details>
-                <summary>
-                    <div class="toggle-code">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-code">
-                            <polyline points="16 18 22 12 16 6" />
-                            <polyline points="8 6 2 12 8 18" />
-                        </svg>
-                        Add Location
-                    </div>
-                </summary>
-                <script src="https://gist.github.com/nielsVoogt/e25c9c8f2b8456bbd1239b775d21333f.js"></script>
-            </details>
+                <div class="nice-form-group">
+                    <label>Building</label>
+                    <InputText type="text" @bind-Value="location.Building" placeholder="Building number" />
+                </div>
+
+                <div class="nice-form-group">
+                    <label>Floor</label>
+                    <InputText type="text" @bind-Value="location.Floor" placeholder="Floor number" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    @(hasLocation ? "Update Location" : "Add Location")
+                </button>
+            </EditForm>
         </section>    
 
         <section id="seller" >
@@ -214,5 +218,88 @@
 <link rel="stylesheet" type="text/css" href="css/ProfileForm.css">
 
 @code {
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
+    private string userId;    
+    private IEnumerable<GetUserDTO> user;
+    public LocationDTO location = new LocationDTO();
+    private bool isLoading = true;
+    private bool hasLocation = false;
 
+
+    private async Task HandleValidSubmit()
+    {
+        Console.WriteLine($"Location Details: Phone = {location.PhoneNumber}, Country = {location.Country}, Street = {location.Street}, Building = {location.Building}, Floor = {location.Floor}");
+        Console.WriteLine($"Has Location: {hasLocation}");
+
+        if (hasLocation)
+        {
+            location.ApplicationUserId = userId;  // Ensure ApplicationUserId is set
+
+            var result = await locationService.UpdateLocationAsync(location);
+            Console.WriteLine($"Update Result: Success = {result.Flag}, Message = {result.Message}");
+
+            if (result.Flag)
+            {
+                await js.InvokeVoidAsync("alert", "Location updated successfully");
+                NavManager.NavigateTo("/client/cart/home");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to update location: {result.Message}");
+            }
+        }
+        else
+        {
+            location.LocationId = Guid.NewGuid().ToString();
+            location.ApplicationUserId = userId;  // Ensure ApplicationUserId is set
+
+            var result = await locationService.AddLocationAsync(location);
+            Console.WriteLine($"Add Result: Success = {result.Flag}, Message = {result.Message}");
+
+            if (result.Flag)
+            {
+                await js.InvokeVoidAsync("alert", "New location added successfully");
+                NavManager.NavigateTo("/checkout");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to add location: {result.Message}");
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthStateTask;
+
+            foreach (var claim in authState.User.Claims)
+            {
+                Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
+            }
+
+            var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+            var userCartIdClaim = authState.User.FindFirst(c => c.Type == "CartId");
+            if (userIdClaim != null)
+            {
+                userId = userIdClaim.Value;
+            }
+
+            user = await accountService.GetUserAsync(userId);
+            var userLocations = await locationService.GetLocation(userId);
+            if (userLocations != null && userLocations.Any())
+            {
+                location = userLocations.First();
+                hasLocation = true;
+            }
+
+            isLoading = false;
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions (e.g., show error message)
+            Console.WriteLine($"Error fetching orders: {ex.Message}");
+        }
+    }
 }

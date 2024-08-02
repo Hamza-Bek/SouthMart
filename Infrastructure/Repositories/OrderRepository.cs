@@ -162,6 +162,8 @@ namespace Infrastructure.Repositories
                      .ThenInclude(s => s.SellerAccount) // Then include the SellerAccount
                      .FirstOrDefaultAsync(p => p.Id == orderDetail.ProductId);
 
+                    if(product.Quantity == 0)
+                        return new OrderResponse(false, "product not found");
 
                     if (product != null)
                     {
@@ -171,7 +173,7 @@ namespace Infrastructure.Repositories
                             product.Quantity -= orderDetail.Quantity;
                             sellerAccount.Revenue += (decimal)(product.SellingPrice - product.Cost);
                             sellerAccount.GrossSales += (decimal)(product.SellingPrice);
-
+                            product.TotalSold = (product.TotalSold) + (orderDetail.Quantity ?? 0);
                             _context.Entry(product).State = EntityState.Modified;
                             _context.Entry(sellerAccount).State = EntityState.Modified;
                         }
@@ -186,7 +188,7 @@ namespace Infrastructure.Repositories
 
                 _context.Orders.Add(order);
                 await _context.SaveChangesAsync();
-
+                
                 return new OrderResponse(true, "Order placed successfully");
             }
             catch (DbUpdateException ex)

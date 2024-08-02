@@ -63,5 +63,19 @@ namespace WebAPI.Controllers
             var data = await _buyerRepository.GetCartItemsAsync(userId);
             return Ok(data);
         }
+
+        [HttpDelete("remove-product/{productId}/{userId}")]
+        public async Task<IActionResult> RemoveProduct(string productId , string userId)
+        {
+            try
+            {
+                var response = await _buyerRepository.RemoveProductFromCartAsync(productId, userId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

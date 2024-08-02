@@ -62,12 +62,11 @@
                         <li>
                             <a class="nav-link dropdown-toggle rounded-circle bg-light p-2 mx-1" role="button" id="pages" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-user large-icon"></i></a>
                             <ul class="dropdown-menu" aria-labelledby="pages">
-                                <li><a href="about.html" class="dropdown-item">Settings </a></li>
-                                <li><a href="shop.html" class="dropdown-item">Track Order </a></li>
-                                <li><a href="single-product.html" class="dropdown-item">Orders History </a></li>
-                                <li><a href="cart.html" class="dropdown-item">Cart </a></li>
-                                <li><a href="checkout.html" class="dropdown-item">Invoice </a></li>
-                                <li><a href="blog.html" class="dropdown-item"><i class="fa-solid fa-right-from-bracket" style="color: #cc0000;"> Logout</i></a></li>
+                                <li><a href="/profile" class="dropdown-item">Settings </a></li>
+                                <li><a href="/order" class="dropdown-item">Track Order </a></li>
+                                <li><a href="/orders/history" class="dropdown-item">Orders History </a></li>
+                                <li><a href="cart.html" class="dropdown-item">Cart </a></li>                                
+                                <li><a href="/logout" class="dropdown-item"><i class="fa-solid fa-right-from-bracket" style="color: #cc0000;"> Logout</i></a></li>
                             </ul>
                         </li>
                         <li>
@@ -109,13 +108,19 @@
                                 {
                                     <li class="list-group-item d-flex justify-content-between lh-sm">
                                         <div>
-                                            <h6 class="my-0">@item.ProductName</h6>
-                                            <small class="text-body-secondary">qty:@item.Quantity</small>
+                                            <h6 class="my-0 d-inline-block ml-3">@item.ProductName</h6>
+                                            <span class="mx-2">(@item.Quantity)</span>
                                         </div>
-                                        <span class="text-body-secondary">@item.ProductPrice</span>
+                                        
+                                       
+                                        <span class="text-body-secondary">
+                                            <a @onclick="() => RemoveProduct(item.ProductId, userId)"><i class="fa-solid fa-minus"></i></a>
+                                            @item.ProductPrice
+                                            <a @onclick="() => AddProduct(item.ProductId, userId)"><i class="fa-solid fa-plus"></i></a>
+                                        </span>
+                                        
+                                        
                                     </li>
-
-
                                 }
 
                                 <li class="list-group-item d-flex justify-content-between">
@@ -222,5 +227,48 @@
         isLoading = false;        
     }
 
-   
+    private async Task RemoveProduct(string productId, string userId)
+    {
+        var selectedPlate = await buyerService.GetCartItemsAsync(userId);
+
+        try
+        {
+            var response = await buyerService.RemoveProductFromCartAsync(productId, userId);
+            if (response.Flag)
+            {
+                cartItems = cartItems.Where(p => p.Id != productId).ToList();
+
+                cartItems = await buyerService.GetCartItemsAsync(userId);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting plate: {ex.Message}");
+        }
+    }
+
+    private async Task AddProduct(string productId, string userId)
+    {
+        var selectedPlate = await buyerService.GetCartItemsAsync(userId);
+
+        try
+        {
+            var response = await buyerService.AddProductToCartAsync(productId, userId);
+            if (response.Flag)
+            {
+                cartItems = cartItems.Where(p => p.Id != productId).ToList();
+
+                cartItems = await buyerService.GetCartItemsAsync(userId);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting plate: {ex.Message}");
+        }
+    }
+ 
 }                
