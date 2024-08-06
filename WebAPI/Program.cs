@@ -1,5 +1,6 @@
 using Application.Extensions;
 using Application.Interfaces;
+using Application.Services;
 using AutoMapper;
 using Domain.Models.Authentication;
 using Infrastructure.Data;
@@ -94,25 +95,30 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<IMenuRepository , MenuRepository>();
+builder.Services.AddScoped<IFilesRepository , FilesRepository>();
+
+
+// Add services to the container.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CombinedUI", policy =>
+    {
+        policy.WithOrigins("https://localhost:7147", "https://localhost:7001")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .WithHeaders(HeaderNames.ContentType);
+    });
+});
 
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors(policy =>
-    {
-        policy.WithOrigins("https://localhost:7001", "https://localhost:7001")
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .WithHeaders(HeaderNames.ContentType);
-    });
+    app.UseCors("CombinedUI");
 }
-
-app.UseCors("WebUI");
 
 app.UseHttpsRedirection();
 

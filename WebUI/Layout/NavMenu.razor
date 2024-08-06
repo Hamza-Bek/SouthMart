@@ -1,7 +1,9 @@
-﻿﻿@using Domain.Models.UserEntity
+﻿@using Application.DTOs.Request.ProductEntity
+﻿@using Domain.Models.UserEntity
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
 @inject IBuyerRepository buyerService
+@inject IMenuRepository menuService
 
 
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasSearch" aria-labelledby="Search">
@@ -35,11 +37,14 @@
         <div class="col-sm-6 offset-sm-2 offset-md-0 col-lg-5 d-none d-lg-block">
             <div class="search-bar row bg-light p-2 my-2 rounded-4">
                 <div class="col-md-4 d-none d-md-block">
-                    <select class="form-select border-0 bg-transparent">
+                    <select class="form-select border-0 bg-transparent" @onchange="NavigateToMenu">
                         <option>All Categories</option>
-                        <option>Groceries</option>
-                        <option>Drinks</option>
-                        <option>Chocolates</option>
+                        @foreach(var category in categories)
+                        {
+                            <option value="@category.CategoryTag">@category.CategoryTag</option>
+                        }
+                       
+                        
                     </select>
                 </div>
                 <div class="col-11 col-md-7">
@@ -204,12 +209,15 @@
     public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
     private string userId;
     private string cartId;
+    IEnumerable<CategoryDTO> categories;
     private IEnumerable<CartItem> cartItems = new List<CartItem>();
     private bool isLoading = true;    
 
 
     protected override async Task OnInitializedAsync()
     {
+
+        await GetCategories();
         var authState = await AuthStateTask;
         foreach (var claim in authState.User.Claims)
         {
@@ -271,4 +279,32 @@
         }
     }
  
+    private void NavigateToMenu(ChangeEventArgs e)
+    {
+        var selectedCategory = e.Value.ToString();
+        if (!string.IsNullOrEmpty(selectedCategory))
+        {
+            NavManager.NavigateTo($"/menu/{selectedCategory}");
+        }
+    } 
+
+    private async Task GetCategories()
+    {
+        try
+        {
+            categories = await menuService.GetAllCategories();
+            if (categories != null && categories.Any())
+            {
+                Console.WriteLine("Categories fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No categories found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching categories: {ex.Message}");
+        }
+    }
 }                

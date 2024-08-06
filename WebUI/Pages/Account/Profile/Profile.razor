@@ -1,10 +1,12 @@
 ﻿@page "/profile"
+@using Application.DTOs.Request
 @using Application.DTOs.Request.Account
 @using Application.DTOs.Request.OrderEntity
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
 @inject ILocationRepository locationService
 @inject IAccountRepository accountService
+@inject ISellerRepository sellerService
 @attribute [Authorize]
 
 <div class="demo-page">
@@ -172,30 +174,38 @@
                Join us NOW! and start your business with selling prooducts with us.
             </p>
 
-            <div class="nice-form-group">
-                <label>Name</label>
-                <input type="text" placeholder="Your business name" value="" class="icon-left" />
-            </div>
+            @if (sellerAccountStatus == "Pending")
+            {
+                <p>You seller account request is now under review. please wait.</p>
+            }
+            else if (sellerAccountStatus == "Approved")
+            {
+                <a href=""> Navigate to dashboard? </a>
+            }
+            else
+            {
+            <EditForm Model="@sellerAccount" OnValidSubmit="@HandleValidLocationSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-            <div class="nice-form-group">
-                <label>Email</label>
-                <input type="email" placeholder="example@example.com" value="" class="icon-left" />
-            </div>
+                <div class="nice-form-group">
+                    <label>Name</label>
+                    <InputText @bind-Value="sellerAccount.Name" placeholder="Your business name" class="icon-left" />
+                </div>
 
-            <div class="nice-form-group">
-                <label>Description</label>
-                <input type="text" placeholder="Your business description" value="" class="icon-left" />
-            </div>        
+                <div class="nice-form-group">
+                    <label>Description</label>
+                    <InputText @bind-Value="sellerAccount.Description" placeholder="Business description" class="icon-left" />
+                </div>
 
-            <div class="nice-form-group">
-                <label>Phone Number</label>
-                <input type="tel" placeholder="Your phonenumber" value="" class="icon-left" />
-            </div>
+                <div class="nice-form-group">
+                    <label>Upload Business Logo</label>
+                    <InputFile OnChange="HandleFileSelected" class="icon-left" />
+                </div>
 
-            <div class="nice-form-group">
-                <label>Upload Business Logo</label>
-                <input type="file" accept="image/*" class="icon-left" />
-            </div>
+                <button type="submit" class="btn btn-primary">Apply for Seller Account</button>
+            </EditForm>
+            }
 
             <details>
                 <summary>
@@ -224,6 +234,9 @@
     public LocationDTO location = new LocationDTO();
     private bool isLoading = true;
     private bool hasLocation = false;
+    private SellerAccountDTO sellerAccount = new SellerAccountDTO();
+    private string sellerAccountStatus;
+    private string errorMessage;
 
 
     private async Task HandleValidSubmit()
@@ -294,6 +307,13 @@
                 hasLocation = true;
             }
 
+            var sellerAccount = await sellerService.GetSellerAccountAsync(userId);
+            if (sellerAccount != null)
+            {
+                sellerAccountStatus = sellerAccount.Status;
+            }
+
+
             isLoading = false;
         }
         catch (Exception ex)
@@ -302,4 +322,31 @@
             Console.WriteLine($"Error fetching orders: {ex.Message}");
         }
     }
+
+    private async Task HandleValidLocationSubmit()
+    {
+        sellerAccount.SellerId = userId;
+        sellerAccount.Id = Guid.NewGuid().ToString();
+        var response = await sellerService.CreateSellerAccountAsync(sellerAccount);
+        if (response.Flag)
+        {
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = response.Message;
+        }
+    }
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            using var stream = file.OpenReadStream();
+            var buffer = new byte[file.Size];
+            await stream.ReadAsync(buffer, 0, (int)file.Size);
+        }
+    }
+
 }

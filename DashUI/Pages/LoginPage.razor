@@ -1,0 +1,49 @@
+﻿@page "/"
+@using Application.DTOs.Request.Account
+@using Application.Extensions
+@using Application.Interfaces
+@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager NavManager
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IAccountRepository accountService
+
+<div class="login-page">
+    <div class="form">  
+        <EditForm Model="@User" OnValidSubmit="@HandleLogin" class="login-form">
+            <InputText @bind-Value="User.Email" placeholder="Email" class="input" />
+            <InputText @bind-Value="User.Password" placeholder="Password" type="password" />
+            <button>login</button>
+            <p class="message">Not registered? <a href="#">Create an account</a></p>
+        </EditForm>
+    </div>
+</div>
+
+<link rel="stylesheet" href="css/LoginStyle.css">
+
+
+
+
+
+    @code {
+        public LoginDTO User { get; set; } = new();
+
+
+        async Task HandleLogin()
+        {
+
+            var response = await accountService.LoginSellerAccountAsync(User);
+            if (response.Flag)
+            {
+
+
+                var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+                await customAuthStateProvider.UpdateAuthenticationState(new LocalStorageDTO()
+                {
+                    Token = response.Token,
+                    Refresh = response.RefreshToken
+                });
+                NavManager.NavigateTo("/home", forceLoad: true);
+            }
+            return;
+        }
+    }

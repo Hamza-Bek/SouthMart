@@ -20,6 +20,15 @@ namespace WebAPI.Controllers
             return Ok(await _account.LoginAccountAsync(model));
         }
 
+        [HttpPost("identity/login/seller")]
+        public async Task<ActionResult<GeneralResponse>> LoginSellerAccount(LoginDTO model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Model user cannot be null!");
+
+            return Ok(await _account.LoginSellerAccountAsync(model));
+        }
+
         [HttpPost("identity/create")]
         public async Task<ActionResult<GeneralResponse>> CreateAccount(CreateAccountDTO model)
         {

@@ -113,5 +113,21 @@ namespace Application.Services
                 return Enumerable.Empty<ProductDTO>();
             }
         }
+
+        public async Task<IEnumerable<ProductDTO>> GetRandomProductsAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("api/menu/get-random-products");
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadFromJsonAsync<IEnumerable<ProductDTO>>();
+                return data ?? Enumerable.Empty<ProductDTO>();
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex)
+                return Enumerable.Empty<ProductDTO>();
+            }
+        }
     }
 }

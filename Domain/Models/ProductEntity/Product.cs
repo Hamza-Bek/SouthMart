@@ -20,6 +20,8 @@ namespace Domain.Models.ProductEntity
         public string? Category { get; set; }
         public DateTime AddedDate { get; set; }
 
+        public ICollection<Image> Images { get; set; } = new List<Image>();
+
         public string SellerId { get; set; }
         public ApplicationUser Seller { get; set; }
 

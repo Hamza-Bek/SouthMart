@@ -107,5 +107,19 @@ namespace Infrastructure.Repositories
                 return Enumerable.Empty<ProductDTO>();
             }
         }
+
+        public async Task<IEnumerable<ProductDTO>> GetRandomProductsAsync()
+        {
+            int numberOfRandomProducts = 10;
+
+            var randomProducts = await _context.Products
+                                               .OrderBy(r => Guid.NewGuid()) // Use Guid.NewGuid() to randomize the order
+                                               .Take(numberOfRandomProducts)
+                                               .ToListAsync();
+
+            var randomProductDTOs = _mapper.Map<IEnumerable<ProductDTO>>(randomProducts);
+
+            return randomProductDTOs;
+        }
     }
 }

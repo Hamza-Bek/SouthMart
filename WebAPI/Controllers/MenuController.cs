@@ -82,5 +82,20 @@ namespace WebAPI.Controllers
             }
 
         }
+
+        [HttpGet("get-random-products")]
+        public async Task<IActionResult> GetRandomProducts()
+        {
+            try
+            {
+                var data = await _menuRepository.GetRandomProductsAsync();
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
     }
 }

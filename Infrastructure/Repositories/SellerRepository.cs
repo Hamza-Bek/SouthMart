@@ -27,25 +27,20 @@ namespace Infrastructure.Repositories
                 if (adminRole == null)
                     throw new Exception("Admin role not found.");
 
-                // Get the users in the "Admin" role
                 var adminUsers = await _userManager.GetUsersInRoleAsync(adminRole.Name);
                 if (adminUsers == null || !adminUsers.Any())
                     throw new Exception("No users found with the Admin role.");
 
                 var userIds = adminUsers.Select(u => u.Id).ToList();
 
-                var map = _mapper.Map<SellerAccount>(model);
-
-                var userId = model.SellerId;
-                var user = await _context.Users.FindAsync(userId);
-
+                var user = await _context.Users.FindAsync(model.SellerId);
                 if (user == null)
                     return new SellerResponse(false, "User not found");
 
                 if (model == null)
-                    return new SellerResponse(false, "Can not inster null values");
+                    return new SellerResponse(false, "Cannot insert null values");
 
-                var acc = new SellerAccount()
+                var acc = new SellerAccount
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = model.Name,
@@ -53,7 +48,7 @@ namespace Infrastructure.Repositories
                     DateCreated = DateTime.Now,
                     GrossSales = 0,
                     Revenue = 0,
-                    SellerId = userId,                    
+                    SellerId = model.SellerId,
                     Status = "Pending"
                 };
 
@@ -70,9 +65,12 @@ namespace Infrastructure.Repositories
             }
             catch (Exception ex)
             {
+                // Log the exception (you can use a logging framework like Serilog)
+                // For now, just output to console
+                Console.WriteLine($"Exception: {ex.Message}");
                 return new SellerResponse(false, $"Error : {ex.Message}");
             }
-          
+
         }
 
         public async Task<SalesResponse> GetSalesForCurrentMonthAsync(string sellerId)

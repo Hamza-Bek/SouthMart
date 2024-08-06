@@ -15,6 +15,7 @@ namespace Application.DTOs.Request
         public decimal GrossSales { get; set; }
         public decimal Revenue { get; set; }
         public string SellerId { get; set; }
+        public DateTime DateCreated { get; set; }
         public string Status { get; set; }
     }
 }

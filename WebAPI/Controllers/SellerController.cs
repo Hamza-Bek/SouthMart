@@ -42,10 +42,20 @@ namespace WebAPI.Controllers
         {
             try
             {
+                if (model == null)
+                {
+                    return BadRequest("Invalid data.");
+                }
+
                 var result = await _sellerRepository.CreateSellerAccountAsync(model);
+                if (!result.Flag)
+                {
+                    return BadRequest(result.Message);
+                }
+
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

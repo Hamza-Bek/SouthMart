@@ -17,7 +17,7 @@ namespace Application.Interfaces
         Task<IEnumerable<Product>> GetProductByIdAsync(string product);
 
         // algorithms
-
+        Task<IEnumerable<ProductDTO>> GetRandomProductsAsync();
         Task<IEnumerable<ProductDTO>> GetTopSellingProductsAsync();
         Task<IEnumerable<ProductDTO>> GetNewestProductsAsync();
     }

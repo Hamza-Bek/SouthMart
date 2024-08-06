@@ -31,14 +31,14 @@ else
                 </div>
 
                 <div class="offcanvas-body">
-              
-                  <select class="filter-categories border-0 mb-0 me-5">
-                      @foreach(var category in categories)
-                            {
 
-                                <option>@category.CategoryTag</option>
+                      <select class="filter-categories border-0 mb-0 me-5" @onchange="NavigateToMenu">
+                       <option>All Categories</option>
+                      @foreach(var category in categories)
+                            {    
+                                    <option value="@category.CategoryTag">@category.CategoryTag</option>
                             }
-                        </select>
+                      </select>
               
                   <ul class="navbar-nav justify-content-end menu-list list-unstyled d-flex gap-md-3 mb-0">
                   @foreach(var category in categories)
@@ -373,426 +373,44 @@ else
                   
                     @foreach(var product in products)
                     {
-                        <div class="col">
-                      <div class="product-item">
-                        <span class="badge bg-success position-absolute m-3">-30%</span>
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
+                                        <div class="col">
+                                            <div class="product-item">
+                                                <span class="badge bg-success position-absolute m-3">-30%</span>
+                                                <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
+                                                <figure>
                                                     <a @onclick="() => NavigateToProductDetails(product.Id)" title="Product Title">
-                                                        <img  src="imgs/thumb-bananas.png" class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>@product.Name</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$@product.SellingPrice</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
+                                                        <img src="imgs/thumb-bananas.png" class="tab-image">
+                                                    </a>
+                                                </figure>
+                                                <h3>@product.Name</h3>
+                                                <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
+                                                <span class="price">$@product.SellingPrice</span>
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="input-group product-qty">
+                                                        <span class="input-group-btn">
                                                             <button type="button" class="quantity-left-minus btn btn-danger btn-number" @onclick="() => DecreaseQuantity(product.Id)" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
+                                                                <i class="fa-solid fa-minus"></i>
+                                                            </button>
+                                                        </span>
+                                                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
+                                                        <span class="input-group-btn">
                                                             <button type="button" class="quantity-right-plus btn btn-success btn-number" @onclick="() => IncreaseQuantity(product.Id)" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>                          
-                          <a @onclick="() => AddPlateToCart(product.Id)" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
+                                                                <i class="fa-solid fa-plus"></i>
+                                                            </button>
+                                                        </span>
+                                                    </div>
+                                                    <a @onclick="() => AddPlateToCart(product.Id)" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart" /></a>
+                                                </div>
+                                            </div>
+                                        </div>
                     }
 
                   </div>
                   <!-- / product-grid -->
                   
-                </div>
-
-                <div class="tab-pane fade" id="nav-fruits" role="tabpanel" aria-labelledby="nav-fruits-tab">
-                  
-                  <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-
-                    <div class="col">
-                      <div class="product-item">
-                        <span class="badge bg-success position-absolute m-3">-30%</span>
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-cucumber.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col">
-                      <div class="product-item">
-                        <span class="badge bg-success position-absolute m-3">-30%</span>
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-milk.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-                  
-                    <div class="col">
-                      <div class="product-item">
-                        <span class="badge bg-success position-absolute m-3">-30%</span>
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-orange-juice.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col">
-                      <div class="product-item">
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-raspberries.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col">
-                      <div class="product-item">
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-bananas.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col">
-                      <div class="product-item">
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-bananas.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                  <!-- / product-grid -->
-
-                </div>
-                <div class="tab-pane fade" id="nav-juices" role="tabpanel" aria-labelledby="nav-juices-tab">
-
-                  <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5">
-
-                    <div class="col">
-                      <div class="product-item">
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-cucumber.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col">
-                      <div class="product-item">
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-milk.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-                  
-                    <div class="col">
-                      <div class="product-item">
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-tomatoes.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col">
-                      <div class="product-item">
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-tomatoketchup.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col">
-                      <div class="product-item">
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-bananas.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col">
-                      <div class="product-item">
-                        <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                        <figure>
-                          <a href="single-product.html" title="Product Title">
-                            <img src="imgs/thumb-bananas.png"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>Sunstar Fresh Melon Juice</h3>
-                        <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                        <span class="price">$18.00</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <i class="fa-solid fa-plus"></i>
-                                  </button>
-                              </span>
-                          </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                  <!-- / product-grid -->
-                  
-                </div>
-                
+                </div>                            
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -875,13 +493,13 @@ else
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="input-group product-qty">
                                             <span class="input-group-btn">
-                                                <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
+                                                <button type="button" class="quantity-left-minus btn btn-danger btn-number" @onclick="() => DecreaseQuantity(product.Id)" data-type="minus">
                                                     <i class="fa-solid fa-minus"></i>
                                                 </button>
                                             </span>
                                             <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
                                             <span class="input-group-btn">
-                                                <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
+                                                <button type="button" class="quantity-right-plus btn btn-success btn-number" @onclick="() => IncreaseQuantity(product.Id)" data-type="plus">
                                                     <i class="fa-solid fa-plus"></i>
                                                 </button>
                                             </span>
@@ -928,11 +546,74 @@ else
               <div class="swiper-wrapper">
                 @foreach(var product in NewestProducts)
                 {
-
                                 <div class="product-item swiper-slide">
                                     <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
                                     <figure>
                                         <a @onclick="() => NavigateToProductDetails(product.Id)" title="Product Title">
+                                            <img src="imgs/thumb-tomatoes.png" class="tab-image">
+                                        </a>
+                                    </figure>
+                                    <h3>@product.Name</h3>
+                                    <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
+                                    <span class="price">$@product.SellingPrice</span>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="input-group product-qty">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="quantity-left-minus btn btn-danger btn-number" @onclick="() => DecreaseQuantity(product.Id)" data-type="minus">
+                                                    <i class="fa-solid fa-minus"></i>
+                                                </button>
+                                            </span>
+                                            <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="quantity-right-plus btn btn-success btn-number" @onclick="() => IncreaseQuantity(product.Id)" data-type="plus">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        <a @onclick="() => AddPlateToCart(product.Id)" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart" /></a>
+                                    </div>
+                                </div>
+                }                                      
+              </div>
+            </div>
+            <!-- / products-carousel -->
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-5 overflow-hidden">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-12">
+
+            <div class="section-header d-flex justify-content-between">
+              
+              <h2 class="section-title">Popular products</h2>
+
+              <div class="d-flex align-items-center">
+                <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
+                <div class="swiper-buttons">
+                  <button class="swiper-prev products-carousel-prev btn btn-primary">❮</button>
+                  <button class="swiper-next products-carousel-next btn btn-primary">❯</button>
+                </div>  
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+
+            <div class="products-carousel swiper">
+              <div class="swiper-wrapper">
+                @foreach(var product in RandomProducts)
+                {
+                                <div class="product-item swiper-slide">
+                                    <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
+                                    <figure>
+                                        <a href="single-product.html" title="Product Title">
                                             <img src="imgs/thumb-tomatoes.png" class="tab-image">
                                         </a>
                                     </figure>
@@ -956,267 +637,8 @@ else
                                         <a @onclick="() => AddPlateToCart(product.Id)" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart" /></a>
                                     </div>
                                 </div>
-
                             }
-                                      
-              </div>
-            </div>
-            <!-- / products-carousel -->
-
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="py-5 overflow-hidden">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-md-12">
-
-            <div class="section-header d-flex justify-content-between">
-              
-              <h2 class="section-title">Just arrived</h2>
-
-              <div class="d-flex align-items-center">
-                <a href="#" class="btn-link text-decoration-none">View All Categories →</a>
-                <div class="swiper-buttons">
-                  <button class="swiper-prev products-carousel-prev btn btn-primary">❮</button>
-                  <button class="swiper-next products-carousel-next btn btn-primary">❯</button>
-                </div>  
-              </div>
-            </div>
-            
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-
-            <div class="products-carousel swiper">
-              <div class="swiper-wrapper">
-                
-                <div class="product-item swiper-slide">
-                  <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                  <figure>
-                    <a href="single-product.html" title="Product Title">
-                      <img src="imgs/thumb-tomatoes.png"  class="tab-image">
-                    </a>
-                  </figure>
-                  <h3>Sunstar Fresh Melon Juice</h3>
-                  <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                  <span class="price">$18.00</span>
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="input-group product-qty">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                              <i class="fa-solid fa-minus"></i>
-                            </button>
-                        </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </span>
-                    </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                  </div>
-                </div>
-
-                <div class="product-item swiper-slide">
-                  <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                  <figure>
-                    <a href="single-product.html" title="Product Title">
-                      <img src="imgs/thumb-tomatoketchup.png"  class="tab-image">
-                    </a>
-                  </figure>
-                  <h3>Sunstar Fresh Melon Juice</h3>
-                  <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                  <span class="price">$18.00</span>
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="input-group product-qty">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                              <i class="fa-solid fa-minus"></i>
-                            </button>
-                        </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </span>
-                    </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                  </div>
-                </div>
-
-                <div class="product-item swiper-slide">
-                  <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                  <figure>
-                    <a href="single-product.html" title="Product Title">
-                      <img src="imgs/thumb-bananas.png"  class="tab-image">
-                    </a>
-                  </figure>
-                  <h3>Sunstar Fresh Melon Juice</h3>
-                  <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                  <span class="price">$18.00</span>
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="input-group product-qty">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                              <i class="fa-solid fa-minus"></i>
-                            </button>
-                        </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </span>
-                    </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                  </div>
-                </div>
-
-                <div class="product-item swiper-slide">
-                  <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                  <figure>
-                    <a href="single-product.html" title="Product Title">
-                      <img src="imgs/thumb-bananas.png"  class="tab-image">
-                    </a>
-                  </figure>
-                  <h3>Sunstar Fresh Melon Juice</h3>
-                  <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                  <span class="price">$18.00</span>
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="input-group product-qty">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                              <i class="fa-solid fa-minus"></i>
-                            </button>
-                        </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </span>
-                    </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                  </div>
-                </div>
-                <div class="product-item swiper-slide">
-                  <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                  <figure>
-                    <a href="single-product.html" title="Product Title">
-                      <img src="imgs/thumb-tomatoes.png"  class="tab-image">
-                    </a>
-                  </figure>
-                  <h3>Sunstar Fresh Melon Juice</h3>
-                  <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                  <span class="price">$18.00</span>
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="input-group product-qty">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                              <i class="fa-solid fa-minus"></i>
-                            </button>
-                        </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </span>
-                    </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                  </div>
-                </div>
-
-                <div class="product-item swiper-slide">
-                  <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                  <figure>
-                    <a href="single-product.html" title="Product Title">
-                      <img src="imgs/thumb-tomatoketchup.png"  class="tab-image">
-                    </a>
-                  </figure>
-                  <h3>Sunstar Fresh Melon Juice</h3>
-                  <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                  <span class="price">$18.00</span>
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="input-group product-qty">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                              <i class="fa-solid fa-minus"></i>
-                            </button>
-                        </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </span>
-                    </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                  </div>
-                </div>
-
-                <div class="product-item swiper-slide">
-                  <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                  <figure>
-                    <a href="single-product.html" title="Product Title">
-                      <img src="imgs/thumb-bananas.png"  class="tab-image">
-                    </a>
-                  </figure>
-                  <h3>Sunstar Fresh Melon Juice</h3>
-                  <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                  <span class="price">$18.00</span>
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="input-group product-qty">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                              <i class="fa-solid fa-minus"></i>
-                            </button>
-                        </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </span>
-                    </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                  </div>
-                </div>
-
-                <div class="product-item swiper-slide">
-                  <a href="#" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
-                  <figure>
-                    <a href="single-product.html" title="Product Title">
-                      <img src="imgs/thumb-bananas.png"  class="tab-image">
-                    </a>
-                  </figure>
-                  <h3>Sunstar Fresh Melon Juice</h3>
-                  <span class="rating"><i class="fa-regular fa-star"></i> 4.5</span>
-                  <span class="price">$18.00</span>
-                  <div class="d-flex align-items-center justify-content-between">
-                    <div class="input-group product-qty">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                              <i class="fa-solid fa-minus"></i>
-                            </button>
-                        </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                        <span class="input-group-btn">
-                            <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                <i class="fa-solid fa-plus"></i>
-                            </button>
-                        </span>
-                    </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"/></a>
-                  </div>
-                </div>
-                
+                                         
               </div>
             </div>
             <!-- / products-carousel -->
@@ -1555,6 +977,7 @@ else
     IEnumerable<ProductDTO> products;
     IEnumerable<ProductDTO> BestSellingProducts;
     IEnumerable<ProductDTO> NewestProducts;
+    IEnumerable<ProductDTO> RandomProducts;
     private IEnumerable<CartItem> cartItems = new List<CartItem>();
 
     protected override async Task OnInitializedAsync()
@@ -1563,6 +986,7 @@ else
         await GetProducts();
         await GetBestSellingProducts();
         await GetNewestProducts();
+        await GetRandomProducts();
     }
 
     private async Task GetCategories()
@@ -1648,6 +1072,27 @@ else
 
     }
 
+    private async Task GetRandomProducts()
+    {
+        try
+        {
+            RandomProducts = await menuService.GetRandomProductsAsync();
+            if (products != null && products.Any())
+            {
+                Console.WriteLine("Categories fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No categories found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching categories: {ex.Message}");
+        }
+
+    }
+
     private void NavigateToMenu(string categoryTag)
     {
         NavManager.NavigateTo($"/menu/{categoryTag}");
@@ -1656,6 +1101,15 @@ else
     private void NavigateToProductDetails(string product)
     {
         NavManager.NavigateTo($"/product-details/{product}");
+    }
+
+    private void NavigateToMenu(ChangeEventArgs e)
+    {
+        var selectedCategory = e.Value.ToString();
+        if (!string.IsNullOrEmpty(selectedCategory))
+        {
+            NavManager.NavigateTo($"/menu/{selectedCategory}");
+        }
     }
 
     private async Task AddPlateToCart(string productId)

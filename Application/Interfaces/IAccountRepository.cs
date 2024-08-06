@@ -11,7 +11,7 @@ namespace Application.Interfaces
 {
     public interface IAccountRepository
     {
-
+        Task<LoginResponse> LoginSellerAccountAsync(LoginDTO model);
         Task<LoginResponse> LoginAccountAsync(LoginDTO model);
         Task<GeneralResponse> CreateAccountAsync(CreateAccountDTO model);
 

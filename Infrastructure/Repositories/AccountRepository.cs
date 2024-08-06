@@ -43,7 +43,7 @@ namespace Infrastructure.Repositories
         }
 
         private async Task<ApplicationUser> FindUserByEmailAsync(string email)
-            => await userManager.FindByEmailAsync(email);
+            => await _userManager.FindByEmailAsync(email);
 
         private async Task<IdentityRole> FindRoleByNameAsync(string roleName)
             => await _roleManager.FindByNameAsync(roleName);
@@ -156,6 +156,52 @@ namespace Infrastructure.Repositories
                 var user = await FindUserByEmailAsync(model.Email);
                 if (user is null)
                     return new LoginResponse(false, "User not found");
+
+                SignInResult result;
+                try
+                {
+                    result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
+                }
+                catch
+                {
+                    return new LoginResponse(false, "Invalid credentials");
+                }
+                if (!result.Succeeded)
+                    return new LoginResponse(false, "Invalid credentials");
+
+                string jwtToken = await GenerateToken(user);
+                string refreshToken = GenerateRefreshToken();
+                if (string.IsNullOrEmpty(jwtToken) || string.IsNullOrEmpty(refreshToken))
+                {
+                    return new LoginResponse(false, "Error occured while logging in.");
+                }
+                else
+                {
+                    var saveResult = await SaveRefreshToken(user.Id, refreshToken);
+                    if (saveResult.Flag)
+                        return new LoginResponse(true, $"{user.Name} successfully logged into the system", jwtToken, refreshToken);
+                    else
+                        return new LoginResponse();
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return new LoginResponse(false, ex.Message);
+            }
+        }
+        public async Task<LoginResponse> LoginSellerAccountAsync(LoginDTO model)
+        {
+            try
+            {
+                var user = await FindUserByEmailAsync(model.Email);
+                if (user is null)
+                    return new LoginResponse(false, "User not found");
+
+                if (!await _userManager.IsInRoleAsync(user, "Seller"))
+                    return new LoginResponse(false, "User not allowed");
+
 
                 SignInResult result;
                 try

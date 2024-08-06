@@ -1,5 +1,6 @@
 ﻿@page "/product/add"
-
+@inject IProductRepository productService
+@attribute [Authorize(Roles = "Seller")]
 
 <div class="page-wrapper">
 <div class="content">

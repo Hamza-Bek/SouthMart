@@ -114,5 +114,21 @@ namespace Application.Services
                 throw new Exception($"Error fetching user details: {ex.Message}");
             }
         }
+
+        public async Task<LoginResponse> LoginSellerAccountAsync(LoginDTO model)
+        {
+            try
+            {
+                var publicClient = httpClientService.GetPublicClient();
+                var response = await publicClient.PostAsJsonAsync(Constants.LoginSellerRoute, model);
+                string error = CheckResponseStatus(response);
+                if (!string.IsNullOrEmpty(error))
+                    return new LoginResponse(Flag: false, Message: error);
+
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                return result!;
+            }
+            catch (Exception ex) { return new LoginResponse(Flag: false, Message: ex.Message); }
+        }
     }
 }

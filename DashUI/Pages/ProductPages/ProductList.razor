@@ -1,11 +1,24 @@
 ﻿@page "/product/list"
+@using Application.DTOs.Request.ProductEntity
+@using Application.Interfaces
+@using Domain.Models.UserEntity
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject IMenuRepository menuService
+@attribute [Authorize(Roles = "Seller")]
 
 <div class="page-wrapper">
 <div class="content">
 <div class="page-header">
 <div class="page-title">
-<h4>Product List</h4>
+                <h4>
+                    Product List    @foreach (var item in products)
+                    {
+                        <h>@item.Name</h>
+                    }
+                </h4>
 <h6>Manage your products</h6>
+             
 </div>
 <div class="page-btn">
 <a href="/product/add" class="btn btn-added"><img src="img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
@@ -483,6 +496,7 @@
 </div>
 
 
+
 <script src="js/bootstrap.bundle.min.js"></script>
 
 <script src="plugins/select2/js/select2.min.js"></script>
@@ -490,3 +504,59 @@
 <script src="plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="plugins/sweetalert/sweetalerts.min.js"></script>
 
+@code{
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
+    private string userId;
+    private string cartId;
+    IEnumerable<CategoryDTO> categories;
+    IEnumerable<ProductDTO> products;
+    private IEnumerable<CartItem> cartItems = new List<CartItem>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCategories();
+        await GetProducts();
+
+    }
+
+    private async Task GetCategories()
+    {
+        try
+        {
+            categories = await menuService.GetAllCategories();
+            if (categories != null && categories.Any())
+            {
+                Console.WriteLine("Categories fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No categories found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching categories: {ex.Message}");
+        }
+    }
+
+    private async Task GetProducts()
+    {
+        try
+        {
+            products = await menuService.GetProducts();
+            if (products != null && products.Any())
+            {
+                Console.WriteLine("Categories fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No categories found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching categories: {ex.Message}");
+        }
+
+    }
+}
