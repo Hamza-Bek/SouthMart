@@ -53,6 +53,20 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("get-product-by-seller/{userId}")]
+        public async Task<IActionResult> GetProductBySeller(string userId)
+        {
+            try
+            {
+                var response = await _menuRepository.GetProductBySeller(userId);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("get-top-selling-products")]
         public async Task<IActionResult> GetTopSellingProducts()
         {

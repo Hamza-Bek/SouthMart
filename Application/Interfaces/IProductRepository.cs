@@ -20,7 +20,7 @@ namespace Application.Interfaces
 
 
         // GET's METHODS
-      
+        Task<Dictionary<string, string>> GetCategoriesDicAsync();
 
     }
 }

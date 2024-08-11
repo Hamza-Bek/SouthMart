@@ -7,7 +7,6 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 
-
 namespace Infrastructure.Repositories
 {
     public class ProductRepository(AppDbContext _context, IMapper _mapper) : IProductRepository
@@ -44,7 +43,7 @@ namespace Infrastructure.Repositories
                 if (model == null)
                     return new ProductResponse(false, "Can not insert null values");
 
-                var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == model.Category);
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryTag == model.Category);
                 if (category == null)
                     return new ProductResponse(false, "Category not found!");
 
@@ -137,10 +136,12 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return new ProductResponse(true, "Category added successfully");
         }
+        
 
-       
-    
-
-      
+        public async Task<Dictionary<string, string>> GetCategoriesDicAsync()
+        {
+            var categories = await _context.Categories.AsNoTracking().ToListAsync();
+            return categories.ToDictionary(c => c.CategoryId, c => c.CategoryTag);
+        }
     }
 }

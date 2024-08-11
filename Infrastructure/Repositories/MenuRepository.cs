@@ -29,7 +29,7 @@ namespace Infrastructure.Repositories
             return data;
         }
 
-        public async Task<List<ProductDTO>> GetProductBySeller(string userId)
+        public async Task<IEnumerable<ProductDTO>> GetProductBySeller(string userId)
         {
             var user = await _context.Users.FindAsync(userId);
             if (user == null)

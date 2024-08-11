@@ -13,7 +13,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 
-builder.Services.AddAuthorizationCore();
+
 builder.Services.AddScoped<Application.Extensions.LocalStorageService>();
 
 builder.Services.AddAuthorizationCore(options =>
@@ -21,7 +21,6 @@ builder.Services.AddAuthorizationCore(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("SellerOnly", policy => policy.RequireRole("Seller"));
 });
-
 
 
 builder.Services.AddScoped<HttpClientService>();

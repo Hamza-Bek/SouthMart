@@ -30,6 +30,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 
+
 #region Connection String
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -85,6 +86,12 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 #endregion
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("SellerOnly", policy => policy.RequireRole("Seller"));
+});
 
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<ISellerRepository, SellerRepository>();

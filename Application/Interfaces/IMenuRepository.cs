@@ -10,7 +10,7 @@ namespace Application.Interfaces
 {
     public interface IMenuRepository
     {
-        Task<List<ProductDTO>> GetProductBySeller(string userId);
+        Task<IEnumerable<ProductDTO>> GetProductBySeller(string userId);
         Task<IEnumerable<CategoryDTO>> GetAllCategories();
         Task<IEnumerable<ProductDTO>> GetProducts();
         Task<IEnumerable<Product>> GetProductsByCategoryAsync(string categoryTag);

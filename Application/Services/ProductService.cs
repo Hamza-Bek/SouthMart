@@ -29,19 +29,76 @@ namespace Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<ProductResponse> AddProductAsync(ProductDTO model)
+        public async Task<ProductResponse> AddProductAsync(ProductDTO model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var data = await _httpClient.PostAsJsonAsync("api/products/add-product", model);
+                var response = await data.Content.ReadFromJsonAsync<ProductResponse>();
+                
+                if (response.Flag)
+                {
+                    return new ProductResponse { Flag = true, Message = "Plate added successfully" };
+                }
+                else
+                {
+                    return new ProductResponse { Flag = false, Message = "Failed to add plate" };
+                }
+
+            }
+
+            catch (Exception ex) 
+            { 
+                return new ProductResponse(Flag: false, Message: ex.Message);             
+            }
         }
 
-        public Task<ProductResponse> RemoveProductAsync(string productId)
+        public async Task<ProductResponse> RemoveProductAsync(string productId)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.DeleteAsync($"api/products/remove-product/{productId}");
+            if (response.IsSuccessStatusCode)
+            {
+                return new ProductResponse { Flag = true, Message = "Item deleted successfully." };
+            }
+            else
+            {
+                return new ProductResponse { Flag = false, Message = "Failed to remove the plate!" };
+            }
         }
 
-        public Task<ProductResponse> UpdateProductAsync(ProductDTO model)
+        public async Task<ProductResponse> UpdateProductAsync(ProductDTO model)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var data = await _httpClient.PutAsJsonAsync("api/products/add-product", model);
+                var response = await data.Content.ReadFromJsonAsync<ProductResponse>();
+
+                if (response.Flag)
+                {
+                    return new ProductResponse { Flag = true, Message = "Product updated successfully" };
+                }
+                else
+                {
+                    return new ProductResponse { Flag = false, Message = "Failed to edit Product" };
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+                return new ProductResponse(Flag: false, Message: ex.Message);
+            }
+        }
+
+        public async Task<Dictionary<string, string>> GetCategoriesDicAsync()
+        {
+            var response = await _httpClient.GetAsync("api/products/get-category-dic");
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                return data!;
+            }
+            throw new Exception();
         }
     }
 }

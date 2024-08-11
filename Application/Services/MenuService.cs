@@ -45,9 +45,19 @@ namespace Application.Services
             }
         }
 
-        public Task<List<ProductDTO>> GetProductBySeller(string userId)
+        public async Task<IEnumerable<ProductDTO>> GetProductBySeller(string userId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/menu/get-product-by-seller/{userId}");
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadFromJsonAsync<IEnumerable<ProductDTO>>();
+                return data ?? Enumerable.Empty<ProductDTO>();
+            }
+            catch
+            {
+                return Enumerable.Empty<ProductDTO>();
+            }
         }
 
         public async Task<IEnumerable<ProductDTO>> GetProducts()

@@ -10,8 +10,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ProductsController (IProductRepository _productRepository , AppDbContext _context) : Controller
     {
-        [HttpPost("add-product")]
-        [Authorize(Roles = "Seller")]
+        [HttpPost("add-product")]        
         public async Task<IActionResult> AddProduct(ProductDTO model)
         {
             try
@@ -25,8 +24,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("update-product")]
-        [Authorize(Roles = "Seller")]
+        [HttpPut("update-product")]        
         public async Task<IActionResult> UpdateProductAsync(ProductDTO model)
         {
             try
@@ -41,8 +39,7 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpDelete("remove-product")]
-        [Authorize(Roles = "Seller")]
+        [HttpDelete("remove-product/{productId}")]        
         public async Task<IActionResult> RemoveProductAsync(string productId)
         {
             try
@@ -70,6 +67,11 @@ namespace WebAPI.Controllers
             }
         }
 
-    
+        [HttpGet("get-category-dic")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var response = await _productRepository.GetCategoriesDicAsync();
+            return Ok(response);
+        }
     }
 }
