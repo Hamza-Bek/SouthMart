@@ -6,6 +6,8 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @inject IMenuRepository menuService
+@inject IProductRepository productService
+@inject IJSRuntime JS
 @attribute [Authorize(Roles = "Seller")]
 
 <div class="page-wrapper">
@@ -153,10 +155,10 @@
                                         <a class="me-3" href="product-details.html">
                                             <img src="img/icons/eye.svg" alt="img">
                                         </a>
-                                        <a class="me-3" href="editproduct.html">
+                                        <a class="me-3" >
                                             <img src="img/icons/edit.svg" alt="img">
                                         </a>
-                                        <a class="confirm-text" href="javascript:void(0);">
+                                        <a class="confirm-text" href="javascript:void(0);" @onclick="() => DeleteProduct(item.Id)">
                                             <img src="img/icons/delete.svg" alt="img">
                                         </a>
                                     </td>                                    
@@ -167,16 +169,14 @@
                 </div>
             </div>
         </div>
-
+         
     </div>
 </div>
 
 
 
 <script src="js/bootstrap.bundle.min.js"></script>
-
 <script src="plugins/select2/js/select2.min.js"></script>
-
 <script src="plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="plugins/sweetalert/sweetalerts.min.js"></script>
 
@@ -186,15 +186,12 @@
     private string cartId;
     IEnumerable<CategoryDTO> categories;
     IEnumerable<ProductDTO> products;
-    private IEnumerable<CartItem> cartItems = new List<CartItem>();
+    
 
     protected override async Task OnInitializedAsync()
-    {
-     
-
+    {     
         await GetCategories();
         await GetProducts();
-
     }
 
     private async Task GetCategories()
@@ -242,5 +239,30 @@
             Console.WriteLine($"Error fetching categories: {ex.Message}");
         }
 
+    }
+    
+    [JSInvokable]
+    public async Task<bool> DeleteProduct(string productId)
+    {
+        try
+        {
+            var response = await productService.RemoveProductAsync(productId);
+
+            if (response.Flag)
+            {
+                products = products.Where(p => p.Id != productId).ToList();
+                StateHasChanged();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting product: {ex.Message}");
+            return false;
+        }
     }
 }

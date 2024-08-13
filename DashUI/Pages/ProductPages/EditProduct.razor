@@ -1,4 +1,4 @@
-﻿@page "/product/add"
+﻿@page "/product/edit"
 @using Application.DTOs.Request.ProductEntity
 @using DashUI.Extensions
 @using Microsoft.AspNetCore.Components.Authorization
@@ -18,53 +18,53 @@
         </div>
         <EditForm Model="product" OnValidSubmit="HandleValidSubmit">
             <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-lg-3 col-sm-6 col-12">
-                        <div class="form-group">
-                            <label>Product Name</label>
-                            <InputText @bind-Value="product.Name" type="text"/>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Product Name</label>
+                                <InputText @bind-Value="product.Name" type="text" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-3 col-sm-6 col-12">
-                        <div class="form-group">
-                            <label>Category</label>
-                          <select class="select" @bind="product.Category">
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select class="select" @bind="product.Category">
                                     @foreach (var kvp in Categories)
                                     {
                                         <option value="@kvp.Value">@kvp.Value</option>
                                     }
                                 </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-3 col-sm-6 col-12">
-                        <div class="form-group">
-                            <label>Cost</label>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Cost</label>
                                 <InputNumber @bind-Value="product.Cost" class="form-control" type="text" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-3 col-sm-6 col-12">
-                        <div class="form-group">
-                            <label>Selling Price</label>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Selling Price</label>
                                 <InputNumber @bind-Value="product.SellingPrice" class="form-control" type="text" />
+                            </div>
                         </div>
-                    </div>
 
 
 
-                    <div class="col-lg-3 col-sm-6 col-12">
-                        <div class="form-group">
-                            <label>Quantity</label>
+                        <div class="col-lg-3 col-sm-6 col-12">
+                            <div class="form-group">
+                                <label>Quantity</label>
                                 <InputNumber @bind-Value="product.Quantity" class="form-control" type="text" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-lg-12">
-                        <div class="form-group">
-                            <label>Description</label>
-                            <InputTextArea @bind-Value="product.Description" class="form-control"/>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Description</label>
+                                <InputTextArea @bind-Value="product.Description" class="form-control" />
+                            </div>
                         </div>
-                    </div>
-                        <InputFile OnChange="SelectPlateImage" multiple="false" type="file" name="chooseFile" id="chooseFile" />
+
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Product Image</label>
@@ -72,6 +72,7 @@
                                     <input type="file" id="productImage">
                                     <div class="image-uploads">
                                         <img src="img/icons/upload.svg" alt="img">
+                                        <InputFile OnChange="SelectPlateImage" multiple="false" type="file" name="chooseFile" id="chooseFile" />
                                     </div>
                                 </div>
                             </div>
@@ -80,9 +81,9 @@
                             <input type="submit" class="btn btn-submit me-2" value="Add Product">
                             <a href="productlist.html" class="btn btn-cancel">Cancel</a>
                         </div>
+                    </div>
                 </div>
             </div>
-        </div>
         </EditForm>
     </div>
 </div>
@@ -131,9 +132,9 @@
 
 </style>
 
-@code{
+@code {
     [CascadingParameter]
-    public Task <AuthenticationState> AuthStateTask{get; set;}
+    public Task<AuthenticationState> AuthStateTask { get; set; }
     private string userId;
     private const int MaxAllowedFileSize = 1024 * 1024 * 10;
     private string _errorMessage = string.Empty;
@@ -163,49 +164,55 @@
         product.Id = Guid.NewGuid().ToString();
         product.SellerId = userId;
         var result = await productService.AddProductAsync(product);
-        if(result.Flag)
+        if (result.Flag)
         {
             Console.WriteLine($"Product Added Successfully");
-            if (_selectedImages.Any())
-            {
-                foreach (var img in _selectedImages)
-                {
-                    Console.WriteLine("Uploading an image...");
-                    await fileService.UploadImageAsync(img, product.Id!);
-                }
-            }
         }
         else
         {
             Console.WriteLine($"Failed to add plate: {result.Message}");
         }
-    }   
+    }
 
     private async Task SelectPlateImage(InputFileChangeEventArgs e)
     {
-        Console.WriteLine("SelectPlateImage method triggered.");
+        // You can allow the user to select multiple images at once, if so,
+        // the e.FileCount property will be greater than 1, so you need a foreach loop
+        // to convert and add each selected image to the _selectedImages collection
 
-        var file = e.File;
-        Console.WriteLine($"File Name: {file.Name}, File Size: {file.Size}, File Type: {file.ContentType}");
+        // check for file size
+        if (e.File.Size > MaxAllowedFileSize)
+        {
+            _errorMessage = "Image size is greater than max allowed file size";
+            return;
+        }
 
-        // check for file size and extension...
+        // check for extension
         var fileExtension = Path.GetExtension(e.File.Name);
-        if (e.File.Size <= MaxAllowedFileSize && _allowedFileExtensions.Contains(fileExtension))
+        if (!_allowedFileExtensions.Contains(fileExtension))
         {
-            var buffer = new byte[file.Size];
-            await file.OpenReadStream(MaxAllowedFileSize).ReadAsync(buffer);
+            _errorMessage = $"Use of unacceptable file extension ({fileExtension})";
+            return;
+        }
+
+        try
+        {
+            var buffer = new byte[e.File.Size];
+            await e.File.OpenReadStream(MaxAllowedFileSize).ReadAsync(buffer);
+
+            // Convert to base64-encoded data URL
             var base64String = Convert.ToBase64String(buffer);
-            var tempUrl = $"data:{file.ContentType};base64,{base64String}";
+            var tempUrl = $"data:{e.File.ContentType};base64,{base64String}";
 
-            var formFile = tempUrl.ToIFormFileFromBase64String();
-            Console.WriteLine($"Converted IFormFile: {formFile.Name}, {formFile.Length} bytes");
-
-            _selectedImages.Add(formFile);
+            _selectedImages.Add(tempUrl.ToIFormFileFromBase64String());
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine("File failed size or extension check.");
+            _errorMessage = ex.Message;
         }
+
+        // check for multiple files
+        // TODO: Yours to implement if needed ;-)
     }
 
     private async Task GetData()

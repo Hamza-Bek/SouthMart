@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
-    [ApiController]
-    [Route("/api/[controller]")]
+    [Route("api/[controller]")]
+    [ApiController]    
     public class FilesController : ControllerBase
     {
         private readonly IFilesRepository _filesRepository;

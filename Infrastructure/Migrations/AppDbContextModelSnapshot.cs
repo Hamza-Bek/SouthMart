@@ -117,7 +117,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.Authentication.RefreshToken", b =>
@@ -136,7 +136,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.ProductEntity.Category", b =>
@@ -150,7 +150,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.ProductEntity.Comment", b =>
@@ -179,7 +179,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.ProductEntity.Image", b =>
@@ -202,7 +202,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.ProductEntity.Product", b =>
@@ -243,7 +243,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("SellerId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.SellerEntity.SellerAccount", b =>
@@ -279,7 +279,7 @@ namespace Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[SellerId] IS NOT NULL");
 
-                    b.ToTable("SellerAccounts");
+                    b.ToTable("SellerAccounts", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.SellerEntity.SellerStatus", b =>
@@ -293,7 +293,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Approved");
 
-                    b.ToTable("SellerStatuses");
+                    b.ToTable("SellerStatuses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.UserEntity.Cart", b =>
@@ -313,7 +313,7 @@ namespace Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[UserId] IS NOT NULL");
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.UserEntity.CartItem", b =>
@@ -348,7 +348,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.UserEntity.Location", b =>
@@ -387,7 +387,7 @@ namespace Infrastructure.Migrations
                         .IsUnique()
                         .HasFilter("[ApplicationUserId1] IS NOT NULL");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.UserEntity.Order", b =>
@@ -422,7 +422,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("OrderMakerId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.UserEntity.OrderDetails", b =>
@@ -452,7 +452,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderDetails");
+                    b.ToTable("OrderDetails", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Models.UserEntity.OrderStatus", b =>
@@ -466,7 +466,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OrderStatuses");
+                    b.ToTable("OrderStatuses", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

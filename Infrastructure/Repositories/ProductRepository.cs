@@ -49,7 +49,7 @@ namespace Infrastructure.Repositories
 
                 var pr = new Product()
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = model.Id,
                     Name = model.Name,
                     Description = model.Description,
                     Category = model.Category,

@@ -34,8 +34,8 @@ namespace Application.Services
             var streamContent = new StreamContent(image.OpenReadStream());
             formData.Add(streamContent, "file", image.FileName);
 
-            string requestUrl = $"api/files/upload-plate-image/{plateId}";
-            HttpResponseMessage response = await _httpClient.PostAsync(requestUrl, formData);
+            //string requestUrl = $"api/files/upload-plate-image/{plateId}";
+            HttpResponseMessage response = await _httpClient.PostAsync($"api/files/upload-plate-image/{plateId}", formData);
 
             if (!response.IsSuccessStatusCode)
             {
