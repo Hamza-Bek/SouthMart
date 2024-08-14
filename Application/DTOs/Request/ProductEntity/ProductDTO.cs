@@ -17,6 +17,7 @@ namespace Application.DTOs.Request.ProductEntity
         public decimal? SellingPrice { get; set; }
         public string SellerId { get; set; }
         public int TotalSold { get; set; }
+        public string? CoverImageUrl { get; set; }
         public DateTime AddedDate { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.Request;
+using Application.DTOs.Request.ProductEntity;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
@@ -7,6 +8,7 @@ using Domain.Models.SellerEntity;
 using Domain.Models.UserEntity;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using System.Linq;
@@ -277,5 +279,34 @@ namespace Infrastructure.Repositories
             }
             
         }
+
+        public async Task<IEnumerable<ProductDTO>> GetExpiredProductAsync(string sellerId)
+        {
+            var seller = await _context.SellerAccounts.FirstOrDefaultAsync(i => i.SellerId == sellerId);
+            if(seller == null)
+                return Enumerable.Empty<ProductDTO>();
+
+            var expiredProducts = await _context.Products
+               .Where(p => p.SellerId == sellerId && p.Quantity == 0) // Filter for products with zero quantity
+                .Include(i => i.Images) // Include related data if necessary
+                  .ToListAsync();
+
+            return _mapper.Map<IEnumerable<ProductDTO>>(expiredProducts);
+        }
+        public async Task<IEnumerable<ProductDTO>> GetRecentlyAddedProductAsync(string sellerId)
+        {
+            var seller = await _context.SellerAccounts.FirstOrDefaultAsync(i => i.SellerId == sellerId);
+            if (seller == null)
+                return Enumerable.Empty<ProductDTO>();
+
+            var recentlyAddedProducts = await _context.Products
+               .Where(p => p.SellerId == sellerId)
+                 .OrderByDescending(p => p.AddedDate) 
+                     .Take(10) 
+                       .Include(i => i.Images)
+                          .ToListAsync();
+            
+            return _mapper.Map<IEnumerable<ProductDTO>>(recentlyAddedProducts);
+        }           
     }
 }

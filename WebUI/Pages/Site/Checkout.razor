@@ -2,7 +2,7 @@
 @using Application.DTOs.Request.OrderEntity
 @using Domain.Models.UserEntity
 @using System.Security.Claims
-@inject IBuyerRepository buyerSerivce
+@inject IBuyerRepository buyerService
 @inject IOrderRepository orderService
 @inject ILocationRepository locationService
 
@@ -19,10 +19,20 @@
                     @foreach(var item in cartItems)
                     {
                         <div class='order-item'>
-                            <img src='https://dl.dropboxusercontent.com/s/sim84r2xfedj99n/%24_32.JPG' class='full-width' />
+                            <img src="@item.CoverImageUrl" class='full-width' />
                             <div class='item-details'>
                                 <span class='thin'>@item.ProductName</span>
-                                <div class='price'>$@item.ProductPrice</div>
+                                <div class='price'>$@item.ProductPrice</div>                                
+                                <span class="quantity-control">
+                                    <button class="quantity-btn" @onclick="() => RemoveProduct(item.ProductId, userId)">
+                                        <i class="fa-solid fa-minus"></i>
+                                    </button>
+                                    <span class="quantity-text">@item.Quantity</span>
+                                    <button class="quantity-btn" @onclick="() => AddProduct(item.ProductId, userId)">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </span>
+                                
                             </div>
                         </div>
                         <div class='line'></div>
@@ -75,7 +85,7 @@
                     </table>
                 </div>
                 <div><a class="pointer-event" href="/profile"><i class="fa-solid fa-location-dot"></i> Add Location?</a></div>
-                <a @onclick="PlaceOrder" class="pay-btn">Checkout</a>
+                <button @onclick="PlaceOrder" class="pay-btn">Checkout</button>
             </div>
         </div>
     </div>
@@ -115,7 +125,7 @@
         {
             userId = userIdClaim.Value;
             cartId = userCartIdClaim.Value;
-            cartItems = await buyerSerivce.GetCartItemsAsync(userId);
+            cartItems = await buyerService.GetCartItemsAsync(userId);
 
         }
         isLoading = false;
@@ -172,4 +182,46 @@
         isLoading = false;
     }
 
+    private async Task AddProduct(string productId, string userId)
+    {
+        var selectedPlate = await buyerService.GetCartItemsAsync(userId);
+
+        try
+        {
+            var response = await buyerService.AddProductToCartAsync(productId, userId);
+            if (response.Flag)
+            {
+                cartItems = cartItems.Where(p => p.Id != productId).ToList();
+
+                cartItems = await buyerService.GetCartItemsAsync(userId);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting plate: {ex.Message}");
+        }
+    }
+    private async Task RemoveProduct(string productId, string userId)
+    {
+        var selectedPlate = await buyerService.GetCartItemsAsync(userId);
+
+        try
+        {
+            var response = await buyerService.RemoveProductFromCartAsync(productId, userId);
+            if (response.Flag)
+            {
+                cartItems = cartItems.Where(p => p.Id != productId).ToList();
+
+                cartItems = await buyerService.GetCartItemsAsync(userId);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting plate: {ex.Message}");
+        }
+    }
 }  

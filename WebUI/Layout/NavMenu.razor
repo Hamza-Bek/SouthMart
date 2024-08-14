@@ -116,12 +116,16 @@
                                             <h6 class="my-0 d-inline-block ml-3">@item.ProductName</h6>
                                             <span class="mx-2">(@item.Quantity)</span>
                                         </div>
-                                        
-                                       
-                                        <span class="text-body-secondary">
-                                            <a @onclick="() => RemoveProduct(item.ProductId, userId)"><i class="fa-solid fa-minus"></i></a>
-                                            @item.ProductPrice
-                                            <a @onclick="() => AddProduct(item.ProductId, userId)"><i class="fa-solid fa-plus"></i></a>
+
+
+                                        <span class="quantity-control">
+                                            <button class="quantity-btn" @onclick="() => RemoveProduct(item.ProductId, userId)">
+                                                <i class="fa-solid fa-minus"></i>
+                                            </button>
+                                            <span class="quantity-text">@item.ProductPrice</span>
+                                            <button class="quantity-btn" @onclick="() => AddProduct(item.ProductId, userId)">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
                                         </span>
                                         
                                         

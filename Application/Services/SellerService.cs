@@ -1,8 +1,10 @@
 ﻿using Application.DTOs.Request;
 using Application.DTOs.Request.Account;
+using Application.DTOs.Request.ProductEntity;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using Domain.Models.Authentication;
+using Domain.Models.ProductEntity;
 using Domain.Models.SellerEntity;
 using Domain.Models.UserEntity;
 using System;
@@ -85,6 +87,40 @@ namespace Application.Services
             catch (Exception ex)
             {
                 return new SellerResponse(false, $"General error: {ex.Message}");
+            }
+        }
+
+        public async Task<IEnumerable<ProductDTO>> GetExpiredProductAsync(string sellerId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/seller/expired-product/{sellerId}");
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadFromJsonAsync<List<ProductDTO>>();
+                return data ?? new List<ProductDTO>();
+            }
+            catch
+            {
+                // Log the exception (ex)
+                return new List<ProductDTO>();
+            }
+        }
+
+        public async Task<IEnumerable<ProductDTO>> GetRecentlyAddedProductAsync(string sellerId)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<IEnumerable<ProductDTO>>($"api/seller/recently-added-product/{sellerId}");
+                if (response == null)
+                {
+                    return Enumerable.Empty<ProductDTO>();
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return Enumerable.Empty<ProductDTO>();
             }
         }
 

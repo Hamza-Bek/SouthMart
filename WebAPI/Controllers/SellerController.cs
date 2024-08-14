@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Request;
 using Application.DTOs.Request.Account;
+using Application.DTOs.Request.ProductEntity;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
@@ -178,6 +179,19 @@ namespace WebAPI.Controllers
             {
                 return StatusCode(500, response);
             }
+        }
+
+        [HttpGet("expired-product/{sellerId}")]
+        public async Task<IActionResult> GetExpiredProduct(string sellerId)
+        {
+            var data = await _sellerRepository.GetExpiredProductAsync(sellerId);
+            return Ok(data);
+        }
+        [HttpGet("recently-added-product/{sellerId}")]
+        public async Task<IActionResult> GetRecentlyAddedProduct(string sellerId)
+        {
+            var data = await _sellerRepository.GetRecentlyAddedProductAsync(sellerId);
+            return Ok(data);
         }
     }
 }

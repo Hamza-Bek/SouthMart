@@ -13,8 +13,8 @@ namespace Application.Interfaces
         Task<IEnumerable<ProductDTO>> GetProductBySeller(string userId);
         Task<IEnumerable<CategoryDTO>> GetAllCategories();
         Task<IEnumerable<ProductDTO>> GetProducts();
-        Task<IEnumerable<Product>> GetProductsByCategoryAsync(string categoryTag);
-        Task<IEnumerable<Product>> GetProductByIdAsync(string product);
+        Task<IEnumerable<ProductDTO>> GetProductsByCategoryAsync(string categoryTag);
+        Task<IEnumerable<ProductDTO>> GetProductByIdAsync(string product);
 
         // algorithms
         Task<IEnumerable<ProductDTO>> GetRandomProductsAsync();

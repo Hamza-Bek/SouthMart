@@ -1,4 +1,9 @@
 ﻿@page "/home"
+@using Application.DTOs.Request.ProductEntity
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@inject IProductRepository productService
+@inject ISellerRepository sellerService
 @attribute [Authorize(Roles = "Seller")]
 
 <div class="page-wrapper">
@@ -214,67 +219,37 @@
                     <table class="table datatable ">
                         <thead>
                             <tr>
-                                <th>SNo</th>
-                                <th>Product Code</th>
+                                <th>SNo</th>                                
                                 <th>Product Name</th>
-                                <th>Brand Name</th>
+                                <th>Total Sold</th>
                                 <th>Category Name</th>
-                                <th>Expiry Date</th>
+                                <th>Added Date</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><a href="javascript:void(0);">IT0001</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="img/product/product2.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist.html">Orange</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>12-12-2022</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><a href="javascript:void(0);">IT0002</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="img/product/product3.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist.html">Pineapple</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>25-11-2022</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><a href="javascript:void(0);">IT0003</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="img/product/product4.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist.html">Stawberry</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>19-11-2022</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td><a href="javascript:void(0);">IT0004</a></td>
-                                <td class="productimgname">
-                                    <a class="product-img" href="productlist.html">
-                                        <img src="img/product/product5.jpg" alt="product">
-                                    </a>
-                                    <a href="productlist.html">Avocat</a>
-                                </td>
-                                <td>N/D</td>
-                                <td>Fruits</td>
-                                <td>20-11-2022</td>
-                            </tr>
+                            @if (ExpiredProducts != null)
+                            {
+                                @foreach (var product in ExpiredProducts)
+                                {
+                                    <tr>
+                                        <td>@(index + 1)</td>
+                                        <!--<td><a href="javascript:void(0);">IT0001</a></td>-->
+                                        <td class="productimgname">
+                                            <a class="product-img" href="productlist.html">
+                                                <img src="@product?.CoverImageUrl" alt="product">
+                                            </a>
+                                            <a href="productlist.html">@product?.Name</a>
+                                        </td>
+                                        <td>@product?.TotalSold</td>
+                                        <td>@product?.Category</td>
+                                        <td>@product?.AddedDate</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <p>No products available.</p>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -282,3 +257,44 @@
         </div>
     </div>
 </div>
+
+@code{
+
+    [CascadingParameter] 
+    public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
+    private string userId;
+    int index = 0;
+    IEnumerable<ProductDTO> ExpiredProducts ;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetProducts();
+    }
+
+    private async Task GetProducts()
+    {
+        try
+        {
+            var authState = await AuthStateTask;
+            var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+
+            if (userIdClaim != null)
+                userId = userIdClaim.Value;
+
+            ExpiredProducts = await sellerService.GetExpiredProductAsync(userId);
+            if (ExpiredProducts != null && ExpiredProducts.Any())
+            {
+                Console.WriteLine("Products fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No Products found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching Products: {ex.Message}");
+        }
+
+    }
+}

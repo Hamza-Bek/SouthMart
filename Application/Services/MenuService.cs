@@ -30,18 +30,18 @@ namespace Application.Services
             }
         } 
 
-        public async Task<IEnumerable<Product>> GetProductByIdAsync(string product)
+        public async Task<IEnumerable<ProductDTO>> GetProductByIdAsync(string product)
         {
             try
             {
                 var response = await _httpClient.GetAsync($"api/menu/get-product-by-Id/{product}");
                 response.EnsureSuccessStatusCode();
-                var data = await response.Content.ReadFromJsonAsync<IEnumerable<Product>>();
-                return data ?? Enumerable.Empty<Product>();
+                var data = await response.Content.ReadFromJsonAsync<IEnumerable<ProductDTO>>();
+                return data ?? Enumerable.Empty<ProductDTO>();
             }
             catch
             {
-                return Enumerable.Empty<Product>();
+                return Enumerable.Empty<ProductDTO>();
             }
         }
 
@@ -76,19 +76,19 @@ namespace Application.Services
             }
         }
 
-        public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(string categoryTag)
+        public async Task<IEnumerable<ProductDTO>> GetProductsByCategoryAsync(string categoryTag)
         {
             try
             {
                 var response = await _httpClient.GetAsync($"api/menu/get-category-products/{categoryTag}");
                 response.EnsureSuccessStatusCode();
-                var data = await response.Content.ReadFromJsonAsync<IEnumerable<Product>>();
-                return data ?? Enumerable.Empty<Product>();
+                var data = await response.Content.ReadFromJsonAsync<IEnumerable<ProductDTO>>();
+                return data ?? Enumerable.Empty<ProductDTO>();
             }
             catch (Exception ex)
             {
                 // Log the exception (ex)
-                return Enumerable.Empty<Product>();
+                return Enumerable.Empty<ProductDTO>();
             }
         }
 

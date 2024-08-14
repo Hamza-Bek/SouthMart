@@ -158,7 +158,7 @@
                                         <a class="me-3" >
                                             <img src="img/icons/edit.svg" alt="img">
                                         </a>
-                                        <a class="confirm-text" href="javascript:void(0);" @onclick="() => DeleteProduct(item.Id)">
+                                        <a  @onclick="() => DeleteProduct(item.Id)">
                                             <img src="img/icons/delete.svg" alt="img">
                                         </a>
                                     </td>                                    
@@ -241,7 +241,7 @@
 
     }
     
-    [JSInvokable]
+   
     public async Task<bool> DeleteProduct(string productId)
     {
         try

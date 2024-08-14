@@ -1,13 +1,18 @@
-﻿using Application.Interfaces;
+﻿
+using Application.DTOs.Request.ProductEntity;
+using Application.Extensions;
+using Application.Interfaces;
+using AutoMapper;
+using Domain.Models.ProductEntity;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MenuController(AppDbContext _context , IMenuRepository _menuRepository) : Controller
+    public class MenuController(AppDbContext _context , IMenuRepository _menuRepository , IMapper _mapper) : Controller
     {
         [HttpGet("get-categories")]
         public async Task<IActionResult> GetCategories()
@@ -30,8 +35,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var response = await _menuRepository.GetProductsByCategoryAsync(categoryTag);
-                return Ok(response);
+                var data = await _menuRepository.GetProductsByCategoryAsync(categoryTag);
+                var mappedPlates = _mapper.Map<IEnumerable<ProductDTO>>(data);
+                return Ok(mappedPlates);
             }
             catch (Exception ex)
             {
@@ -40,12 +46,14 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("get-product-by-Id/{product}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Product>))]
         public async Task<IActionResult> GetProductById(string product)
         {
             try
             {
-                var response = await _menuRepository.GetProductByIdAsync(product);
-                return Ok(response);
+                var data = await _menuRepository.GetProductByIdAsync(product);
+                var mappedPlates = _mapper.Map<IEnumerable<ProductDTO>>(data);
+                return Ok(mappedPlates);                
             }
             catch (Exception ex)
             {

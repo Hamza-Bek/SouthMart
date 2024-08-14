@@ -9,7 +9,7 @@ using System;
 
 namespace Infrastructure.Repositories
 {
-    public class ProductRepository(AppDbContext _context, IMapper _mapper) : IProductRepository
+    public class ProductRepository(AppDbContext _context, IMapper _mapper , IFilesRepository _filesRepository) : IProductRepository
     {
         public async Task<ProductResponse> AddProductAsync(ProductDTO model)
         {
@@ -110,10 +110,20 @@ namespace Infrastructure.Repositories
 
         public async Task<ProductResponse> RemoveProductAsync(string productId)
         {
-            var product = await _context.Products.FindAsync(productId);
+            var product = await _context.Products
+                .Include(i => i.Images)
+                .FirstOrDefaultAsync(p => p.Id == productId);
 
             if (product == null || string.IsNullOrEmpty(productId))
                 return new ProductResponse(false, "Product not found");
+
+            if (product.Images is not null && product.Images.Any())
+            {
+                for (int i = 0; i < product.Images.Count; i++)
+                {
+                    await _filesRepository.DeleteImageAsync(product.Images.ElementAt(i).imageId);
+                }
+            }
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
@@ -137,7 +147,6 @@ namespace Infrastructure.Repositories
             return new ProductResponse(true, "Category added successfully");
         }
         
-
         public async Task<Dictionary<string, string>> GetCategoriesDicAsync()
         {
             var categories = await _context.Categories.AsNoTracking().ToListAsync();

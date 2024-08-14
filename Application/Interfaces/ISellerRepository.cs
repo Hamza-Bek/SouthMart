@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.Request;
+using Application.DTOs.Request.ProductEntity;
 using Application.DTOs.Response;
 using Domain.Models.Authentication;
 using Domain.Models.SellerEntity;
@@ -16,10 +17,11 @@ namespace Application.Interfaces
         Task<SellerResponse> ApproveSellerAccountAsync(string userId, bool isApproved);
         Task<SellerResponse> ChangeUserRoleToSeller(ApplicationUser user);
         Task<SellerResponse> AddSellerStatus(SellerStatus model);
-
-
-
         Task<SellerAccountDTO> GetSellerAccountAsync(string userId);
+
+        // GET's methods
+        Task<IEnumerable<ProductDTO>> GetExpiredProductAsync(string sellerId);
+        Task<IEnumerable<ProductDTO>> GetRecentlyAddedProductAsync(string sellerId);
 
         // Total sales and products sold
         Task<SalesResponse> GetSalesForLastYearAsync(string sellerId);

@@ -3,18 +3,23 @@
 @inject ICommentRepository commentService
 @inject IBuyerRepository buyerService
 @using Application.DTOs.Request.ProductEntity
+@using Application.Interfaces
 @using Domain.Models.ProductEntity
 @using System.Security.Claims
 @using Domain.Models.UserEntity
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
 
 <div class="container">
     <div class="title">PRODUCT DETAIL</div>
     <div class="detail">
-        <div class="image">
-            <img src="/imgs/thumb-tomatoes.png">
-        </div>
+      
         @foreach (var item in ProductDetail)
         {
+            <div class="image">
+                <img src="@item.CoverImageUrl" alt="@item.Name" />
+                
+            </div>
             <div class="content">
                 <h1 class="name">@item.Name</h1>
             <div class="price">$@item.SellingPrice</div>
@@ -31,7 +36,7 @@
                     <button>+</button>
             </div>
             <div class="description">
-                    item.Description
+                    @item.Description
             </div>
         </div>
         }
@@ -348,7 +353,8 @@ a{
     [Parameter]
     public string product { get; set; }
     private IEnumerable<Comment> Comments;
-    private IEnumerable<Product> ProductDetail;
+    private IEnumerable<ProductDTO> ProductDetail;
+    private IBrowserFile? uploadedImage;
     private CommentDTO newComment = new CommentDTO();
 
     [CascadingParameter] 

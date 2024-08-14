@@ -12,9 +12,14 @@ namespace Infrastructure.Repositories
         {
             int Quantity = 1;
 
-            var product = await _context.Products.FindAsync(productId);
+            var product = await _context.Products
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.Id == productId);
             if (product == null)
                 return new BuyerResponse(false, "Product not found");
+            
+            if (product.Quantity <= 0)
+                return new BuyerResponse(false, "Product is out of stock");
 
             var user = await _context.Users.FindAsync(userId);
             if (user == null)
@@ -29,6 +34,9 @@ namespace Infrastructure.Repositories
 
             if(existingCartItem != null)
             {
+                if (existingCartItem.Quantity + Quantity > product.Quantity)
+                    return new BuyerResponse(false, "Cannot add more items than available in stock");
+
                 existingCartItem.Quantity += Quantity;
                 existingCartItem.Total = existingCartItem.Quantity * existingCartItem.ProductPrice;
 
@@ -39,6 +47,9 @@ namespace Infrastructure.Repositories
             }
             else
             {
+                if (Quantity > product.Quantity)
+                    return new BuyerResponse(false, "Cannot add more items than available in stock");
+
                 var cartitem = new CartItem()
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -47,7 +58,8 @@ namespace Infrastructure.Repositories
                     ProductName = product.Name,
                     ProductPrice = (decimal)product.SellingPrice,
                     Quantity = Quantity,
-                    Total = (decimal)(Quantity * product.SellingPrice)
+                    Total = (decimal)(Quantity * product.SellingPrice),
+                    CoverImageUrl = product.Images.FirstOrDefault()?.Url
                 };
 
                 userCart.CartTotal += (decimal)cartitem.Total;
@@ -119,7 +131,7 @@ namespace Infrastructure.Repositories
 
 
             var userCartItems = await _context.CartItems
-             .Where(ci => ci.CartId == getUser.CartId)
+             .Where(ci => ci.CartId == getUser.CartId)             
              .ToListAsync();
 
             if (userCartItems == null || !userCartItems.Any())

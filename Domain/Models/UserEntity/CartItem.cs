@@ -14,6 +14,7 @@ namespace Domain.Models.UserEntity
         public decimal ProductPrice { get; set; }
         public decimal Total { get; set; }
         public int Quantity { get; set; }
+        public string? CoverImageUrl { get; set; }
 
         public string CartId { get; set; }
         public Cart? Cart { get; set; }

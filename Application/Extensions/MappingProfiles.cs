@@ -31,6 +31,9 @@ namespace Application.Extensions
 
             CreateMap<CommentDTO, Comment>();
             CreateMap<Comment, CommentDTO>();
+
+            CreateMap<Product, ProductDTO>()
+           .ForMember(dest => dest.CoverImageUrl, opt => opt.MapFrom(src => src.Images.FirstOrDefault().Url));
         }
 
     }
