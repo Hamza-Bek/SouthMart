@@ -1,9 +1,10 @@
-﻿@page "/order/list"
+﻿@page "/admin/orders/list"
+@using Application.DTOs.Request.OrderEntity
 @using Domain.Models.UserEntity
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
-@inject ISellerRepository sellerService
-@attribute [Authorize(Roles = "Seller")]
+@inject IOrderRepository orderService
+@attribute [Authorize(Roles = "Admin")]
 
 <div class="page-wrapper">
     <div class="content">
@@ -101,8 +102,7 @@
                             {
                                 foreach (var order in products)
                                 {
-                                    if (order.ProductStatus != "Done") // Check if the product status is not "Done"
-                                    {
+                                  
                                         <tr>
                                             <td>
                                                 <label class="checkboxs">
@@ -110,12 +110,12 @@
                                                     <span class="checkmarks"></span>
                                                 </label>
                                             </td>
-                                            <td>@order.Order.OrderDate</td>
-                                            <td>@order.Order.OrderMaker.Name</td>
-                                            <td>@order.Order.OrderNumber</td>
-                                            <td><span class="badges bg-lightgreen">@order.ProductStatus</span></td>
+                                            <td>@order.OrderDate</td>
+                                            <td>@order.OrderMaker.Name</td>
+                                            <td>@order.OrderNumber</td>
+                                            <td><span class="badges bg-lightgreen">@order.OrderStatus</span></td>
                                             <td><span class="badges bg-lightgreen">Paid</span></td>
-                                            <td>@(order.ProductPrice * order.Quantity)</td>
+                                            <td>@order.OrderTotal</td>
                                             <td>Admin</td>
                                             <td class="text-center">
                                                 <a class="action-set" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="true">
@@ -123,7 +123,7 @@
                                                 </a>
                                                 <ul class="dropdown-menu">
                                                     <li>
-                                                        <a href="/order/details/@order.OrderId" class="dropdown-item"><img src="img/icons/eye1.svg" class="me-2" alt="img">Sale Detail</a>
+                                                        <a href="/admin/order/details/@order.OrderId" class="dropdown-item"><img src="img/icons/eye1.svg" class="me-2" alt="img">Sale Detail</a>
                                                     </li>
                                                     <li>
                                                         <a href="edit-sales.html" class="dropdown-item"><img src="img/icons/edit.svg" class="me-2" alt="img">Edit Sale</a>
@@ -143,7 +143,7 @@
                                                 </ul>
                                             </td>
                                         </tr>
-                                    }
+                                    
                                 }
                             }
                             else
@@ -342,7 +342,7 @@
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
     private string userId;
     private string cartId;
-    IEnumerable<OrderDetails> products;
+    IEnumerable<Order> products;
 
     protected override async Task OnInitializedAsync()
     {
@@ -359,7 +359,7 @@
             if (userIdClaim != null)
                 userId = userIdClaim.Value;
 
-            products = await sellerService.GetSellerOrders(userId);
+            products = await orderService.GetOrdersAsync();
             if (products != null && products.Any())
             {
                 Console.WriteLine("Categories fetched successfully");

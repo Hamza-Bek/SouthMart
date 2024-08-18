@@ -106,6 +106,24 @@ namespace Application.Services
             }
         }
 
+        public async Task<IEnumerable<OrderDetails>> GetOrder(string orderId)
+        {
+            try
+            {
+                // Fetch the data from the API
+                var response = await _httpClient.GetFromJsonAsync<IEnumerable<OrderDetails>>($"api/seller/get-order-id/{orderId}");
+
+                // Return the response wrapped in a collection
+                return (IEnumerable<OrderDetails>)response;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                Console.WriteLine($"Error fetching order details: {ex.Message}");
+                return null; // Return an empty collection if there's an error
+            }
+        }
+
         public async Task<IEnumerable<ProductDTO>> GetRecentlyAddedProductAsync(string sellerId)
         {
             try
@@ -199,6 +217,20 @@ namespace Application.Services
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<OrderDetails>> GetSellerOrders(string sellerId)
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<IEnumerable<OrderDetails>>($"api/seller/get-orders/{sellerId}");
+                return response ?? Enumerable.Empty<OrderDetails>(); // Return an empty collection if the response is null
+            }
+            catch (Exception ex)
+            {
+                // Log the exception or handle it as needed
+                throw new Exception("Error fetching seller orders: " + ex.Message);
             }
         }
     }

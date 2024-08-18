@@ -16,6 +16,9 @@ namespace Domain.Models.UserEntity
         public string ProductId { get; set; }
         public string ProductName { get; set; }
         public decimal ProductPrice { get; set; }
+        public string SellerId { get; set; }
+        public string ProductStatus { get; set; }
+        public string? CoverImageUrl { get; set; }
         public int? Quantity { get; set; }
     }
 }

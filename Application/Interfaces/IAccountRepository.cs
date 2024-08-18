@@ -13,6 +13,7 @@ namespace Application.Interfaces
     {
         Task<LoginResponse> LoginSellerAccountAsync(LoginDTO model);
         Task<LoginResponse> LoginAccountAsync(LoginDTO model);
+        Task<LoginResponse> LoginAdminAccountAsync(LoginDTO model);
         Task<GeneralResponse> CreateAccountAsync(CreateAccountDTO model);
 
 

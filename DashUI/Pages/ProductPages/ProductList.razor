@@ -141,7 +141,7 @@
                                     </td>
                                     <td class="productimgname">
                                         <a href="javascript:void(0);" class="product-img">
-                                            <img src="img/product/product1.jpg" alt="product">
+                                            <img src="@item.CoverImageUrl" alt="product">
                                         </a>
                                         <a href="javascript:void(0);">@item.Name</a>
                                     </td>
@@ -155,7 +155,7 @@
                                         <a class="me-3" href="product-details.html">
                                             <img src="img/icons/eye.svg" alt="img">
                                         </a>
-                                        <a class="me-3" >
+                                        <a class="me-3" href="@($"/product/edit/{item.Id}")">
                                             <img src="img/icons/edit.svg" alt="img">
                                         </a>
                                         <a  @onclick="() => DeleteProduct(item.Id)">

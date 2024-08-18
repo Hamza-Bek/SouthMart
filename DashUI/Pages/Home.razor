@@ -1,11 +1,20 @@
 ﻿@page "/home"
+@using Application.DTOs.Request
 @using Application.DTOs.Request.ProductEntity
+@using Domain.Models.SellerEntity
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @inject IProductRepository productService
 @inject ISellerRepository sellerService
 @attribute [Authorize(Roles = "Seller")]
-
+   @if (isLoading)
+{
+    <div class="loading-indicator">
+        <p>Loading...</p>
+    </div>
+}
+else
+{    
 <div class="page-wrapper">
     <div class="content">
         <div class="row">
@@ -15,8 +24,8 @@
                         <span><img src="img/icons/dash1.svg" alt="img"></span>
                     </div>
                     <div class="dash-widgetcontent">
-                        <h5>$<span class="counters" data-count="307144.00">$307,144.00</span></h5>
-                        <h6>Total Purchase Due</h6>
+                        <h5>$<span class="counters" data-count="307144.00">@Seller.Revenue</span></h5>
+                        <h6>Total Revenues Due</h6>
                     </div>
                 </div>
             </div>
@@ -26,7 +35,7 @@
                         <span><img src="img/icons/dash2.svg" alt="img"></span>
                     </div>
                     <div class="dash-widgetcontent">
-                        <h5>$<span class="counters" data-count="4385.00">$4,385.00</span></h5>
+                        <h5>$<span class="counters" data-count="4385.00">@Seller.GrossSales</span></h5>
                         <h6>Total Sales Due</h6>
                     </div>
                 </div>
@@ -165,46 +174,28 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="img/product/product22.jpg" alt="product">
-                                            </a>
-                                            <a href="productlist.html">Apple Earpods</a>
-                                        </td>
-                                        <td>$891.2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="img/product/product23.jpg" alt="product">
-                                            </a>
-                                            <a href="productlist.html">iPhone 11</a>
-                                        </td>
-                                        <td>$668.51</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="img/product/product24.jpg" alt="product">
-                                            </a>
-                                            <a href="productlist.html">samsung</a>
-                                        </td>
-                                        <td>$522.29</td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td class="productimgname">
-                                            <a href="productlist.html" class="product-img">
-                                                <img src="img/product/product6.jpg" alt="product">
-                                            </a>
-                                            <a href="productlist.html">Macbook Pro</a>
-                                        </td>
-                                        <td>$291.01</td>
-                                    </tr>
+                                        @if (RecentlyAddedProducts != null && RecentlyAddedProducts.Any())
+                                        {
+                                            @foreach (var product in RecentlyAddedProducts)
+                                            {
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td class="productimgname">
+                                                        <a href="productlist.html" class="product-img">
+                                                            <img src="@product.CoverImageUrl" alt="product">
+                                                        </a>
+                                                        <a href="productlist.html">@product.Name</a>
+                                                    </td>
+                                                    <td>$@product.SellingPrice</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="3">No products available.</td>
+                                            </tr>
+                                        }
                                 </tbody>
                             </table>
                         </div>
@@ -257,7 +248,7 @@
         </div>
     </div>
 </div>
-
+}
 @code{
 
     [CascadingParameter] 
@@ -265,13 +256,19 @@
     private string userId;
     int index = 0;
     IEnumerable<ProductDTO> ExpiredProducts ;
+    IEnumerable<ProductDTO> RecentlyAddedProducts;
+    SellerAccountDTO Seller { get; set; }
+    private bool isLoading;
 
     protected async override Task OnInitializedAsync()
     {
-        await GetProducts();
+        await GetExpiredProducts();
+        await GetRecentlyAddedProducts();
+        await GetSellerAsync();
+        isLoading = false;
     }
 
-    private async Task GetProducts()
+    private async Task GetExpiredProducts()
     {
         try
         {
@@ -295,6 +292,59 @@
         {
             Console.WriteLine($"Error fetching Products: {ex.Message}");
         }
+        isLoading = false;
+    }
 
+    private async Task GetRecentlyAddedProducts()
+    {
+        try
+        {
+            var authState = await AuthStateTask;
+            var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+
+            if (userIdClaim != null)
+                userId = userIdClaim.Value;
+
+            RecentlyAddedProducts = await sellerService.GetRecentlyAddedProductAsync(userId);
+            if (RecentlyAddedProducts != null && RecentlyAddedProducts.Any())
+            {
+                Console.WriteLine("Products fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No Products found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching Products: {ex.Message}");
+        }
+        isLoading = false;
+    }
+
+    private async Task GetSellerAsync()
+    {
+        try
+        {
+            var authState = await AuthStateTask;
+            var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+
+            if (userIdClaim != null)
+                userId = userIdClaim.Value;
+
+            Seller = await sellerService.GetSellerAccountAsync(userId);
+            if (Seller != null)
+            {
+                Console.WriteLine("Seller fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No Seller found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching Seller: {ex.Message}");
+        }
     }
 }

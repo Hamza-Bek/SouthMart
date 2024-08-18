@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Request.OrderEntity;
 using Application.DTOs.Response;
 using Application.Interfaces;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -11,6 +12,8 @@ namespace WebAPI.Controllers
     {
 
         [HttpPost("place-order")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> PlaceOrder(OrderDTO model)
         {
             var response = await _orderRepository.PlaceOrderAsync(model);
@@ -18,14 +21,27 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("get-orders/{userId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> GetOrders(string userId)
         {
             var data = await _orderRepository.GetUserOrdersAsync(userId);
             return Ok(data);
         }
 
-		[HttpGet("get-order-orderid/{orderId}")]
-		public async Task<IActionResult> GetOrderByOrderId(string orderId)
+        [HttpGet("get-all-orders")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var data = await _orderRepository.GetOrdersAsync();
+            return Ok(data);
+        }
+
+        [HttpGet("get-order-orderid/{orderId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> GetOrderByOrderId(string orderId)
 		{
 			var data = await _orderRepository.GetUserOrdersByOrderIdAsync(orderId);
 			return Ok(data);
@@ -33,6 +49,8 @@ namespace WebAPI.Controllers
 
 
         [HttpDelete("clear-cart-total/{userId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         public async Task<ActionResult<OrderResponse>> ClearCartTotal(string userId)
         {
             try
@@ -52,13 +70,45 @@ namespace WebAPI.Controllers
 
         [HttpDelete("clear-cart-items/{userId}")]
         [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]        
         public async Task<IActionResult> ClearCartItems(string userId)
         {
             var result = await _orderRepository.ClearCartItemsAsync(userId);
             return Ok(result);
         }
 
+        [HttpGet("get-product-status-dic")]
+        public async Task<IActionResult> GetProductStatuses()
+        {
+            var response = await _orderRepository.GetProductStatusAsync();
+            return Ok(response);
+        }
+
+        [HttpGet("get-order-status-dic")]
+        public async Task<IActionResult> GetOrderStatuses()
+        {
+            var response = await _orderRepository.GetOrderStatusAsync();
+            return Ok(response);
+        }
+
+        [HttpPut("change-product-status/{productId}/{newStatusId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> ChangeProductStatus(string productId, string newStatusId)
+        {
+
+            var data = await _orderRepository.ChangeProductStatusAsync(productId, newStatusId);
+            return Ok(data);
+        }
+
+        [HttpPut("change-order-status/{orderId}/{newStatusId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> ChangeOrderStatus(string orderId, string newStatusId)
+        {
+
+            var data = await _orderRepository.ChangeOrderStatusAsync(orderId, newStatusId);
+            return Ok(data);
+        }
     }
 }

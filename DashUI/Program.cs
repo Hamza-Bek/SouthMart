@@ -22,7 +22,7 @@ builder.Services.AddAuthorizationCore(options =>
     options.AddPolicy("SellerOnly", policy => policy.RequireRole("Seller"));
 });
 
-
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<HttpClientService>();
 builder.Services.AddScoped<CustomHttpHandler>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();

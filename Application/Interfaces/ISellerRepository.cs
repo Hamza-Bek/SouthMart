@@ -3,6 +3,7 @@ using Application.DTOs.Request.ProductEntity;
 using Application.DTOs.Response;
 using Domain.Models.Authentication;
 using Domain.Models.SellerEntity;
+using Domain.Models.UserEntity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,8 @@ namespace Application.Interfaces
         Task<SellerAccountDTO> GetSellerAccountAsync(string userId);
 
         // GET's methods
+        Task<IEnumerable<OrderDetails>> GetSellerOrders(string sellerId);
+        Task<IEnumerable<OrderDetails>> GetOrder(string orderId);
         Task<IEnumerable<ProductDTO>> GetExpiredProductAsync(string sellerId);
         Task<IEnumerable<ProductDTO>> GetRecentlyAddedProductAsync(string sellerId);
 

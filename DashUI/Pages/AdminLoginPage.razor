@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/admin/login"
 @using Application.DTOs.Request.Account
 @using Application.Extensions
 @using Application.Interfaces
@@ -13,7 +13,7 @@
             <InputText @bind-Value="User.Email" placeholder="Email" class="input" />
             <InputText @bind-Value="User.Password" placeholder="Password" type="password" />
             <button>login</button>
-            <p class="message">Admin? <a href="/admin/login">Sign in</a></p>
+            <p class="message">Seller? <a href="#">Sign in</a></p>
         </EditForm>
     </div>
 </div>
@@ -31,11 +31,9 @@
         async Task HandleLogin()
         {
 
-            var response = await accountService.LoginSellerAccountAsync(User);
+            var response = await accountService.LoginAdminAccountAsync(User);
             if (response.Flag)
-            {
-
-
+            {                
                 var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
                 await customAuthStateProvider.UpdateAuthenticationState(new LocalStorageDTO()
                 {

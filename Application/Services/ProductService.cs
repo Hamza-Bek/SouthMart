@@ -70,7 +70,7 @@ namespace Application.Services
         {
             try
             {
-                var data = await _httpClient.PutAsJsonAsync("api/products/add-product", model);
+                var data = await _httpClient.PutAsJsonAsync("api/products/update-product", model);
                 var response = await data.Content.ReadFromJsonAsync<ProductResponse>();
 
                 if (response.Flag)

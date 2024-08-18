@@ -90,7 +90,7 @@ namespace Infrastructure.Repositories
                 if (product == null)
                     return new ProductResponse(false, "No produt found");
 
-                var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryId == model.Category);
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.CategoryTag == model.Category);
                 if (category == null)
                     return new ProductResponse(false, "Category not found!");
 

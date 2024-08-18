@@ -25,6 +25,36 @@ namespace Application.Services
             this.httpClientService = httpClientService;
         }
 
+        public async Task<OrderResponse> ChangeOrderStatusAsync(string orderId, string newStatusId)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(new { newStatusId }), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync($"api/orders/change-order-status/{orderId}/{newStatusId}", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return new OrderResponse(false, $"Error changing order status: {errorContent}");
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<OrderResponse>();
+            return result!;
+        }
+
+        public async Task<OrderResponse> ChangeProductStatusAsync(string productId, string newStatusId)
+        {
+            var content = new StringContent(JsonSerializer.Serialize(new { newStatusId }), Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync($"api/orders/change-product-status/{productId}/{newStatusId}", content);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return new OrderResponse(false, $"Error changing order status: {errorContent}");
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<OrderResponse>();
+            return result!;
+        }
+
         public async Task<OrderResponse> ClearCartItemsAsync(string userId)
         {
             var response = await _httpClient.DeleteAsync($"api/orders/clear-cart-items/{userId}");
@@ -49,6 +79,43 @@ namespace Application.Services
             {
                 return new OrderResponse { Flag = false, Message = "Failed to remove the plate!" };
             }
+        }
+
+        public async Task<IEnumerable<Order>> GetOrdersAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("api/orders/get-all-orders");
+                response.EnsureSuccessStatusCode();
+                var data = await response.Content.ReadFromJsonAsync<IEnumerable<Order>>();
+                return data ?? Enumerable.Empty<Order>();
+            }
+            catch
+            {
+                return Enumerable.Empty<Order>();
+            }
+        }
+
+        public async Task<Dictionary<string, string>> GetOrderStatusAsync()
+        {
+            var response = await _httpClient.GetAsync("api/orders/get-order-status-dic");
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                return data!;
+            }
+            throw new Exception();
+        }
+
+        public async Task<Dictionary<string, string>> GetProductStatusAsync()
+        {
+            var response = await _httpClient.GetAsync("api/orders/get-product-status-dic");
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                return data!;
+            }
+            throw new Exception();
         }
 
         public async Task<IEnumerable<OrderDTO>> GetUserOrdersAsync(string userId)

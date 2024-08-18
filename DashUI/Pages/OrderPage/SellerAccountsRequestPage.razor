@@ -1,9 +1,9 @@
-﻿@page "/order/list"
+﻿@page "/seller-account/requests"
 @using Domain.Models.UserEntity
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @inject ISellerRepository sellerService
-@attribute [Authorize(Roles = "Seller")]
+@attribute [Authorize(Roles = "Admin")]
 
 <div class="page-wrapper">
     <div class="content">

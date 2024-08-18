@@ -59,7 +59,8 @@ namespace Infrastructure.Repositories
                     ProductPrice = (decimal)product.SellingPrice,
                     Quantity = Quantity,
                     Total = (decimal)(Quantity * product.SellingPrice),
-                    CoverImageUrl = product.Images.FirstOrDefault()?.Url
+                    CoverImageUrl = product.Images.FirstOrDefault()?.Url,
+                    SellerId = product.SellerId
                 };
 
                 userCart.CartTotal += (decimal)cartitem.Total;

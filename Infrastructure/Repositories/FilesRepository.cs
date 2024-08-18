@@ -14,6 +14,7 @@ namespace Infrastructure.Repositories
 {
     public class FilesRepository (AppDbContext _context) : IFilesRepository
     {
+      
         public async Task<GeneralResponse> DeleteImageAsync(string imageId)
         {
             var imageToDelete = await _context.Images.FindAsync(imageId);
@@ -68,5 +69,7 @@ namespace Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
+
+      
     }
 }

@@ -16,6 +16,45 @@ namespace Infrastructure.Repositories
 {
     public class OrderRepository(AppDbContext _context, IMapper _mapper) : IOrderRepository
     {
+        public async Task<OrderResponse> ChangeOrderStatusAsync(string orderId, string newStatusId)
+        {
+
+            var order = await _context.Orders.FirstOrDefaultAsync(i => i.OrderId == orderId);
+            if (order == null)
+                return new OrderResponse(Flag: false, Message: "The order not found");
+
+            var status = await _context.OrderStatuses.FindAsync(newStatusId);
+            if (status == null)
+                return new OrderResponse(Flag: false, Message: "The status not found");
+
+            order.OrderStatus = status.Status;
+
+
+            _context.Orders.Update(order);
+
+            await _context.SaveChangesAsync();
+            return new OrderResponse(true, "Status changed");
+        }
+
+        public async Task<OrderResponse> ChangeProductStatusAsync(string productId, string newStatusId)
+        {
+            var product = await _context.OrderDetails.FirstOrDefaultAsync(i => i.ProductId == productId);
+            if (product == null)
+                return new OrderResponse(Flag: false, Message: "The product not found");
+
+            var status = await _context.ProductStatuses.FindAsync(newStatusId);
+            if (status == null)
+                return new OrderResponse(Flag: false, Message: "The status not found");
+
+            product.ProductStatus = status.Status;
+
+
+            _context.OrderDetails.Update(product);
+
+            await _context.SaveChangesAsync();
+            return new OrderResponse(true, "Status changed");
+        }
+
         public async Task<OrderResponse> ClearCartItemsAsync(string userId)
         {
             var getUser = await _context.Users.FindAsync(userId);
@@ -60,6 +99,29 @@ namespace Infrastructure.Repositories
             await _context.SaveChangesAsync();
 
             return new OrderResponse(Flag: true, Message: "Cart Total cleared successfully");
+        }
+
+        public async Task<IEnumerable<Order>> GetOrdersAsync()
+        {
+            var orders = await _context.Orders
+                .Include(d => d.OrderDetails) 
+                .Include(o => o.OrderMaker)
+                .ToListAsync();
+            
+
+            return orders;
+        }
+
+        public async Task<Dictionary<string, string>> GetOrderStatusAsync()
+        {
+            var statuses = await _context.OrderStatuses.AsNoTracking().ToListAsync();
+            return statuses.ToDictionary(c => c.Id, c => c.Status);
+        }
+
+        public async Task<Dictionary<string, string>> GetProductStatusAsync()
+        {
+            var statuses = await _context.ProductStatuses.AsNoTracking().ToListAsync();
+            return statuses.ToDictionary(c => c.Id, c => c.Status);
         }
 
         public async Task<IEnumerable<OrderDTO>> GetUserOrdersAsync(string userId)
@@ -148,7 +210,10 @@ namespace Infrastructure.Repositories
 						ProductId = cartItem.ProductId,
 						ProductName = cartItem.ProductName,
 						ProductPrice = cartItem.ProductPrice,
-						Quantity = cartItem.Quantity
+						Quantity = cartItem.Quantity,
+                        SellerId = cartItem.SellerId,
+                        ProductStatus = "Pending",
+                        CoverImageUrl = cartItem.CoverImageUrl
 					}).ToList()
 				};           
 

@@ -18,6 +18,7 @@ namespace WebAPI.Controllers
             _filesRepository = filesRepository;
             _environment = environment;
         }
+        
 
         [HttpPost("upload-plate-image/{plateId}")]
         public async Task<IActionResult> UploadPlateImageAsync(IFormFile file, [FromRoute] string plateId)

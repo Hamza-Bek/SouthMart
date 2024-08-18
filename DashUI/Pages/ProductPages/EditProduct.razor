@@ -1,10 +1,13 @@
-﻿@page "/product/edit"
+﻿@page "/product/edit/{ProductId}"
 @using Application.DTOs.Request.ProductEntity
+@using AutoMapper
 @using DashUI.Extensions
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Internal
 @inject IProductRepository productService
+@inject IMenuRepository menuService
 @inject IFilesRepository fileService
 @attribute [Authorize(Roles = "Seller")]
 
@@ -12,20 +15,22 @@
     <div class="content">
         <div class="page-header">
             <div class="page-title">
-                <h4>Product Add</h4>
-                <h6>Create new product</h6>
+                <h4>Product Edit</h4>
+                <h6>Update your product</h6>
             </div>
         </div>
         <EditForm Model="product" OnValidSubmit="HandleValidSubmit">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
+                        <!-- Product Name -->
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Product Name</label>
                                 <InputText @bind-Value="product.Name" type="text" />
                             </div>
                         </div>
+                        <!-- Category -->
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Category</label>
@@ -37,49 +42,40 @@
                                 </select>
                             </div>
                         </div>
+                        <!-- Cost -->
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Cost</label>
                                 <InputNumber @bind-Value="product.Cost" class="form-control" type="text" />
                             </div>
                         </div>
+                        <!-- Selling Price -->
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Selling Price</label>
                                 <InputNumber @bind-Value="product.SellingPrice" class="form-control" type="text" />
                             </div>
                         </div>
-
-
-
+                        <!-- Quantity -->
                         <div class="col-lg-3 col-sm-6 col-12">
                             <div class="form-group">
                                 <label>Quantity</label>
                                 <InputNumber @bind-Value="product.Quantity" class="form-control" type="text" />
                             </div>
                         </div>
+                        <!-- Description -->
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Description</label>
                                 <InputTextArea @bind-Value="product.Description" class="form-control" />
                             </div>
                         </div>
-
-                        <div class="col-lg-12">
-                            <div class="form-group">
-                                <label>Product Image</label>
-                                <div class="image-upload">
-                                    <input type="file" id="productImage">
-                                    <div class="image-uploads">
-                                        <img src="img/icons/upload.svg" alt="img">
-                                        <InputFile OnChange="SelectPlateImage" multiple="false" type="file" name="chooseFile" id="chooseFile" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Product Image -->
+                     
+                        <!-- Submit Button -->
                         <div class="col-lg-12 mt-3">
-                            <input type="submit" class="btn btn-submit me-2" value="Add Product">
-                            <a href="productlist.html" class="btn btn-cancel">Cancel</a>
+                            <input type="submit" class="btn btn-submit me-2" value="Update Product">
+                            <a href="/home" class="btn btn-cancel">Cancel</a>
                         </div>
                     </div>
                 </div>
@@ -129,19 +125,19 @@
         .select::-ms-expand {
             display: none;
         }
-
 </style>
 
 @code {
     [CascadingParameter]
     public Task<AuthenticationState> AuthStateTask { get; set; }
     private string userId;
-    private const int MaxAllowedFileSize = 1024 * 1024 * 10;
     private string _errorMessage = string.Empty;
     public ProductDTO product = new ProductDTO();
     Dictionary<string, string> Categories = new();
-    private List<IFormFile> _selectedImages = new();
-    private readonly IEnumerable<string> _allowedFileExtensions = [".jpeg", ".png", ".jpg", ".webp"];
+   
+
+    [Parameter]
+    public string ProductId { get; set; } // This will help with editing the specific product
 
     protected override async Task OnInitializedAsync()
     {
@@ -152,68 +148,54 @@
             userId = userClaim.Value;
 
         await GetData();
-        // Ensure plate.CategoryTag is properly initialized
-        if (Categories.Any())
+
+        if (!string.IsNullOrEmpty(ProductId))
         {
-            product.Category = Categories.Values.First();
+            await LoadProduct(ProductId);
+        }
+    }
+
+    private async Task LoadProduct(string productId)
+    {
+        try
+        {
+            var productsFromDb = await menuService.GetProductByIdAsync(productId);
+            var productFromDb = productsFromDb.FirstOrDefault(); // Get the first product if available
+
+            if (productFromDb != null)
+            {
+                product = productFromDb; // Assign fetched product data to the product DTO
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading product: {ex.Message}");
         }
     }
 
     private async Task HandleValidSubmit()
     {
-        product.Id = Guid.NewGuid().ToString();
-        product.SellerId = userId;
-        var result = await productService.AddProductAsync(product);
-        if (result.Flag)
-        {
-            Console.WriteLine($"Product Added Successfully");
+        if (!string.IsNullOrEmpty(product.Id))
+        {            
+            var result = await productService.UpdateProductAsync(product);
+            if (result.Flag)
+            {
+                Console.WriteLine("Product updated successfully.");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to update product: {result.Message}");
+            }
         }
         else
         {
-            Console.WriteLine($"Failed to add plate: {result.Message}");
+            _errorMessage = "Product ID is missing.";
         }
     }
 
-    private async Task SelectPlateImage(InputFileChangeEventArgs e)
-    {
-        // You can allow the user to select multiple images at once, if so,
-        // the e.FileCount property will be greater than 1, so you need a foreach loop
-        // to convert and add each selected image to the _selectedImages collection
 
-        // check for file size
-        if (e.File.Size > MaxAllowedFileSize)
-        {
-            _errorMessage = "Image size is greater than max allowed file size";
-            return;
-        }
 
-        // check for extension
-        var fileExtension = Path.GetExtension(e.File.Name);
-        if (!_allowedFileExtensions.Contains(fileExtension))
-        {
-            _errorMessage = $"Use of unacceptable file extension ({fileExtension})";
-            return;
-        }
-
-        try
-        {
-            var buffer = new byte[e.File.Size];
-            await e.File.OpenReadStream(MaxAllowedFileSize).ReadAsync(buffer);
-
-            // Convert to base64-encoded data URL
-            var base64String = Convert.ToBase64String(buffer);
-            var tempUrl = $"data:{e.File.ContentType};base64,{base64String}";
-
-            _selectedImages.Add(tempUrl.ToIFormFileFromBase64String());
-        }
-        catch (Exception ex)
-        {
-            _errorMessage = ex.Message;
-        }
-
-        // check for multiple files
-        // TODO: Yours to implement if needed ;-)
-    }
+ 
 
     private async Task GetData()
     {
@@ -221,14 +203,10 @@
         {
             Categories = await productService.GetCategoriesDicAsync();
             Console.WriteLine("Categories fetched successfully.");
-            foreach (var category in Categories)
-            {
-                Console.WriteLine($"Key: {category.Key}, Value: {category.Value}");
-            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error fetching categories: {ex.Message}");
+            _errorMessage = $"Error fetching categories: {ex.Message}";
         }
     }
-}        
+}

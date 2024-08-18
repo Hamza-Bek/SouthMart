@@ -202,35 +202,56 @@
 
             </div>
 
-
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-inner slimscroll">
+            
+                <div class="sidebar" id="sidebar">
+                    <div class="sidebar-inner slimscroll">
                     <div id="sidebar-menu" class="sidebar-menu">
                         <ul>
                             <li class="active">
                                 <a href="/home"><img src="img/icons/dashboard.svg" alt="img"><span> Dashboard</span> </a>
                             </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="/product/list">Product List</a></li>
-                                    <li><a href="/product/add">Add Product</a></li>
-                                    <li><a href="/category/list">Category List</a></li>
+                            @if(roles.Contains("Admin"))
+                            {
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"><img src="img/icons/product.svg" alt="img"><span> Orders</span> <span class="menu-arrow"></span></a>
+                                    <ul>
+                                        <li><a href="/admin/orders/list">Orders List</a></li>
+                                        <li><a href="/product/add">Orders History</a></li>                                        
+                                    </ul>
+                                </li>
 
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="img/icons/sales1.svg" alt="img"><span> Orders</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="/order/list">Orders List</a></li>
-                                </ul>
-                            </li>
-                            <li class="submenu">
-                                <a href="javascript:void(0);"><img src="img/icons/users1.svg" alt="img"><span> Profile</span> <span class="menu-arrow"></span></a>
-                                <ul>
-                                    <li><a href="/profile">My Profile </a></li>
-                                </ul>
-                            </li>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"><img src="img/icons/users1.svg" alt="img"><span> Sellers</span> <span class="menu-arrow"></span></a>
+                                    <ul>
+                                        <li><a href="/profile">Seller Account Request</a></li>
+                                        <li><a href="/profile">Sellers   </a></li>
+                                    </ul>
+                                </li>
+                            }
+                            @if (roles.Contains("Seller"))
+                            {
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"><img src="img/icons/product.svg" alt="img"><span> Product</span> <span class="menu-arrow"></span></a>
+                                    <ul>
+                                        <li><a href="/product/list">Product List</a></li>
+                                        <li><a href="/product/add">Add Product</a></li>
+                                        <li><a href="/category/list">Category List</a></li>
+
+                                    </ul>
+                                </li>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"><img src="img/icons/sales1.svg" alt="img"><span> Orders</span> <span class="menu-arrow"></span></a>
+                                    <ul>
+                                        <li><a href="/order/list">Orders List</a></li>
+                                    </ul>
+                                </li>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"><img src="img/icons/users1.svg" alt="img"><span> Profile</span> <span class="menu-arrow"></span></a>
+                                    <ul>
+                                        <li><a href="/profile">My Profile </a></li>
+                                    </ul>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </div>
@@ -258,3 +279,20 @@
 <script src="plugins/apexchart/chart-data.js"></script>
 
 <script src="js/script.js"></script>
+
+@code {
+    private IEnumerable<string> roles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            roles = user.Claims
+                        .Where(c => c.Type == System.Security.Claims.ClaimTypes.Role)
+                        .Select(c => c.Value);
+        }
+    }
+}

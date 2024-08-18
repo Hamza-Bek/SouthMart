@@ -8,7 +8,7 @@ namespace Application.Interfaces
 {
     public interface IFilesRepository
     {
-        Task<ImageResponse> UploadImageAsync(IFormFile image, string plateId);
+        Task<ImageResponse> UploadImageAsync(IFormFile image, string plateId);        
         Task<GeneralResponse> SaveImageAsync(string productId, Image image);
         Task<GeneralResponse> DeleteImageAsync(string imageId);
         Task<Image> GetImageByIdAsync(string imageId);

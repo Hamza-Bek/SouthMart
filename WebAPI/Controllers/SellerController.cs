@@ -187,11 +187,62 @@ namespace WebAPI.Controllers
             var data = await _sellerRepository.GetExpiredProductAsync(sellerId);
             return Ok(data);
         }
+
         [HttpGet("recently-added-product/{sellerId}")]
         public async Task<IActionResult> GetRecentlyAddedProduct(string sellerId)
         {
             var data = await _sellerRepository.GetRecentlyAddedProductAsync(sellerId);
             return Ok(data);
+        }
+
+        [HttpGet("get-orders/{sellerId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<OrderDetails>))]
+        public async Task<IActionResult> GetSellerOrders(string sellerId)
+        {
+            try
+            {
+                var data = await _sellerRepository.GetSellerOrders(sellerId);
+
+                // Check if no data is found for the seller
+                if (data == null || !data.Any())
+                {
+                    return NotFound(new { message = "No orders found for this seller." });
+                }
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging (optional)
+                // _logger.LogError(ex, "Error while retrieving seller orders");
+
+                return BadRequest(new { message = "An error occurred while processing your request.", error = ex.Message });
+            }
+        }
+
+        [HttpGet("get-order-id/{orderId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<OrderDetails>))]
+        public async Task<IActionResult> GetOrderById(string orderId)
+        {
+            try
+            {
+                var data = await _sellerRepository.GetOrder(orderId);
+
+                // Check if no data is found for the seller
+                if (data == null )
+                {
+                    return NotFound(new { message = "No orders found for this seller." });
+                }
+
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging (optional)
+                // _logger.LogError(ex, "Error while retrieving seller orders");
+
+                return BadRequest(new { message = "An error occurred while processing your request.", error = ex.Message });
+            }
         }
     }
 }

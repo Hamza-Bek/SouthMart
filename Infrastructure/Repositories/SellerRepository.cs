@@ -293,6 +293,7 @@ namespace Infrastructure.Repositories
 
             return _mapper.Map<IEnumerable<ProductDTO>>(expiredProducts);
         }
+
         public async Task<IEnumerable<ProductDTO>> GetRecentlyAddedProductAsync(string sellerId)
         {
             var seller = await _context.SellerAccounts.FirstOrDefaultAsync(i => i.SellerId == sellerId);
@@ -307,6 +308,33 @@ namespace Infrastructure.Repositories
                           .ToListAsync();
             
             return _mapper.Map<IEnumerable<ProductDTO>>(recentlyAddedProducts);
-        }           
+        }
+
+        public async Task<IEnumerable<OrderDetails>> GetSellerOrders(string sellerId)
+        {
+            var seller = await _context.SellerAccounts.FirstOrDefaultAsync(i => i.SellerId == sellerId);
+            if (seller == null)
+                throw new Exception("Seller not found.");
+
+            var products = await _context.OrderDetails
+                .Where(i => i.SellerId == seller.SellerId)
+                .Include(i => i.Order)      
+                .ThenInclude(i => i.OrderMaker)
+                     .ToListAsync();
+
+            return _mapper.Map<IEnumerable<OrderDetails>>(products);
+        }
+
+        public async Task<IEnumerable<OrderDetails>> GetOrder(string orderId)
+        {
+            var orders = await _context.OrderDetails
+                .Include(o => o.Order)       // Include related entities if needed
+                .ThenInclude(o => o.OrderMaker) // Include related entities if needed
+                .ThenInclude(l => l.Location)
+                .Where(o => o.OrderId == orderId)
+                .ToListAsync(); // Convert the result to a list
+
+            return orders; // Return the list of orders
+        }
     }
 }
