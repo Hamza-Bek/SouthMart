@@ -58,7 +58,7 @@ namespace Infrastructure.Repositories
 
                 foreach (var adminId in userIds)
                 {
-                    await _notificationRepository.AddNotificationAsync(adminId, $"The user with id: {acc.SellerId} requested a seller account. Current Status: {acc.Status}");
+                    await _notificationRepository.AddNotificationAsync(model.SellerId, $"The user with id: {acc.SellerId} requested a seller account. Current Status: {acc.Status}");
                 }
 
                 await _context.SaveChangesAsync();
@@ -243,6 +243,9 @@ namespace Infrastructure.Repositories
         {
             try
             {
+                if (user.SellerAccount.Status != "Approved")
+                    return new SellerResponse(false, "Seller not accpeted yet!");
+
                 await _userManager.RemoveFromRoleAsync(user, "User");
                 await _userManager.AddToRoleAsync(user, "Seller");
 

@@ -26,6 +26,8 @@ namespace Infrastructure.Repositories
             var data = await _context.Products
                 .Where(n => n.Name == getProduct.Name)
                 .Include(i => i.Images)
+                .Include( s => s.Seller)
+                .ThenInclude(s => s.SellerAccount)
                 .ToListAsync();
 
             return _mapper.Map<IEnumerable<ProductDTO>>(data);

@@ -11,11 +11,11 @@ namespace WebAPI.Controllers
     {
 
         [HttpGet("get-notifications")]
-        public async Task<ActionResult<List<NotificationDTO>>> GetAllNotifications(string userId)
+        public async Task<ActionResult<List<NotificationDTO>>> GetAllNotifications()
         {
             try
             {
-                var data = await _notificationRepository.GetAllNotifications(userId);
+                var data = await _notificationRepository.GetAllNotifications();
                 return Ok(data);
             }
             catch (Exception ex)

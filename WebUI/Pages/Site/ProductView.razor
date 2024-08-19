@@ -22,7 +22,7 @@
             </div>
             <div class="content">
                 <h1 class="name">@item.Name</h1>
-            <div class="price">$@item.SellingPrice</div>
+            <div class="price">$@item.SellingPrice</div>                                             
             <div class="buttons">
                 <button>-</button>
                     <button @onclick="() => AddPlateToCart(item.Id)">
@@ -36,7 +36,9 @@
                     <button>+</button>
             </div>
             <div class="description">
+
                     @item.Description
+                    <a class="seller-name" href="/seller/products/@item.SellerId"> by: @item.Seller.SellerAccount.Name</a>
             </div>
         </div>
         }
@@ -87,6 +89,13 @@
         margin-top: 20px;        
     }
 
+    .seller-name {
+        margin-right: 40px; /* Adjusts the space between 'by:' and the seller name */
+        text-decoration: none; /* Optional: Remove underline */
+      
+    }
+
+       
     .img-sm {
         width: 46px;
         height: 46px;
@@ -264,6 +273,12 @@ a{
     letter-spacing: 7px;
     margin-bottom: 20px;
 }
+
+        .detail .text {
+            font-weight: bold;
+            font-size: small;            
+            margin-bottom: 20px;
+        }
 .detail .buttons{
     display: flex;
     gap: 20px;

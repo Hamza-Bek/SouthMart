@@ -31,19 +31,15 @@ namespace Infrastructure.Repositories
             return new NotificationResponse(true, "Notification added!");
         }
 
-        public async Task<List<NotificationDTO>> GetAllNotifications(string userId)
-        {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-                Console.WriteLine("User not found!");
-
+        public async Task<IEnumerable<Notification>> GetAllNotifications()
+        {            
             var notifications = await _context.Notifications
-            .Where(u => u.UserId == userId)
-            .ToListAsync();
 
-            var notificationDTO = notifications.Select(p => _mapper.Map<NotificationDTO>(p)).ToList();
+                .Include(n => n.User)
+                .ThenInclude(o =>o.SellerAccount)
+            .ToListAsync();            
 
-            return notificationDTO;
+            return notifications;
         }        
 
         public async Task<NotificationResponse> LowQuantityNotifyAsync(NotificationDTO model)

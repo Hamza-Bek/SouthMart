@@ -1,8 +1,11 @@
 ﻿@page "/seller-account/requests"
+@using Application.DTOs.Request.Account
+@using Domain.Models.Authentication
 @using Domain.Models.UserEntity
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @inject ISellerRepository sellerService
+@inject INotificationRepository notificationService
 @attribute [Authorize(Roles = "Admin")]
 
 <div class="page-wrapper">
@@ -90,18 +93,17 @@
                                 <th>Customer Name</th>
                                 <th>Reference</th>
                                 <th>Status</th>
-                                <th>Payment</th>
-                                <th>Total</th>                              
-                                <th>Biller</th>
+                                <th>Reference</th>                                                       
+                               
                                 <th class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (products != null && products.Any())
+                            @if (notification != null && notification.Any())
                             {
-                                foreach (var order in products)
-                                {
-                                    if (order.ProductStatus != "Done") // Check if the product status is not "Done"
+                                foreach (var notify in notification)
+                                {           
+                                    if(notify.User.SellerAccount.Status != "Approved")
                                     {
                                         <tr>
                                             <td>
@@ -110,48 +112,31 @@
                                                     <span class="checkmarks"></span>
                                                 </label>
                                             </td>
-                                            <td>@order.Order.OrderDate</td>
-                                            <td>@order.Order.OrderMaker.Name</td>
-                                            <td>@order.Order.OrderNumber</td>
-                                            <td><span class="badges bg-lightgreen">@order.ProductStatus</span></td>
-                                            <td><span class="badges bg-lightgreen">Paid</span></td>
-                                            <td>@(order.ProductPrice * order.Quantity)</td>
-                                            <td>Admin</td>
+                                            <td>@notify.User.SellerAccount.DateCreated</td>
+                                            <td>@notify.User.SellerAccount.Name</td>
+                                            <td>@notify.User.SellerAccount.Description</td>
+                                            <td><span class="badges bg-lightgreen">@notify.User.SellerAccount.Status</span></td>
+
+                                            <td><span class="badges bg-lightgreen">@notify.User.SellerAccount.Id</span></td>
+
+
                                             <td class="text-center">
                                                 <a class="action-set" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="true">
                                                     <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                 </a>
                                                 <ul class="dropdown-menu">
+
                                                     <li>
-                                                        <a href="/order/details/@order.OrderId" class="dropdown-item"><img src="img/icons/eye1.svg" class="me-2" alt="img">Sale Detail</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="edit-sales.html" class="dropdown-item"><img src="img/icons/edit.svg" class="me-2" alt="img">Edit Sale</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#showpayment"><img src="img/icons/dollar-square.svg" class="me-2" alt="img">Show Payments</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#createpayment"><img src="img/icons/plus-circle.svg" class="me-2" alt="img">Create Payment</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item"><img src="img/icons/download.svg" class="me-2" alt="img">Download pdf</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="javascript:void(0);" class="dropdown-item confirm-text"><img src="img/icons/delete1.svg" class="me-2" alt="img">Delete Sale</a>
+                                                        <a @onclick="() => ApproveSellerAccount(notify.User.SellerAccount.Id, true)" href=" javascript:void(0);" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#showpayment"><img src="img/icons/dollar-square.svg" class="me-2" alt="img">Accept Seller</a>
                                                     </li>
                                                 </ul>
                                             </td>
                                         </tr>
                                     }
+                                    
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="3">No products available.</td>
-                                </tr>
-                            }
+                                                        
                         </tbody>
                     </table>
                 </div>
@@ -340,16 +325,15 @@
 
 @code {
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
-    private string userId;
-    private string cartId;
-    IEnumerable<OrderDetails> products;
+    private string userId;    
+    IEnumerable<Notification> notification;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetProducts();
+        await GetNotify();
     }
 
-    private async Task GetProducts()
+    private async Task GetNotify()
     {
         try
         {
@@ -359,20 +343,28 @@
             if (userIdClaim != null)
                 userId = userIdClaim.Value;
 
-            products = await sellerService.GetSellerOrders(userId);
-            if (products != null && products.Any())
+            notification = await notificationService.GetAllNotifications();
+            if (notification != null && notification.Any())
             {
-                Console.WriteLine("Categories fetched successfully");
+                Console.WriteLine("Notifications fetched successfully");
             }
             else
             {
-                Console.WriteLine("No categories found.");
+                Console.WriteLine("No Notifications found.");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error fetching categories: {ex.Message}");
+            Console.WriteLine($"Error fetching Notifications: {ex.Message}");
         }
 
+    }
+
+
+    private async Task ApproveSellerAccount(string sellerAccountId, bool isApproved)
+    {
+        await sellerService.ApproveSellerAccountAsync(sellerAccountId, isApproved);
+        // Optionally reload notifications or update UI after approval
+        notification = await notificationService.GetAllNotifications();
     }
 }

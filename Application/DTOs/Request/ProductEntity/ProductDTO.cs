@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Models.Authentication;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,5 +20,6 @@ namespace Application.DTOs.Request.ProductEntity
         public int TotalSold { get; set; }
         public string? CoverImageUrl { get; set; }
         public DateTime AddedDate { get; set; }
+        public ApplicationUser Seller { get; set; }
     }
 }

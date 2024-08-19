@@ -287,11 +287,6 @@
         {
             var authState = await AuthStateTask;
 
-            foreach (var claim in authState.User.Claims)
-            {
-                Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
-            }
-
             var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
             var userCartIdClaim = authState.User.FindFirst(c => c.Type == "CartId");
             if (userIdClaim != null)

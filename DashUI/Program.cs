@@ -40,9 +40,14 @@ builder.Services.AddScoped<ILocationRepository, LocationService>();
 builder.Services.AddScoped<IMenuRepository, MenuService>();
 builder.Services.AddScoped<IFilesRepository, FilesService>();
 builder.Services.AddScoped<ISellerRepository, SellerService>();
+builder.Services.AddScoped<INotificationRepository, NotificationService>();
 #endregion
 
 #region HTTP's CLients
+builder.Services.AddHttpClient<INotificationRepository, NotificationService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7207/");
+});
 builder.Services.AddHttpClient<ISellerRepository, SellerService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7207/");

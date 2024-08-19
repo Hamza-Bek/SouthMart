@@ -11,7 +11,7 @@ namespace Application.Interfaces
 {
     public interface INotificationRepository
     {
-        Task<List<NotificationDTO>> GetAllNotifications(string userId);
+        Task<IEnumerable<Notification>> GetAllNotifications();
         Task<NotificationResponse> AddNotificationAsync(string userId, string message);
 
         //Buyer's methods :
