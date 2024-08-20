@@ -21,6 +21,7 @@ namespace Application.Interfaces
         Task<SellerAccountDTO> GetSellerAccountAsync(string userId);
 
         // GET's methods
+        Task<IEnumerable<SellerAccountDTO>> GetAllSellersAsync();
         Task<IEnumerable<OrderDetails>> GetSellerOrders(string sellerId);
         Task<IEnumerable<OrderDetails>> GetOrder(string orderId);
         Task<IEnumerable<ProductDTO>> GetExpiredProductAsync(string sellerId);

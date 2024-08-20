@@ -1,6 +1,9 @@
-﻿using Application.DTOs.Response;
+﻿using Application.DTOs.Request.ProductEntity;
+using Application.DTOs.Response;
 using Application.Extensions;
 using Application.Interfaces;
+using Domain.Models.Authentication;
+using Domain.Models.ProductEntity;
 using Domain.Models.UserEntity;
 using System;
 using System.Collections.Generic;
@@ -9,6 +12,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Application.Services
 {
@@ -16,13 +20,14 @@ namespace Application.Services
     {
         private readonly HttpClient _httpClient;
         private readonly HttpClientService httpClientService;
-
+        public event Action OnChange;
 
         public BuyerService(HttpClient httpClient, HttpClientService httpClientService)
         {
             _httpClient = httpClient;
             this.httpClientService = httpClientService;
         }
+
         public async Task<BuyerResponse> AddProductToCartAsync(string productId, string userId)
         {
             try
@@ -32,13 +37,14 @@ namespace Application.Services
                 var response = await data.Content.ReadFromJsonAsync<BuyerResponse>();
                 if (response.Flag)
                 {
-                    return new BuyerResponse { Flag = true, Message = "Plate added successfully" };
+                    NotifyStateChanged();
+                    return new BuyerResponse { Flag = true, Message = "Product added successfully" };
 
                 }
                 else
                 {
 
-                    return new BuyerResponse { Flag = false, Message = "Failed to add plate" };
+                    return new BuyerResponse { Flag = false, Message = "Failed to add product" };
 
                 }
 
@@ -114,6 +120,55 @@ namespace Application.Services
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public async Task<BuyerResponse> LikeProductAsync(string productId, string userId)
+        {
+            try
+            {
+                var data = await _httpClient.PostAsJsonAsync($"api/buyers/like-product/{productId}/{userId}", new { });
+                var response = await data.Content.ReadFromJsonAsync<BuyerResponse>();
+                
+                if (response.Flag)
+                {
+                    return new BuyerResponse { Flag = true, Message = "Product liked successfully" };
+
+                }
+                else
+                {
+
+                    return new BuyerResponse { Flag = false, Message = "Failed to like product" };
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<IEnumerable<ProductDTO>> GetLikedProductsAsync(string userId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"api/buyers/get-likes/{userId}");
+                string error = CheckResponseStatus(response);
+                if (!string.IsNullOrEmpty(error))
+                    throw new Exception(error);
+
+                var result = await response.Content.ReadFromJsonAsync<IEnumerable<ProductDTO>>();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private async void NotifyStateChanged()
+        {
+            Console.WriteLine("OnChange event triggered"); // Debug output
+            OnChange?.Invoke();
         }
     }
 }

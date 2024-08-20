@@ -244,5 +244,12 @@ namespace WebAPI.Controllers
                 return BadRequest(new { message = "An error occurred while processing your request.", error = ex.Message });
             }
         }
+
+        [HttpGet("get-sellers")]
+        public async Task<IActionResult> GetAllSellers()
+        {
+            var data = await _sellerRepository.GetAllSellersAsync();
+            return Ok(data);
+        }
     }
 }

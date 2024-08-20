@@ -1,6 +1,7 @@
-﻿@page "/menu/{categoryTag}"
+﻿@page "/wishlist"
 @using Application.DTOs.Request.ProductEntity
 @using Application.Interfaces
+@using Domain.Models.Authentication
 @using Domain.Models.ProductEntity
 @using System.Security.Claims
 @inject IMenuRepository menuService
@@ -33,7 +34,7 @@
                                             <a @onclick="()=> LikeProduct(product.Id)" class="btn-wishlist" style="text-decoration: none;"><i class="fa-regular fa-heart"></i></a>
                                             <figure>
                                                 <a @onclick="() => NavigateToProductDetails(product.Id)" title="Product Title">
-                                                    <img  src="@product.CoverImageUrl" class="tab-image">
+                                                    <img src="@product.CoverImageUrl" class="tab-image">
                                                 </a>
                                             </figure>
                                             <h3>@product.Name</h3>
@@ -100,7 +101,7 @@
     public string CategoryTag { get; set; }
     private string likeMessage = string.Empty;
 
-    private List<ProductDTO> Products = new List<ProductDTO>();
+    IEnumerable<ProductDTO> Products;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -111,7 +112,7 @@
         {
             userId = userIdClaim.Value;
         }
-        Products = (await menuService.GetProductsByCategoryAsync(CategoryTag)).ToList();
+        Products = await buyerService.GetLikedProductsAsync(userId);
     }
 
     private void NavigateToProductDetails(string product)

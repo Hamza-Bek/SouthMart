@@ -1,7 +1,9 @@
 ﻿@page "/home"
 @using Application.DTOs.Request
 @using Application.DTOs.Request.ProductEntity
+@using Application.DTOs.Response
 @using Domain.Models.SellerEntity
+@using Domain.Models.UserEntity
 @using Microsoft.AspNetCore.Components.Authorization
 @using System.Security.Claims
 @inject IProductRepository productService
@@ -15,16 +17,17 @@
 }
 else
 {    
+
 <div class="page-wrapper">
     <div class="content">
-        <div class="row">
+        <div class="row">              
             <div class="col-lg-3 col-sm-6 col-12">
                 <div class="dash-widget">
                     <div class="dash-widgetimg">
                         <span><img src="img/icons/dash1.svg" alt="img"></span>
                     </div>
                     <div class="dash-widgetcontent">
-                        <h5>$<span class="counters" data-count="307144.00">@Seller.Revenue</span></h5>
+                            <h5>$<span class="counters" data-count="307144.00">@((Seller?.Revenue ?? 0).ToString("F2"))</span></h5>
                         <h6>Total Revenues Due</h6>
                     </div>
                 </div>
@@ -35,7 +38,7 @@ else
                         <span><img src="img/icons/dash2.svg" alt="img"></span>
                     </div>
                     <div class="dash-widgetcontent">
-                        <h5>$<span class="counters" data-count="4385.00">@Seller.GrossSales</span></h5>
+                            <h5>$<span class="counters" data-count="4385.00">@((Seller?.GrossSales ?? 0).ToString("F2"))</span></h5>
                         <h6>Total Sales Due</h6>
                     </div>
                 </div>
@@ -46,8 +49,8 @@ else
                         <span><img src="img/icons/dash3.svg" alt="img"></span>
                     </div>
                     <div class="dash-widgetcontent">
-                        <h5>$<span class="counters" data-count="385656.50">385,656.50</span></h5>
-                        <h6>Total Sale Amount</h6>
+                            <h5>$<span class="counters" data-count="385656.50">@Last24hSalesAmount</span></h5>
+                        <h6>Total Sale Amount (24h)</h6>
                     </div>
                 </div>
             </div>
@@ -58,15 +61,15 @@ else
                     </div>
                     <div class="dash-widgetcontent">
                         <h5>$<span class="counters" data-count="40000.00">400.00</span></h5>
-                        <h6>Total Sale Amount</h6>
+                        <h6>Account debit</h6>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-sm-6 col-12 d-flex">
                 <div class="dash-count">
                     <div class="dash-counts">
-                        <h4>100</h4>
-                        <h5>Customers</h5>
+                            <h4>$@LastYearSalesAmount</h4>
+                        <h5>Last year sales</h5>
                     </div>
                     <div class="dash-imgs">
                         <i data-feather="user"></i>
@@ -76,8 +79,8 @@ else
             <div class="col-lg-3 col-sm-6 col-12 d-flex">
                 <div class="dash-count das1">
                     <div class="dash-counts">
-                        <h4>100</h4>
-                        <h5>Suppliers</h5>
+                        <h4>$@CurrentYearSalesAmount</h4>
+                        <h5>Current year sales</h5>
                     </div>
                     <div class="dash-imgs">
                         <i data-feather="user-check"></i>
@@ -87,8 +90,8 @@ else
             <div class="col-lg-3 col-sm-6 col-12 d-flex">
                 <div class="dash-count das2">
                     <div class="dash-counts">
-                        <h4>100</h4>
-                        <h5>Purchase Invoice</h5>
+                            <h4>$@LastMonthSalesAmount</h4>
+                        <h5>Last month sales</h5>
                     </div>
                     <div class="dash-imgs">
                         <i data-feather="file-text"></i>
@@ -98,8 +101,8 @@ else
             <div class="col-lg-3 col-sm-6 col-12 d-flex">
                 <div class="dash-count das3">
                     <div class="dash-counts">
-                        <h4>105</h4>
-                        <h5>Sales Invoice</h5>
+                        <h4>$@CurrentMonthSalesAmount</h4>
+                        <h5>Current month sales</h5>
                     </div>
                     <div class="dash-imgs">
                         <i data-feather="file"></i>
@@ -248,7 +251,12 @@ else
         </div>
     </div>
 </div>
+
+  
 }
+
+
+  
 @code{
 
     [CascadingParameter] 
@@ -260,11 +268,22 @@ else
     SellerAccountDTO Seller { get; set; }
     private bool isLoading;
 
+    private SalesResponse LastYearSales;
+    private SalesResponse CurrentYearSales;
+    private SalesResponse LastMonthSales;
+    private SalesResponse CurrentMonthSales;
+    private SalesResponse Last24hSales;
+
     protected async override Task OnInitializedAsync()
     {
         await GetExpiredProducts();
         await GetRecentlyAddedProducts();
         await GetSellerAsync();
+        await GetSalesForLastYearAsync(userId);
+        await GetSalesForCurrentYearAsync(userId);
+        await GetSalesForLastMonthAsync(userId);
+        await GetSalesForCuurentMonthAsync(userId);
+        await GetSalesForLast24hAsync(userId);
         isLoading = false;
     }
 
@@ -347,4 +366,124 @@ else
             Console.WriteLine($"Error fetching Seller: {ex.Message}");
         }
     }
+
+    private async Task GetSalesForLastYearAsync(string userId)
+    {
+        try
+        {
+            LastYearSales = await sellerService.GetSalesForLastYearAsync(userId);
+            if (LastYearSales != null && LastYearSales.Flag)
+            {
+                Console.WriteLine("Sales for last year fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No Sales data found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            LastYearSales = new SalesResponse(false, ex.Message, new List<OrderDetails>());
+            Console.WriteLine($"Error fetching Sales for last year: {ex.Message}");
+        }
+    }
+
+    private decimal LastYearSalesAmount =>
+     LastYearSales?.SalesData?.Sum(order => order.Quantity * order.ProductPrice) ?? 0;
+
+    private async Task GetSalesForCurrentYearAsync(string userId)
+    {
+        try
+        {
+            CurrentYearSales = await sellerService.GetSalesForCurrentYearAsync(userId);
+            if (CurrentYearSales != null && CurrentYearSales.Flag)
+            {
+                Console.WriteLine("Sales for current year fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No Sales data found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            CurrentYearSales = new SalesResponse(false, ex.Message, new List<OrderDetails>());
+            Console.WriteLine($"Error fetching Sales for current year: {ex.Message}");
+        }
+    }
+
+    private decimal CurrentYearSalesAmount =>
+     CurrentYearSales?.SalesData?.Sum(order => order.Quantity * order.ProductPrice) ?? 0;
+
+    private async Task GetSalesForLastMonthAsync(string userId)
+    {
+        try
+        {
+            LastMonthSales = await sellerService.GetSalesForLastMonthAsync(userId);
+            if (LastMonthSales != null && LastMonthSales.Flag)
+            {
+                Console.WriteLine("Sales for last month fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No Sales data found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            CurrentYearSales = new SalesResponse(false, ex.Message, new List<OrderDetails>());
+            Console.WriteLine($"Error fetching Sales for last month: {ex.Message}");
+        }
+    }
+
+    private decimal LastMonthSalesAmount =>
+     LastMonthSales?.SalesData?.Sum(order => order.Quantity * order.ProductPrice) ?? 0;
+
+    private async Task GetSalesForCuurentMonthAsync(string userId)
+    {
+        try
+        {
+            CurrentMonthSales = await sellerService.GetSalesForCurrentMonthAsync(userId);
+            if (CurrentMonthSales != null && CurrentMonthSales.Flag)
+            {
+                Console.WriteLine("Sales for last month fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No Sales data found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            CurrentMonthSales = new SalesResponse(false, ex.Message, new List<OrderDetails>());
+            Console.WriteLine($"Error fetching Sales for last month: {ex.Message}");
+        }
+    }
+
+    private decimal CurrentMonthSalesAmount =>
+     CurrentMonthSales?.SalesData?.Sum(order => order.Quantity * order.ProductPrice) ?? 0;
+
+    private async Task GetSalesForLast24hAsync(string userId)
+    {
+        try
+        {
+            Last24hSales = await sellerService.GetSalesForLast24HoursAsync(userId);
+            if (Last24hSales != null && Last24hSales.Flag)
+            {
+                Console.WriteLine("Sales for last month fetched successfully");
+            }
+            else
+            {
+                Console.WriteLine("No Sales data found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            CurrentMonthSales = new SalesResponse(false, ex.Message, new List<OrderDetails>());
+            Console.WriteLine($"Error fetching Sales for last month: {ex.Message}");
+        }
+    }
+
+    private decimal Last24hSalesAmount =>
+     Last24hSales?.SalesData?.Sum(order => order.Quantity * order.ProductPrice) ?? 0;
 }

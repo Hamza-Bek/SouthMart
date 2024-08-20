@@ -2,8 +2,10 @@
 ﻿@using Domain.Models.UserEntity
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
+@using System.Timers
 @inject IBuyerRepository buyerService
 @inject IMenuRepository menuService
+
 
 
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasSearch" aria-labelledby="Search">
@@ -70,7 +72,7 @@
                                 <li><a href="/profile" class="dropdown-item">Settings </a></li>
                                 <li><a href="/order" class="dropdown-item">Track Order </a></li>
                                 <li><a href="/orders/history" class="dropdown-item">Orders History </a></li>
-                                <li><a href="cart.html" class="dropdown-item">Cart </a></li>                                
+                                <li><a href="/wishlist" class="dropdown-item">Wish list </a></li>                                
                                 <li><a href="/logout" class="dropdown-item"><i class="fa-solid fa-right-from-bracket" style="color: #cc0000;"> Logout</i></a></li>
                             </ul>
                         </li>
@@ -106,7 +108,7 @@
                         <div class="order-md-last">
                             <h4 class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="text-primary">Your cart</span>
-                                <span class="badge bg-primary rounded-pill">3</span>
+                                <span class="badge bg-primary rounded-pill">@cartItems.Count()</span>
                             </h4>
                             <ul class="list-group mb-3">
                                 @foreach (var item in cartItems)
@@ -209,17 +211,33 @@
 </div>
 
 @code {
-    [CascadingParameter] 
-    public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
+        [CascadingParameter] 
+        public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
     private string userId;
     private string cartId;
     IEnumerable<CategoryDTO> categories;
     private IEnumerable<CartItem> cartItems = new List<CartItem>();
     private bool isLoading = true;    
 
+    private Timer _timer;
+
+    public void Dispose()
+    {
+        // Unsubscribe to prevent memory leaks
+        buyerService.OnChange -= OnCartChanged;
+    }
+
+    private async void OnCartChanged()
+    {
+        Console.WriteLine("OnCartChanged event triggered");
+        cartItems = (await buyerService.GetCartItemsAsync(userId)).ToList();
+        StateHasChanged(); // Force UI update
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
+        
 
         await GetCategories();
         var authState = await AuthStateTask;
@@ -233,10 +251,23 @@
         if (userIdClaim != null)
         {
             userId = userIdClaim.Value;
-            cartId = userCartIdClaim.Value;
+            cartId = userCartIdClaim.Value;           
+            buyerService.OnChange += OnCartChanged;  // Subscribe here
             cartItems = await buyerService.GetCartItemsAsync(userId);
         }
+        _timer = new Timer(400); // 1000 ms = 1 second
+        _timer.Elapsed += async (sender, e) => await OnTimerElapsed();
+        _timer.AutoReset = true;
+        _timer.Enabled = true;
+
         isLoading = false;        
+    }
+
+    private async Task OnTimerElapsed()
+    {
+        // Refresh cart items every second
+        cartItems = await buyerService.GetCartItemsAsync(userId);
+        StateHasChanged(); // Force UI update
     }
 
     private async Task RemoveProduct(string productId, string userId)
@@ -272,8 +303,7 @@
             {
                 cartItems = cartItems.Where(p => p.Id != productId).ToList();
 
-                cartItems = await buyerService.GetCartItemsAsync(userId);
-
+                cartItems = await buyerService.GetCartItemsAsync(userId);                
             }
 
         }

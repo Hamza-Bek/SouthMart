@@ -42,6 +42,7 @@ builder.Services.AddScoped<ISellerRepository, SellerService>();
 #endregion
 
 #region HTTP's CLients
+
 builder.Services.AddHttpClient<ISellerRepository, SellerService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7207/");

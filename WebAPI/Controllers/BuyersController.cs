@@ -64,6 +64,7 @@ namespace WebAPI.Controllers
             return Ok(data);
         }
 
+
         [HttpDelete("remove-product/{productId}/{userId}")]
         public async Task<IActionResult> RemoveProduct(string productId , string userId)
         {
@@ -76,6 +77,20 @@ namespace WebAPI.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpPost("like-product/{productId}/{userId}")]
+        public async Task<IActionResult> LikeProduct(string productId , string userId)
+        {
+            var response = await _buyerRepository.LikeProductAsync(productId, userId);
+            return Ok(response);
+        }
+
+        [HttpGet("get-likes/{userId}")]
+        public async Task<IActionResult> GetUserLikes(string userId)
+        {
+            var data = await _buyerRepository.GetLikedProductsAsync(userId);
+            return Ok(data);
         }
     }
 }

@@ -26,6 +26,7 @@ namespace Domain.Models.ProductEntity
         public ApplicationUser Seller { get; set; }
 
         public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
-        public ICollection<Comment> Comments { get; set; } = new List<Comment>();  // Navigation property to Comments
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public ICollection<Like> Likes { get; set; }
     }
 }

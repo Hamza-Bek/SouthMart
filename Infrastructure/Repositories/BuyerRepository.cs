@@ -1,13 +1,19 @@
-﻿using Application.DTOs.Response;
+﻿using Application.DTOs.Request.ProductEntity;
+using Application.DTOs.Response;
 using Application.Interfaces;
+using AutoMapper;
+using Domain.Models.Authentication;
+using Domain.Models.ProductEntity;
 using Domain.Models.UserEntity;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class BuyerRepository(AppDbContext _context) : IBuyerRepository
+    public class BuyerRepository(AppDbContext _context , IMapper _mapper) : IBuyerRepository
     {
+        public event Action OnChange;
+
         public async Task<BuyerResponse> AddProductToCartAsync(string productId, string userId)
         {
             int Quantity = 1;
@@ -70,6 +76,7 @@ namespace Infrastructure.Repositories
             }
 
             await _context.SaveChangesAsync();
+            NotifyStateChanged();
             return new BuyerResponse(true, "Product added to the cart!");
         }
 
@@ -144,6 +151,53 @@ namespace Infrastructure.Repositories
             return userCartItems;
         }
 
-        
+        public async Task<BuyerResponse> LikeProductAsync(string productId, string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return new BuyerResponse(false, "User not found!");
+
+            var product = await _context.Products.FirstOrDefaultAsync(i => i.Id == productId);
+            if (product == null)
+                return new BuyerResponse(false, "Product not found!");
+
+            var like = new Like()
+            {
+                Id = Guid.NewGuid().ToString(),
+                ProductId = productId,
+                UserId = userId
+            };
+
+            _context.Likes.Add(like);
+            await _context.SaveChangesAsync();
+
+            return new BuyerResponse(true, "Product Liked!");
+        }
+
+        public async Task<IEnumerable<ProductDTO>> GetLikedProductsAsync(string userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return null!;
+
+            var likes = await _context.Likes
+                .Where(i => i.UserId == userId)
+                .Include(u => u.User)
+                .Include(p => p.Product)
+                .ThenInclude(i => i.Images)
+                .Select(like => like.Product)
+                .ToListAsync();
+
+            var mappedLikes = _mapper.Map<IEnumerable<ProductDTO>>(likes);
+
+            return mappedLikes;
+
+        }
+
+        private void NotifyStateChanged()
+        {
+            Console.WriteLine("OnChange event triggered"); // Debug output
+            OnChange?.Invoke();
+        }
     }
 }

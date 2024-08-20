@@ -32,6 +32,7 @@ namespace Infrastructure.Data
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<Like> Likes { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<SellerStatus> SellerStatuses { get; set; }
@@ -102,7 +103,19 @@ namespace Infrastructure.Data
                 .HasOne(c => c.Product)
                 .WithMany(p => p.Comments)
                 .HasForeignKey(c => c.ProductId)
-                .OnDelete(DeleteBehavior.NoAction); 
+                .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Like>()
+            .HasOne(l => l.Product)
+            .WithMany(p => p.Likes)
+            .HasForeignKey(l => l.ProductId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Like>()
+           .HasOne(l => l.User)
+           .WithMany(u => u.Likes)
+           .HasForeignKey(l => l.UserId)
+           .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

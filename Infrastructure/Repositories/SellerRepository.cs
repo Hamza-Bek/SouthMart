@@ -339,5 +339,16 @@ namespace Infrastructure.Repositories
 
             return orders; // Return the list of orders
         }
+
+        public async Task<IEnumerable<SellerAccountDTO>> GetAllSellersAsync()
+        {
+            var sellers = await _context.SellerAccounts
+                .Include(u => u.Seller)                
+                .ToListAsync();
+
+            var mapperSellers = _mapper.Map<IEnumerable<SellerAccountDTO>>(sellers);
+
+            return mapperSellers;
+        }
     }
 }

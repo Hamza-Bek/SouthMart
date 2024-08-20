@@ -90,6 +90,20 @@ namespace Application.Services
             }
         }
 
+        public async Task<IEnumerable<SellerAccountDTO>> GetAllSellersAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetFromJsonAsync<IEnumerable<SellerAccountDTO>>("api/seller/get-sellers");
+                return response;
+            }
+            catch (Exception ex)
+            {               
+                Console.WriteLine($"Error fetching order details: {ex.Message}");
+                return null;
+            }
+        }
+
         public async Task<IEnumerable<ProductDTO>> GetExpiredProductAsync(string sellerId)
         {
             try
@@ -109,18 +123,15 @@ namespace Application.Services
         public async Task<IEnumerable<OrderDetails>> GetOrder(string orderId)
         {
             try
-            {
-                // Fetch the data from the API
+            {              
                 var response = await _httpClient.GetFromJsonAsync<IEnumerable<OrderDetails>>($"api/seller/get-order-id/{orderId}");
-
-                // Return the response wrapped in a collection
+               
                 return (IEnumerable<OrderDetails>)response;
             }
             catch (Exception ex)
-            {
-                // Log the exception or handle it as needed
+            {               
                 Console.WriteLine($"Error fetching order details: {ex.Message}");
-                return null; // Return an empty collection if there's an error
+                return null; 
             }
         }
 
