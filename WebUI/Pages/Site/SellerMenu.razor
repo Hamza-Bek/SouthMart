@@ -2,7 +2,9 @@
 @using Application.DTOs.Request.ProductEntity
 @using Application.Interfaces
 @using Domain.Models.ProductEntity
+@using System.Security.Claims
 @inject IMenuRepository menuService
+@inject IBuyerRepository buyerService
 <section class="py-5">
     <div class="container-fluid">
 
@@ -93,6 +95,10 @@
     [Parameter]
     public string sellerId { get; set; }
 
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
+    private string userId;
+
     private List<ProductDTO> Products = new List<ProductDTO>();
 
     protected override async Task OnParametersSetAsync()
@@ -103,5 +109,29 @@
     private void NavigateToProductDetails(string product)
     {
         NavManager.NavigateTo($"/product-details/{product}");
+    }
+
+    private async Task AddPlateToCart(string productId)
+    {
+        var authState = await AuthStateTask;
+
+        var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+        if (userIdClaim != null)
+        {
+            userId = userIdClaim.Value;
+            var response = await buyerService.AddProductToCartAsync(productId, userId);
+            if (response.Flag)
+            {
+                await js.InvokeVoidAsync("showToast", "Added Successfully", "success");
+            }
+            else
+            {
+                await js.InvokeVoidAsync("showToast", "Failed to Add ", "error");
+            }
+        }
+        else
+        {
+            await js.InvokeVoidAsync("showToast", "Failed to Add ", "error");
+        }
     }
 }

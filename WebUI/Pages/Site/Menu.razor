@@ -53,7 +53,7 @@
                                                         </button>
                                                     </span>
                                                 </div>
-                                                <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart" /></a>
+                                                <a @onclick="() => AddPlateToCart(product.Id)" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart" /></a>
                                             </div>
                                         </div>
                                     </div>
@@ -122,7 +122,31 @@
     private async Task LikeProduct(string ProductId)
     {          
         var response = await buyerService.LikeProductAsync(ProductId, userId);
+        await js.InvokeVoidAsync("showToast", "Product Liked", "success");
         likeMessage = response.Message;
     }
 
+    private async Task AddPlateToCart(string productId)
+    {
+        var authState = await AuthStateTask;
+
+        var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
+        if (userIdClaim != null)
+        {
+            userId = userIdClaim.Value;
+            var response = await buyerService.AddProductToCartAsync(productId, userId);
+            if (response.Flag)
+            {
+                await js.InvokeVoidAsync("showToast", "Product Added Successfully", "success");
+            }
+            else
+            {
+                await js.InvokeVoidAsync("showToast", "Not enough quantity", "error");
+            }
+        }
+        else
+        {
+            await js.InvokeVoidAsync("showToast", "Failed to add product", "error");
+        }
+    }
 }

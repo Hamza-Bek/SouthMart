@@ -20,6 +20,6 @@ namespace Application.DTOs.Request.ProductEntity
         public int TotalSold { get; set; }
         public string? CoverImageUrl { get; set; }
         public DateTime AddedDate { get; set; }
-        public ApplicationUser Seller { get; set; }
+        
     }
 }

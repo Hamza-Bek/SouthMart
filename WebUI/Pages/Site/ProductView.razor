@@ -24,7 +24,7 @@
                 <h1 class="name">@item.Name</h1>
             <div class="price">$@item.SellingPrice</div>                                             
             <div class="buttons">
-                <button>-</button>
+                    <button @onclick="() => RemoveProduct(item.Id, userId)">-</button>
                     <button @onclick="() => AddPlateToCart(item.Id)">
                     Add To Cart
                     <span>
@@ -33,7 +33,7 @@
                         </svg>
                     </span>
                 </button>
-                    <button>+</button>
+                    <button @onclick="() => AddPlateToCart(item.Id)">+</button>
             </div>
             <div class="description">
 
@@ -55,7 +55,7 @@
                         <div class="mar-top clearfix">
                             <button class="btn-comment btn-comment-sm btn-comment-primary pull-right" @onclick="AddComment">
                                 <i class="fa fa-pencil fa-fw"></i> Share
-                            </button>
+                            </button>                            
                         </div>
                     </div>
                 </div>
@@ -250,18 +250,7 @@ a{
 .detail .image{
     position: relative;
 }
-.detail .image::before{
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    content: '';
-    background-color: #94817733;
-    z-index: -1;
-    border-radius: 190px 100px 170px 180px;
-    left: calc(50% - 150px);
-    top: 50px;
 
-}
 .detail .name{
     font-size: xxx-large;
     padding: 40px 0 0 0;
@@ -371,6 +360,7 @@ a{
     private IEnumerable<ProductDTO> ProductDetail;
     private IBrowserFile? uploadedImage;
     private CommentDTO newComment = new CommentDTO();
+    private IEnumerable<CartItem> cartItems = new List<CartItem>();
 
     [CascadingParameter] 
     public Task<AuthenticationState> AuthStateTask { get; set; } = null!;
@@ -380,13 +370,6 @@ a{
     {
         var authState = await AuthStateTask;
 
-
-
-        foreach (var claim in authState.User.Claims)
-        {
-            Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
-        }
-
         var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
         if (userIdClaim != null)
         {
@@ -394,16 +377,16 @@ a{
             var response = await buyerService.AddProductToCartAsync(productId, userId);
             if (response.Flag)
             {
-                Console.WriteLine("Product Added!");
+                await js.InvokeVoidAsync("showToast", "Added Successfully", "success");
             }
             else
             {
-                Console.WriteLine("Failed to add product");
+                await js.InvokeVoidAsync("showToast", "Failed to Add ", "error");
             }
         }
         else
         {
-            Console.WriteLine("Failed to add product");
+            await js.InvokeVoidAsync("showToast", "Failed to Add ", "error");
         }
     }
 
@@ -434,11 +417,7 @@ a{
     private async Task AddComment()
     {
         var authState = await AuthStateTask;
-        foreach (var claim in authState.User.Claims)
-        {
-            Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
-        }
-
+     
         var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
         if (userIdClaim != null)
         {
@@ -463,6 +442,7 @@ a{
             if (result.Flag)
             {
                 // Comment added successfully
+                await js.InvokeVoidAsync("showToast", "Comment added", "success");
                 newComment = new CommentDTO(); // Clear the form
                 await GetComments(); // Refresh comments list
             }
@@ -479,5 +459,26 @@ a{
         }
     }
 
+    private async Task RemoveProduct(string productId, string userId)
+    {
+        var selectedPlate = await buyerService.GetCartItemsAsync(userId);
+
+        try
+        {
+            var response = await buyerService.RemoveProductFromCartAsync(productId, userId);
+            if (response.Flag)
+            {
+                cartItems = cartItems.Where(p => p.Id != productId).ToList();
+
+                cartItems = await buyerService.GetCartItemsAsync(userId);
+                await js.InvokeVoidAsync("showToast", "Removed Successfully", "error");
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting plate: {ex.Message}");
+        }
+    }
 
 }

@@ -5,15 +5,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DashUI</title>
-    <base href="/" />
+    <base href="/login" />
 
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.jpg">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/animate.css">
     <link rel="stylesheet" href="css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="plugins/fontawesome/css/fontawesome.min.css">
-    <link rel="stylesheet" href="plugins/fontawesome/css/all.min.css">    
+    <link rel="stylesheet" href="plugins/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
 
 </head>
 
@@ -26,6 +28,22 @@
         <div class="loading-progress-text"></div>
     </div>
 
-    <script src="_framework/blazor.webassembly.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        function showToast(message, type) {
+            Toastify({
+                text: message,
+                duration: 3000, // Duration in milliseconds
+                gravity: "top", // top or bottom
+                position: "right", // left, center or right
+                backgroundColor: type === "success" ? "green" : "red",
+                close: true,
+                stopOnFocus: true
+            }).showToast();
+        }
+    </script>
+
+    <script src="_framework/blazor.webassembly.js"></script>
 </body>
 </html>

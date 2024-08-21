@@ -113,11 +113,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateTask;
-        foreach (var claim in authState.User.Claims)
-        {
-            Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
-        }
+        var authState = await AuthStateTask;    
 
         var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
         var userCartIdClaim = authState.User.FindFirst(c => c.Type == "CartId");
@@ -147,7 +143,7 @@
 
             if (cartItems == null || !cartItems.Any())
             {
-                await js.InvokeVoidAsync("alert", "No items in the cart!");
+                await js.InvokeVoidAsync("showToast", "No items in the cart", "error");
                 isLoading = false;
                 return;
             }
@@ -167,7 +163,7 @@
                 await orderService.ClearCartTotalAsync(userId);
                 await orderService.ClearCartItemsAsync(userId);
                 NavManager.NavigateTo("/order");
-                Console.WriteLine("Order placed successfully.");
+                await js.InvokeVoidAsync("showToast", "Order placed", "success");
             }
             else
             {
@@ -191,10 +187,9 @@
             var response = await buyerService.AddProductToCartAsync(productId, userId);
             if (response.Flag)
             {
-                cartItems = cartItems.Where(p => p.Id != productId).ToList();
-
+                cartItems = cartItems.Where(p => p.Id != productId).ToList();                
                 cartItems = await buyerService.GetCartItemsAsync(userId);
-
+                await js.InvokeVoidAsync("showToast", "Product Added", "success");
             }
 
         }
@@ -213,8 +208,8 @@
             if (response.Flag)
             {
                 cartItems = cartItems.Where(p => p.Id != productId).ToList();
-
                 cartItems = await buyerService.GetCartItemsAsync(userId);
+                await js.InvokeVoidAsync("showToast", "Product removed", "error");
 
             }
 

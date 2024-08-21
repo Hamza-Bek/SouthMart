@@ -1135,12 +1135,7 @@ else
     private async Task AddPlateToCart(string productId)
     {
         var authState = await AuthStateTask;
-
-        foreach (var claim in authState.User.Claims)
-        {
-            Console.WriteLine($"Claim Type: {claim.Type} | Claim Value: {claim.Value}");
-        }
-
+     
         var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
         if (userIdClaim != null)
         {
@@ -1148,16 +1143,16 @@ else
             var response = await buyerService.AddProductToCartAsync(productId, userId);
             if (response.Flag)
             {
-                Console.WriteLine("Product Added!");
+                await js.InvokeVoidAsync("showToast", "Product Added Successfully", "success");
             }
             else
             {
-                Console.WriteLine("Failed to add product");
+                await js.InvokeVoidAsync("showToast", "Not enough quantity", "error");
             }
         }
         else
         {
-            Console.WriteLine("Failed to add product");
+               await js.InvokeVoidAsync("showToast", "Failed to add product", "error");
         }
     }
   

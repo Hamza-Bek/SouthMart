@@ -58,6 +58,7 @@ namespace Infrastructure.Repositories
                     SellingPrice = model.SellingPrice,
                     SellerId = userId,
                     AddedDate = DateTime.Now,
+                    
                 };
 
                 _context.Products.Add(pr);

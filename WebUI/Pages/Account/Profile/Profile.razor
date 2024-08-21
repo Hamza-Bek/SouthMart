@@ -241,24 +241,21 @@
 
     private async Task HandleValidSubmit()
     {
-        Console.WriteLine($"Location Details: Phone = {location.PhoneNumber}, Country = {location.Country}, Street = {location.Street}, Building = {location.Building}, Floor = {location.Floor}");
-        Console.WriteLine($"Has Location: {hasLocation}");
-
+      
         if (hasLocation)
         {
             location.ApplicationUserId = userId;  // Ensure ApplicationUserId is set
 
-            var result = await locationService.UpdateLocationAsync(location);
-            Console.WriteLine($"Update Result: Success = {result.Flag}, Message = {result.Message}");
+            var result = await locationService.UpdateLocationAsync(location);       
 
             if (result.Flag)
             {
-                await js.InvokeVoidAsync("alert", "Location updated successfully");
+                await js.InvokeVoidAsync("showToast", "Location updated ", "success");
                 NavManager.NavigateTo("/client/cart/home");
             }
             else
             {
-                Console.WriteLine($"Failed to update location: {result.Message}");
+                await js.InvokeVoidAsync("showToast", "Please try again in a while", "error");
             }
         }
         else
@@ -267,12 +264,11 @@
             location.ApplicationUserId = userId;  // Ensure ApplicationUserId is set
 
             var result = await locationService.AddLocationAsync(location);
-            Console.WriteLine($"Add Result: Success = {result.Flag}, Message = {result.Message}");
+       
 
             if (result.Flag)
             {
-                await js.InvokeVoidAsync("alert", "New location added successfully");
-                NavManager.NavigateTo("/checkout");
+                await js.InvokeVoidAsync("showToast", "New location added", "success");
             }
             else
             {
@@ -289,6 +285,7 @@
 
             var userIdClaim = authState.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
             var userCartIdClaim = authState.User.FindFirst(c => c.Type == "CartId");
+
             if (userIdClaim != null)
             {
                 userId = userIdClaim.Value;
@@ -326,6 +323,7 @@
         if (response.Flag)
         {
             NavManager.NavigateTo("/");
+            await js.InvokeVoidAsync("showToast", "Account Request Sent", "success");
         }
         else
         {
